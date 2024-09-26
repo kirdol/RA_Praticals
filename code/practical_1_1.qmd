@@ -60,49 +60,49 @@ print(adf_test_neg_log)
 
 Since the p-value is significantly smaller than 0.05, we can reject the null hypothesis and conclude that the negative log returns series is stationary.
 
-## c) (((DOES NOT WORK YET)))
+## c)
 
 > Are the negative log returns normally distributed? Draw histograms, check QQ-plots and use an
 Anderson-Darling testing procedure to answer this question.
 
 ```{r echo = FALSE}
-# # Plot histogram of the negative log returns
-# hist(neg_log_returns_bitcoin, breaks=50, col="lightblue", 
-#      main="Histogram of Negative Log Returns", xlab="Negative Log Returns")
-# 
-# # Plot QQ-plot of the negative log returns
-# qqnorm(neg_log_returns_bitcoin)
-# qqline(neg_log_returns_bitcoin, col="red")
-# 
-# # Perform Anderson-Darling test for normality
-# ad_test <- ad.test(neg_log_returns_bitcoin)
-# 
-# # Display the Anderson-Darling test result
-# print(ad_test)
+# Plot histogram of the negative log returns
+hist(neg_log_returns_bitcoin, breaks=50, col="lightblue", 
+     main="Histogram of Negative Log Returns", xlab="Negative Log Returns")
+
+# Plot QQ-plot of the negative log returns
+qqnorm(neg_log_returns_bitcoin)
+qqline(neg_log_returns_bitcoin, col="red")
+
+# Perform Anderson-Darling test for normality
+ad_test <- ad.test(neg_log_returns_bitcoin)
+
+# Display the Anderson-Darling test result
+print(ad_test)
 ```
 
 Even though the Histogram suggest that the negative log returns follows a normal distribution, the p-value when performing the Andersen-Darling test is smaller than 5%. It indicates that the data does not follow a normal distribution.
 
-## d)
+## d) ((DOES NOT WORK YET))
 
 ```{r}
-# Fit a t-distribution to the negative log returns
-fit_t <- fitdistr(neg_log_returns_bitcoin, "t")
-
-# Display the t-distribution fit parameters
-print(fit_t)
-
-# Generate QQ-plot for t-distribution
-df_t <- fit_t$estimate[3]  # Degrees of freedom from the fit
-qqplot(rt(length(neg_log_returns_bitcoin), df=df_t), 
-       neg_log_returns_bitcoin, 
-       main="QQ-plot for t-distribution", 
-       xlab="Theoretical Quantiles (t-distribution)", 
-       ylab="Sample Quantiles")
-qqline(neg_log_returns_bitcoin, col="red")
-
-# For comparison: QQ-plot for normal distribution
-qqnorm(neg_log_returns_bitcoin, main="QQ-plot for Normal distribution")
-qqline(neg_log_returns_bitcoin, col="blue")
+# # Fit a t-distribution to the negative log returns
+# fit_t <- fitdistr(neg_log_returns_bitcoin, "t")
+# 
+# # Display the t-distribution fit parameters
+# print(fit_t)
+# 
+# # Generate QQ-plot for t-distribution
+# df_t <- fit_t$estimate[3]  # Degrees of freedom from the fit
+# qqplot(rt(length(neg_log_returns_bitcoin), df=df_t), 
+#        neg_log_returns_bitcoin, 
+#        main="QQ-plot for t-distribution", 
+#        xlab="Theoretical Quantiles (t-distribution)", 
+#        ylab="Sample Quantiles")
+# qqline(neg_log_returns_bitcoin, col="red")
+# 
+# # For comparison: QQ-plot for normal distribution
+# qqnorm(neg_log_returns_bitcoin, main="QQ-plot for Normal distribution")
+# qqline(neg_log_returns_bitcoin, col="blue")
 ```
 
