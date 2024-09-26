@@ -1,0 +1,31 @@
+---
+title: Pratical 1 - Group XX
+date: "`r Sys.Date()`"
+author: Lodrik Adam, Jeff Macaraeg, Julien Perini
+---
+
+```{r packages, echo = FALSE, message = FALSE}
+# load the required packages and install them if they are not.
+packages <- c(
+  "here"
+)
+
+# Function that install the packages if not already installed on your computer
+for (pkg in packages) {
+  if (!pkg %in% installed.packages()) {
+    install.packages(pkg)}}
+
+# load the packages
+for (pkg in packages) {
+  library(pkg, character.only = TRUE)}
+
+# getiing the working directory
+wd <- here()
+```
+
+The working directory is set to: `r wd`
+
+```{r data_loading}
+crypto_data <- read.csv(here("data", "crypto_data.csv"))
+```
+
