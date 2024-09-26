@@ -1,0 +1,8 @@
+---
+title: Pratical 1 - Group XX
+date: "`r Sys.Date()`"
+author: Lodrik Adam, Jeff Macaraeg, Julien Perini
+---
+
+```{r child = c("practical_1_1.qmd", "practical_1_2.qmd", "practical_1_3.qmd")}
+```
