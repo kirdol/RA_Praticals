@@ -20,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -81,11 +47,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>The working directory is set to: /Users/lodrik/Documents/GitHub/RA_Praticals</p>
-<section id="a" class="level1">
-<h1>a)</h1>
+<section id="part-1-financial-returns-and-normality" class="level1">
+<h1>Part 1: Financial returns and normality</h1>
+<section id="a" class="level2">
+<h2 class="anchored" data-anchor-id="a">a)</h2>
+<blockquote class="blockquote">
 <p>Read in the Bitcoin data from file Crypto data.csv. Then, assess the stationarity of the (raw) Bitcoin prices.</p>
+</blockquote>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">adf.test</span>(crypto_data<span class="sc">$</span>Bitcoin, <span class="at">alternative =</span> <span class="st">"stationary"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical_1_1_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Augmented Dickey-Fuller Test
@@ -95,10 +71,13 @@ Dickey-Fuller = -2.4484, Lag order = 11, p-value = 0.3885
 alternative hypothesis: stationary</code></pre>
 </div>
 </div>
+<p>Since the p-value is significantly bigger than 0.05, we can not reject the null hypothesis and conclude that the negative log returns series is not stationary.</p>
 </section>
-<section id="b" class="level1">
-<h1>b)</h1>
+<section id="b" class="level2">
+<h2 class="anchored" data-anchor-id="b">b)</h2>
+<blockquote class="blockquote">
 <p>Create a function to transform the Bitcoin prices into their negative log returns counterparts. Plot the latter series and assess their stationarity. To compare the series, also plot the negative log returns on a common scale.</p>
+</blockquote>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -106,10 +85,6 @@ alternative hypothesis: stationary</code></pre>
 <p><img src="practical_1_1_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in adf.test(neg_log_returns_bitcoin): p-value smaller than printed
-p-value</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -121,6 +96,12 @@ alternative hypothesis: stationary</code></pre>
 </div>
 </div>
 <p>Since the p-value is significantly smaller than 0.05, we can reject the null hypothesis and conclude that the negative log returns series is stationary.</p>
+</section>
+<section id="c" class="level2">
+<h2 class="anchored" data-anchor-id="c">c)</h2>
+<blockquote class="blockquote">
+<p>Are the negative log returns normally distributed? Draw histograms, check QQ-plots and use an Anderson-Darling testing procedure to answer this question.</p>
+</blockquote>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -136,7 +117,16 @@ alternative hypothesis: stationary</code></pre>
 </figure>
 </div>
 </div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Anderson-Darling normality test
+
+data:  neg_log_returns_bitcoin
+A = 26.277, p-value &lt; 2.2e-16</code></pre>
 </div>
+</div>
+<p>Even though the Histogram suggest that the negative log returns follows a normal distribution, the p-value when performing the Andersen-Darling test is smaller than 5%. It indicates that the data does not follow a normal distribution.</p>
+</section>
 </section>
 
 </main>
