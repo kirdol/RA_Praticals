@@ -1,0 +1,57 @@
+```{r}
+crypto_data <- read.csv(here("data", "crypto_data.csv"))
+```
+
+```{r}
+library(fpp3)
+library(urca)
+library(ggplot2)
+```
+
+## Part 1 - Financial returns and normality
+
+### a)
+```{r}
+# Perform KPSS test for stationarity on the Bitcoin prices column
+kpss_test <- ur.kpss(crypto_data$Bitcoin, type = "mu")  # type = "mu" for testing level stationarity
+summary(kpss_test)
+```
+
+As the test-statistic is greater than 0.739 (1% critical value), the time series is not stationary.
+
+### b)
+```{r}
+# Applying the function to Bitcoin prices
+negative_log_ret <- negative_log_returns(data$Bitcoin)
+
+# Add the negative log returns to the data for plotting (excluding the first row due to diff)
+data <- data[-1, ]  # Remove the first row due to differencing
+data$neg_log_ret <- negative_log_ret
+
+# Plot the negative log returns
+ggplot(data, aes(x = 1:nrow(data), y = neg_log_ret)) +
+  geom_line(color = 'red') +
+  labs(title = "Negative Log Returns of Bitcoin Prices", x = "Time", y = "Negative Log Returns") +
+  theme_minimal()
+
+# KPSS Test to assess stationarity of the negative log returns
+kpss_test_neg_log_ret <- ur.kpss(negative_log_ret, type = "mu")
+summary(kpss_test_neg_log_ret)
+
+# Plot the raw Bitcoin prices and negative log returns on the same scale
+# Normalize both series for comparison (scaling to a common range)
+data$scaled_bitcoin <- scale(data$Bitcoin)
+data$scaled_neg_log_ret <- scale(data$neg_log_ret)
+
+# Plot scaled Bitcoin prices and negative log returns on the same graph
+ggplot(data) +
+  geom_line(aes(x = 1:nrow(data), y = scaled_bitcoin), color = 'blue', linetype = "dashed") +
+  geom_line(aes(x = 1:nrow(data), y = scaled_neg_log_ret), color = 'red') +
+  labs(title = "Comparison of Scaled Bitcoin Prices and Negative Log Returns",
+       x = "Time", y = "Scaled Values") +
+  theme_minimal() +
+  scale_color_manual(values=c("blue", "red")) +
+  theme(legend.position="bottom")
+```
+
+
