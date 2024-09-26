@@ -1,6 +1,7 @@
 # load the required packages and install them if they are not.
 packages <- c(
-  "here"
+  "here",
+  "tseries"
 )
 
 # Function that install the packages if not already installed on your computer

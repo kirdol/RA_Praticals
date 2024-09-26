@@ -4,10 +4,68 @@ source(here::here("code","setup.R"))
 
 # getiing the working directory
 wd <- here()
+
+# Loading the data
+crypto_data <- read.csv(here("data", "crypto_data.csv"))
 ```
 
 The working directory is set to: `r wd`
 
+# a)
+
+Read in the Bitcoin data from file Crypto data.csv. Then, assess the stationarity of the (raw)
+Bitcoin prices.
+
 ```{r}
-crypto_data <- read.csv(here("data", "crypto_data.csv"))
+adf.test(crypto_data$Bitcoin, alternative = "stationary")
 ```
+
+# b)
+
+Create a function to transform the Bitcoin prices into their negative log returns counterparts. Plot
+the latter series and assess their stationarity. To compare the series, also plot the negative log
+returns on a common scale.
+
+```{r echo = FALSE}
+# Function to compute negative log returns
+negative_log_returns <- function(prices) {
+  return(-diff(log(prices)))
+}
+
+# Extract the Bitcoin prices
+bitcoin_prices <- crypto_data$Bitcoin
+
+# Compute negative log returns for Bitcoin prices
+neg_log_returns_bitcoin <- negative_log_returns(bitcoin_prices)
+
+# Plot the negative log returns series
+plot(neg_log_returns_bitcoin, type="l", col="blue", 
+     main="Negative Log Returns of Bitcoin Prices", 
+     xlab="Time", ylab="Negative Log Returns")
+
+# Perform the Augmented Dickey-Fuller test on negative log returns
+adf_test_neg_log <- adf.test(neg_log_returns_bitcoin)
+
+# Display the test results
+print(adf_test_neg_log)
+```
+
+Since the p-value is significantly smaller than 0.05, we can reject the null hypothesis and conclude that the negative log returns series is stationary.
+
+```{r echo = FALSE}
+# To compare the series, plot the raw prices and negative log returns on a common scale
+
+plot(bitcoin_prices, type="l", col="red", 
+     main="Bitcoin Prices", xlab="Time", ylab="Price")
+plot(neg_log_returns_bitcoin, type="l", col="blue", 
+     main="Negative Log Returns of Bitcoin Prices", 
+     xlab="Time", ylab="Negative Log Returns")
+```
+
+
+
+
+
+
+
+
