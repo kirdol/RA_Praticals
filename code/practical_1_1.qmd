@@ -26,10 +26,10 @@ bitcoin_prices <- crypto_data$Bitcoin
 plot(bitcoin_prices, type="l", col="red", 
      main="Bitcoin Prices", xlab="Time", ylab="Price")
 # test for stationarity
-adf.test(crypto_data$Bitcoin, alternative = "stationary")
+adf.test(crypto_data$Bitcoin)
 ```
 
-Since the p-value is significantly bigger than 0.05, we can not reject the null hypothesis and conclude that the negative log returns series is not stationary.
+Since the p-value is significantly bigger than 0.05, we can not reject the null hypothesis and conclude that the time serie is not stationary.
 
 ## b)
 
@@ -47,9 +47,12 @@ negative_log_returns <- function(prices) {
 neg_log_returns_bitcoin <- negative_log_returns(bitcoin_prices)
 
 # Plot the negative log returns series
-plot(neg_log_returns_bitcoin, type="l", col="blue", 
+plot(neg_log_returns_bitcoin,
+     type="l",
+     col="blue", 
      main="Negative Log Returns of Bitcoin Prices", 
-     xlab="Time", ylab="Negative Log Returns")
+     xlab="Time",
+     ylab="Negative Log Returns")
 
 # Perform the Augmented Dickey-Fuller test on negative log returns
 adf_test_neg_log <- adf.test(neg_log_returns_bitcoin)
@@ -67,8 +70,11 @@ Anderson-Darling testing procedure to answer this question.
 
 ```{r echo = FALSE}
 # Plot histogram of the negative log returns
-hist(neg_log_returns_bitcoin, breaks=50, col="lightblue", 
-     main="Histogram of Negative Log Returns", xlab="Negative Log Returns")
+hist(neg_log_returns_bitcoin,
+     breaks=50,
+     col="lightblue", 
+     main="Histogram of Negative Log Returns",
+     xlab="Negative Log Returns")
 
 # Plot QQ-plot of the negative log returns
 qqnorm(neg_log_returns_bitcoin)

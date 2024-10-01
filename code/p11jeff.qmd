@@ -1,8 +1,12 @@
 ```{r}
-crypto_data <- read.csv(here("data", "crypto_data.csv"))
+crypto_data <- read.csv(here::here("data", "crypto_data.csv"))
 ```
 
 ```{r}
+
+# load the required packages and install them if they are not.
+source(here::here("code","setup.R"))
+
 library(fpp3)
 library(urca)
 library(ggplot2)
