@@ -6,6 +6,7 @@ install.packages("MASS")
 install.packages("tseries")
 install.packages("forecast")
 install.packages("fGarch")
+install.packages("lmtest")
 ################################################Part 1
 #Seeing if the time series is stationary :
 library(fpp3)
@@ -111,16 +112,20 @@ library(MASS)
 # In this case, we estimate these using fitdistr()
 
 fit_t <- fitdistr(nlrdf$nlr, "t", start = list(m = 0, s = 1, df = 5))  # Starting values
-
 #################################################################ERROR USING THIS, ASK TEACHER
-# Print the estimated parameters of the t-distribution
-print(fit_t)
+
+#solution : multipler par 100000 les données pour avoir le resultat
+aug_fit <- nlrdf |>
+  mutate(aug = nlrdf$nlr * 100000)
+
+aug_fit_t <- fitdistr(aug_fit$aug, "t", start = list(m = 0, s = 1, df = 5))
+print(aug_fit_t)
 
 # Step 2: Generate a QQ-plot to assess the fit
 # Extract the estimated parameters
-df_est <- fit_t$estimate["df"]
-mean_est <- fit_t$estimate["m"]
-sd_est <- fit_t$estimate["s"]
+df_est <- aug_fit_t$estimate["df"]
+mean_est <- aug_fit_t$estimate["m"]
+sd_est <- aug_fit_t$estimate["s"]
 
 # Generate a sample of t-distributed values based on the estimated parameters
 t_sample <- rt(length(nlrdf$nlr), df = df_est) * sd_est + mean_est
@@ -132,11 +137,46 @@ ggplot(nlrdf, aes(sample = nlr)) +
   labs(title = "QQ-Plot of Negative Log Returns vs. Fitted t-Distribution") +
   theme_minimal()
 
-#REST PROBABLY WORKS ONCE FIRST LINE WORKS
+#Now we get someting that seems a lot more normally distributed than previously
+#(c)
 
+#1e)
+# Step 1: Calculate the fitted parameters for both distributions
+# Parameters for the normal distribution (mean and sd of negative log returns)
+mean_nlr <- mean(nlrdf$nlr)
+sd_nlr <- sd(nlrdf$nlr)
 
-#1e) depends on d) answer
+# Parameters for the fitted t-distribution (already obtained)
+df_est <- aug_fit_t$estimate["df"]
+mean_est <- aug_fit_t$estimate["m"] / 100000  # Scale back the mean
+sd_est <- aug_fit_t$estimate["s"] / 100000    # Scale back the standard deviation
 
+# Step 2: Create a data frame with values from -3 to 3 for density comparison
+x_values <- seq(min(nlrdf$nlr), max(nlrdf$nlr), length.out = 500)
+
+# Calculate the density for the normal and t-distributions
+densities <- data.frame(
+  x = x_values,
+  Normal = dnorm(x_values, mean = mean_nlr, sd = sd_nlr),
+  T_Distribution = dt((x_values - mean_est) / sd_est, df = df_est) / sd_est
+)
+
+# Step 3: Reshape the data for plotting
+densities_long <- densities |>
+  pivot_longer(cols = c("Normal", "T_Distribution"), names_to = "Distribution", values_to = "Density")
+
+# Step 4: Plot the density curves
+ggplot(densities_long, aes(x = x, y = Density, color = Distribution)) +
+  geom_line(size = 1) +
+  xlim(-0.05, 0.05) +  # Adjust x-limits to focus on the tails
+  labs(title = "Density Comparison of Normal vs T-Distribution",
+       x = "Negative Log Returns",
+       y = "Density") +
+  theme_minimal()
+
+#We can expect more extreme, unexpected events from the t distribution,
+#which leads us to conclude that this type of event is present in our bitcoin
+#data, as our data is better modeled by the t-distribution that the normal distribution.
 
 ##########################################################################Part 2
 
@@ -244,3 +284,33 @@ plot(garch_fit_on_residuals, which = 11)  # QQ-plot of the Standardized Residual
 
 
 #####################################################################################Part 3
+#3a)
+
+neglogret_eth <- neg_log_return(data$Ethereum)
+
+row_count_eth <- seq_along(neglogret_eth)
+
+nlr_euth_df <- data.frame(Time = row_count_eth, nlr = neglogret_eth)
+
+ggplot(nlr_euth_df, aes(x = Time, y = nlr)) +
+  geom_line()   # Line plot
+
+cor.test(nlr_euth_df$nlr, nlrdf$nlr)
+
+#No significant linear relationship between the variables (p-value = 1). However,
+#We cannot conclude that they are independant only based on the correlation test.
+#There could be, for example, a non-linear relationship between the 2.
+
+#3b)
+# Calculate and plot the cross-correlation function (CCF)
+ccf(nlr_euth_df$nlr, nlrdf$nlr, main = "Cross-Correlation Function: nlr_euth_df$nlr vs. nlrdf$nlr")
+#We can see a very significant spike in cross correlation at around lag 5.
+
+#3c)
+library(lmtest)
+#Testing if eth granger-causes bitcoin
+grangertest(nlr_euth_df$nlr ~ nlrdf$nlr, order = 5)
+#Very tiny p-value, very promising -> eth granger causes bitcoin
+#Testing if bitcoin granger-causes euth
+grangertest(nlrdf$nlr ~ nlr_euth_df$nlr, order = 5)
+#Very large p-value, insignificant result -> bitcoin does not granger-cause eth
