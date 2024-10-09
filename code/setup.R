@@ -8,7 +8,9 @@ packages <- c(
   "fpp3",
   "urca",
   "ggplot2",
-  "patchwork"
+  "patchwork",
+  "forecast",
+  "fGarch"
 )
 
 # Function that install the packages if not already installed on your computer

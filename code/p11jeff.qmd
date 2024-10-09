@@ -8,29 +8,21 @@ crypto_data <- read.csv(here::here("data", "crypto_data.csv"))
 ```
 
 ```{r}
-
-# load the required packages and install them if they are not.
 source(here::here("code","setup.R"))
-
-library(fpp3)
-library(urca)
-library(ggplot2)
-library(patchwork)
-library(nortest)
 ```
 
 ## Part 1 - Financial returns and normality
 
 ### a)
 ```{r}
-#Adding a "time" column
+# Add a "time" column
 data <- crypto_data %>% 
   mutate(Time = row_number())
 
-#Transforming into a tsibble
+# Tsibble
 data <- as_tsibble(data, index = Time)
 
-#Testing for stationarity
+# Test for stationarity
 data |> features(Bitcoin, unitroot_kpss)
 ```
 The p-value of 1% indicates evidence to reject the null hypothesis.
@@ -45,7 +37,7 @@ negative_log_returns <- function(prices) {
   -log_returns
 }
 
-# Applying the function to Bitcoin prices
+# Apply the function to Bitcoin prices
 negative_log_ret <- negative_log_returns(data$Bitcoin)
 
 # Add the negative log returns to the data for plotting (excluding the first row due to diff)
@@ -100,13 +92,202 @@ The p-value is lower than 0.05, so the distrubtion is not normally distributed.
 ### d)
 
 ```{r}
+# Fit a t-distribution to the negative log returns
+t_fit <- fitdistr(data$neg_log_ret, "t")
 
+# Print the fit result
+print(t_fit)
+
+# Extract the parameters from the t-distribution fit
+t_df <- t_fit$estimate["df"]
+t_mean <- t_fit$estimate["m"]
+t_sd <- t_fit$estimate["s"]
+
+# Generate QQ-plot for t-distribution
+ggplot(data, aes(sample = neg_log_ret)) +
+  stat_qq(distribution = qt, dparams = list(df = t_df, ncp = t_mean), 
+          aes(sample = neg_log_ret)) +
+  stat_qq_line(distribution = qt, dparams = list(df = t_df, ncp = t_mean)) +
+  labs(title = "QQ-Plot of Negative Log Returns vs. Fitted t-Distribution",
+       x = "Theoretical Quantiles (t-distribution)", y = "Sample Quantiles") +
+  theme_minimal()
+
+# Generate QQ-plot for normal distribution for comparison
+ggplot(data, aes(sample = neg_log_ret)) +
+  stat_qq() +
+  stat_qq_line() +
+  labs(title = "QQ-Plot of Negative Log Returns vs. Normal Distribution",
+       x = "Theoretical Quantiles (Normal Distribution)", y = "Sample Quantiles") +
+  theme_minimal()
 ```
+
+Doesn't work yet
+
+### e)
 
 
 ## Part 2 - Financial time series, heteroskedasticity and the random walk hypothesis
 
-```{r}
+### a)
 
+```{r}
+# Extract Bitcoin and Ethereum prices
+bitcoin_prices <- crypto_data$Bitcoin
+ethereum_prices <- crypto_data$Ethereum
+
+# Calculate negative log returns
+bitcoin_log_returns <- -diff(log(bitcoin_prices))
+ethereum_log_returns <- -diff(log(ethereum_prices))
+
+# Plot ACF for the raw series and the negative log returns
+par(mfrow=c(2,2))
+
+# ACF for raw Bitcoin prices
+acf(bitcoin_prices, main="ACF of Raw Bitcoin Prices")
+
+# ACF for Bitcoin negative log returns
+acf(bitcoin_log_returns, main="ACF of Bitcoin Negative Log Returns")
+
+# ACF for raw Ethereum prices
+acf(ethereum_prices, main="ACF of Raw Ethereum Prices")
+
+# ACF for Ethereum negative log returns
+acf(ethereum_log_returns, main="ACF of Ethereum Negative Log Returns")
+
+# Reset the plotting area
+par(mfrow=c(1,1))
 ```
 
+The negative log returns is more stationary, thus easier to model.
+
+### b)
+
+```{r}
+# Perform Ljung-Box test on raw Bitcoin prices
+lb_test_bitcoin_raw <- Box.test(bitcoin_prices, lag = 20, type = "Ljung-Box")
+
+# Perform Ljung-Box test on Bitcoin negative log returns
+lb_test_bitcoin_log <- Box.test(bitcoin_log_returns, lag = 20, type = "Ljung-Box")
+
+# Perform Ljung-Box test on raw Ethereum prices
+lb_test_ethereum_raw <- Box.test(ethereum_prices, lag = 20, type = "Ljung-Box")
+
+# Perform Ljung-Box test on Ethereum negative log returns
+lb_test_ethereum_log <- Box.test(ethereum_log_returns, lag = 20, type = "Ljung-Box")
+
+# Print the test results
+cat("Ljung-Box test for raw Bitcoin prices:\n")
+print(lb_test_bitcoin_raw)
+cat("\nLjung-Box test for Bitcoin negative log returns:\n")
+print(lb_test_bitcoin_log)
+
+cat("\nLjung-Box test for raw Ethereum prices:\n")
+print(lb_test_ethereum_raw)
+cat("\nLjung-Box test for Ethereum negative log returns:\n")
+print(lb_test_ethereum_log)
+```
+
+In the raw prices, if the p-value is small, it indicates that the raw series has significant autocorrelations, suggesting that the series is not independent over time.
+In the negative log returns, if the p-value is large, it means that after transformation, the series behave like white noise.
+
+### c) 
+
+```{r}
+# Bitcoin negative log returns ACF and PACF
+par(mfrow=c(2,1))
+acf(bitcoin_log_returns, main="ACF of Bitcoin Negative Log Returns")
+pacf(bitcoin_log_returns, main="PACF of Bitcoin Negative Log Returns")
+
+# Ethereum negative log returns ACF and PACF
+acf(ethereum_log_returns, main="ACF of Ethereum Negative Log Returns")
+pacf(ethereum_log_returns, main="PACF of Ethereum Negative Log Returns")
+
+# Reset plot area
+par(mfrow=c(1,1))
+
+# Auto-select ARIMA models using auto.arima
+arima_bitcoin <- auto.arima(bitcoin_log_returns)
+arima_ethereum <- auto.arima(ethereum_log_returns)
+
+# Print the selected ARIMA models
+cat("Selected ARIMA model for Bitcoin negative log returns:\n")
+print(arima_bitcoin)
+
+cat("\nSelected ARIMA model for Ethereum negative log returns:\n")
+print(arima_ethereum)
+
+# Residual diagnostics for Bitcoin model
+cat("\nResidual diagnostics for Bitcoin ARIMA model:\n")
+checkresiduals(arima_bitcoin)
+
+# Residual diagnostics for Ethereum model
+cat("\nResidual diagnostics for Ethereum ARIMA model:\n")
+checkresiduals(arima_ethereum)
+```
+
+The difference between manual ARIMA models and the auto.arima() is that the automatic can potentially identify a better mdoel based on statistical criteria.
+If there is a significatn difference, it suggest that the ACF/PACF might miss some subtle but important characteristics of the series, which can be mitigated with the auto.arima().
+
+Regarding the residuals, if the ones from ARIMA shows no autocorrelations, it means that the model captured a serial dependence. On the contrary, it means that a more complex model is required if still signs of autocorrelation.
+
+### d)
+
+```{r}
+# GARCH(1,1) with normal distribution
+garch_bitcoin_norm <- garchFit(~ garch(1, 1), data = bitcoin_log_returns, trace = FALSE)
+
+# GARCH(1,1) with standardized t-distribution
+garch_bitcoin_t <- garchFit(~ garch(1, 1), data = bitcoin_log_returns, cond.dist = "std", trace = FALSE)
+
+# Print summaries of the models
+cat("GARCH(1,1) model with Normal distribution for Bitcoin:\n")
+summary(garch_bitcoin_norm)
+
+cat("\nGARCH(1,1) model with Standardized t-distribution for Bitcoin:\n")
+summary(garch_bitcoin_t)
+
+# GARCH(1,1) with normal distribution
+garch_ethereum_norm <- garchFit(~ garch(1, 1), data = ethereum_log_returns, trace = FALSE)
+
+# GARCH(1,1) with standardized t-distribution
+garch_ethereum_t <- garchFit(~ garch(1, 1), data = ethereum_log_returns, cond.dist = "std", trace = FALSE)
+
+# Print summaries of the models
+cat("\nGARCH(1,1) model with Normal distribution for Ethereum:\n")
+summary(garch_ethereum_norm)
+
+cat("\nGARCH(1,1) model with Standardized t-distribution for Ethereum:\n")
+summary(garch_ethereum_t)
+
+# Residual Diagnostics for Bitcoin Models
+cat("\nResidual diagnostics for GARCH(1,1) model with Normal distribution for Bitcoin:\n")
+par(mfrow=c(2,1))
+plot(residuals(garch_bitcoin_norm), main="Residuals of GARCH(1,1) Normal Model - Bitcoin")
+acf(residuals(garch_bitcoin_norm), main="ACF of Residuals - GARCH(1,1) Normal - Bitcoin")
+par(mfrow=c(1,1))
+
+cat("\nResidual diagnostics for GARCH(1,1) model with Standardized t-distribution for Bitcoin:\n")
+par(mfrow=c(2,1))
+plot(residuals(garch_bitcoin_t), main="Residuals of GARCH(1,1) t-distribution Model - Bitcoin")
+acf(residuals(garch_bitcoin_t), main="ACF of Residuals - GARCH(1,1) t-distribution - Bitcoin")
+par(mfrow=c(1,1))
+
+# Residual Diagnostics for Ethereum Models
+cat("\nResidual diagnostics for GARCH(1,1) model with Normal distribution for Ethereum:\n")
+par(mfrow=c(2,1))
+plot(residuals(garch_ethereum_norm), main="Residuals of GARCH(1,1) Normal Model - Ethereum")
+acf(residuals(garch_ethereum_norm), main="ACF of Residuals - GARCH(1,1) Normal - Ethereum")
+par(mfrow=c(1,1))
+
+cat("\nResidual diagnostics for GARCH(1,1) model with Standardized t-distribution for Ethereum:\n")
+par(mfrow=c(2,1))
+plot(residuals(garch_ethereum_t), main="Residuals of GARCH(1,1) t-distribution Model - Ethereum")
+acf(residuals(garch_ethereum_t), main="ACF of Residuals - GARCH(1,1) t-distribution - Ethereum")
+par(mfrow=c(1,1))
+```
+
+The standardized t-distribution is better for financial data, as it accounts for the heavy tails observed in asset returns.
+
+### e)
+
+...
