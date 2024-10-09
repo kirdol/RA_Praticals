@@ -1,3 +1,8 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 ```{r}
 crypto_data <- read.csv(here::here("data", "crypto_data.csv"))
 ```
@@ -10,21 +15,36 @@ source(here::here("code","setup.R"))
 library(fpp3)
 library(urca)
 library(ggplot2)
+library(patchwork)
+library(nortest)
 ```
 
 ## Part 1 - Financial returns and normality
 
 ### a)
 ```{r}
-# Perform KPSS test for stationarity on the Bitcoin prices column
-kpss_test <- ur.kpss(crypto_data$Bitcoin, type = "mu")  # type = "mu" for testing level stationarity
-summary(kpss_test)
-```
+#Adding a "time" column
+data <- crypto_data %>% 
+  mutate(Time = row_number())
 
-As the test-statistic is greater than 0.739 (1% critical value), the time series is not stationary.
+#Transforming into a tsibble
+data <- as_tsibble(data, index = Time)
+
+#Testing for stationarity
+data |> features(Bitcoin, unitroot_kpss)
+```
+The p-value of 1% indicates evidence to reject the null hypothesis.
 
 ### b)
 ```{r}
+# Function to calculate negative log returns
+negative_log_returns <- function(prices) {
+  # Calculate log returns
+  log_returns <- diff(log(prices))
+  # Return the negative log returns
+  -log_returns
+}
+
 # Applying the function to Bitcoin prices
 negative_log_ret <- negative_log_returns(data$Bitcoin)
 
@@ -58,4 +78,35 @@ ggplot(data) +
   theme(legend.position="bottom")
 ```
 
+### c)
+
+```{r}
+# Histogram of negative log returns
+ggplot(data, aes(x = neg_log_ret)) +
+  geom_histogram(bins = 30, fill = "red", alpha = 0.7) +
+  labs(title = "Histogram of Negative Log Returns of Bitcoin Prices", 
+       x = "Negative Log Returns", y = "Frequency") +
+  theme_minimal()
+
+# Anderson-Darling test for normality on negative log returns
+ad_test_result <- ad.test(data$neg_log_ret)
+
+
+print(ad_test_result)
+```
+
+The p-value is lower than 0.05, so the distrubtion is not normally distributed.
+
+### d)
+
+```{r}
+
+```
+
+
+## Part 2 - Financial time series, heteroskedasticity and the random walk hypothesis
+
+```{r}
+
+```
 

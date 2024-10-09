@@ -4,7 +4,11 @@ packages <- c(
   "tseries",
   "nortest",
   "stats",
-  "MASS"
+  "MASS",
+  "fpp3",
+  "urca",
+  "ggplot2",
+  "patchwork"
 )
 
 # Function that install the packages if not already installed on your computer
