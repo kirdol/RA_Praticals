@@ -12,7 +12,8 @@ install.packages("lmtest")
 library(fpp3)
 library(patchwork)
 
-data <- read.csv("Crypto_data.csv")
+
+data <- read.csv(here::here("data", "crypto_data.csv"))
 
 #Adding a "time" column
 data <- data |>
@@ -314,3 +315,4 @@ grangertest(nlr_euth_df$nlr ~ nlrdf$nlr, order = 5)
 #Testing if bitcoin granger-causes euth
 grangertest(nlrdf$nlr ~ nlr_euth_df$nlr, order = 5)
 #Very large p-value, insignificant result -> bitcoin does not granger-cause eth
+
