@@ -14,52 +14,52 @@ source(here::here("code","setup.R"))
 ## Part 1 - Financial returns and normality
 
 ### a)
+
 ```{r}
-# Add a "time" column
+# Step 1: Add a "Time" column
 data <- crypto_data %>% 
   mutate(Time = row_number())
 
-# Tsibble
+# Step 2: Create a Tsibble
 data <- as_tsibble(data, index = Time)
 
-# Test for stationarity
+# Step 3: Test for stationarity
 data |> features(Bitcoin, unitroot_kpss)
 ```
+
 The p-value of 1% indicates evidence to reject the null hypothesis.
 
 ### b)
 ```{r}
-# Function to calculate negative log returns
+# Step 1: Create a function to calculate negative log returns, then calculate it & create the return of the negative log returns
 negative_log_returns <- function(prices) {
-  # Calculate log returns
   log_returns <- diff(log(prices))
-  # Return the negative log returns
   -log_returns
 }
 
-# Apply the function to Bitcoin prices
+# Step 2: Apply the function to the Bitcoin prices
 negative_log_ret <- negative_log_returns(data$Bitcoin)
 
-# Add the negative log returns to the data for plotting (excluding the first row due to diff)
-data <- data[-1, ]  # Remove the first row due to differencing
+# Step 3: Add the negative log returns to the data for plotting & removing the first row dut to differencing
+data <- data[-1, ]
 data$neg_log_ret <- negative_log_ret
 
-# Plot the negative log returns
+# Step 4: Plot the negative log returns
 ggplot(data, aes(x = 1:nrow(data), y = neg_log_ret)) +
   geom_line(color = 'red') +
   labs(title = "Negative Log Returns of Bitcoin Prices", x = "Time", y = "Negative Log Returns") +
   theme_minimal()
 
-# KPSS Test to assess stationarity of the negative log returns
+# Step 5: Use the KPSS Test to assess stationarity of the negative log returns
 kpss_test_neg_log_ret <- ur.kpss(negative_log_ret, type = "mu")
 summary(kpss_test_neg_log_ret)
 
-# Plot the raw Bitcoin prices and negative log returns on the same scale
-# Normalize both series for comparison (scaling to a common range)
+# Step 6: Plot the raw Bitcoin prices and negative log returns on the same scale
+# Step 6.1: Normalize both series for comparison, scaled to a common range
 data$scaled_bitcoin <- scale(data$Bitcoin)
 data$scaled_neg_log_ret <- scale(data$neg_log_ret)
 
-# Plot scaled Bitcoin prices and negative log returns on the same graph
+# Step 6.2: Plot scaled Bitcoin prices and negative log returns on the same graph
 ggplot(data) +
   geom_line(aes(x = 1:nrow(data), y = scaled_bitcoin), color = 'blue', linetype = "dashed") +
   geom_line(aes(x = 1:nrow(data), y = scaled_neg_log_ret), color = 'red') +
@@ -73,16 +73,15 @@ ggplot(data) +
 ### c)
 
 ```{r}
-# Histogram of negative log returns
+# Step 1: Create a Histogram of negative log returns
 ggplot(data, aes(x = neg_log_ret)) +
   geom_histogram(bins = 30, fill = "red", alpha = 0.7) +
   labs(title = "Histogram of Negative Log Returns of Bitcoin Prices", 
        x = "Negative Log Returns", y = "Frequency") +
   theme_minimal()
 
-# Anderson-Darling test for normality on negative log returns
+# Step 2: Use the Anderson-Darling test to check for normality on negative log returns
 ad_test_result <- ad.test(data$neg_log_ret)
-
 
 print(ad_test_result)
 ```
@@ -92,38 +91,96 @@ The p-value is lower than 0.05, so the distrubtion is not normally distributed.
 ### d)
 
 ```{r}
-# Fit a t-distribution to the negative log returns
-t_fit <- fitdistr(data$neg_log_ret, "t")
+# Step 1: Scale the negative log returns
+aug_data <- data %>%
+  mutate(aug_neg_log_ret = neg_log_ret * 100000)
 
-# Print the fit result
-print(t_fit)
+# Step 2: Fit a t-distribution to the scaled negative log returns
+fit_t <- fitdistr(aug_data$aug_neg_log_ret, "t", start = list(m = 0, s = 1, df = 5))
 
-# Extract the parameters from the t-distribution fit
-t_df <- t_fit$estimate["df"]
-t_mean <- t_fit$estimate["m"]
-t_sd <- t_fit$estimate["s"]
+# Print the estimated parameters
+print(fit_t)
+```
 
-# Generate QQ-plot for t-distribution
-ggplot(data, aes(sample = neg_log_ret)) +
-  stat_qq(distribution = qt, dparams = list(df = t_df, ncp = t_mean), 
-          aes(sample = neg_log_ret)) +
-  stat_qq_line(distribution = qt, dparams = list(df = t_df, ncp = t_mean)) +
-  labs(title = "QQ-Plot of Negative Log Returns vs. Fitted t-Distribution",
-       x = "Theoretical Quantiles (t-distribution)", y = "Sample Quantiles") +
-  theme_minimal()
+```{r}
+# Step 3: Extract the estimated parameters
+df_est <- fit_t$estimate["df"]
+mean_est <- fit_t$estimate["m"]
+sd_est <- fit_t$estimate["s"]
 
-# Generate QQ-plot for normal distribution for comparison
-ggplot(data, aes(sample = neg_log_ret)) +
-  stat_qq() +
-  stat_qq_line() +
-  labs(title = "QQ-Plot of Negative Log Returns vs. Normal Distribution",
-       x = "Theoretical Quantiles (Normal Distribution)", y = "Sample Quantiles") +
+# Step 4: Generate a sample of t-distributed values based on the estimated parameters
+t_sample <- rt(length(aug_data$aug_neg_log_ret), df = df_est) * sd_est + mean_est
+
+# Step 5: Create a QQ-plot to compare the negative log returns to the fitted t-distribution
+ggplot(aug_data, aes(sample = aug_neg_log_ret)) +
+  stat_qq(distribution = qt, dparams = list(df = df_est)) +
+  stat_qq_line(distribution = qt, dparams = list(df = df_est)) +
+  labs(title = "QQ-Plot of Negative Log Returns vs. Fitted t-Distribution") +
   theme_minimal()
 ```
 
-Doesn't work yet
+Looking at both QQ-plots:
+
+```{r}
+# Step 6.1: Generate a QQ-plot for the normal distribution
+ggplot(data, aes(sample = neg_log_ret)) +
+  stat_qq(distribution = qnorm) +
+  stat_qq_line(distribution = qnorm) +
+  labs(title = "QQ-Plot of Negative Log Returns vs. Normal Distribution") +
+  theme_minimal()
+
+# Step 6.2: Generate a QQ-plot for the t-distribution (fitted earlier)
+ggplot(aug_data, aes(sample = aug_neg_log_ret)) +
+  stat_qq(distribution = qt, dparams = list(df = df_est)) +
+  stat_qq_line(distribution = qt, dparams = list(df = df_est)) +
+  labs(title = "QQ-Plot of Negative Log Returns vs. Fitted t-Distribution") +
+  theme_minimal()
+```
+
+We observe that the QQ-plot using a t-Distribution is a better fit for the negative log returns, as the points are closer to the diagonal.
 
 ### e)
+
+```{r}
+# Step 1: Calculate the parameters for the normal distribution
+mean_neg_log_ret <- mean(data$neg_log_ret)
+sd_neg_log_ret <- sd(data$neg_log_ret)
+
+# Step 2: Use the estimated parameters for the t-distribution (scaled)
+df_est <- fit_t$estimate["df"]
+mean_est <- fit_t$estimate["m"] / 100000  # Scale back the mean
+sd_est <- fit_t$estimate["s"] / 100000    # Scale back the standard deviation
+
+# Step 3: Create a sequence of values for the x-axis (negative log returns) to compare densities
+x_values <- seq(min(data$neg_log_ret), max(data$neg_log_ret), length.out = 500)
+
+# Step 4: Calculate the density for both distributions
+densities <- data.frame(
+  x = x_values,
+  Normal = dnorm(x_values, mean = mean_neg_log_ret, sd = sd_neg_log_ret),
+  T_Distribution = dt((x_values - mean_est) / sd_est, df = df_est) / sd_est
+)
+
+# Step 5: Reshape the data for plotting
+densities_long <- densities |>
+  pivot_longer(cols = c("Normal", "T_Distribution"), names_to = "Distribution", values_to = "Density")
+
+# Step 6: Plot the density curves & adjust the x-limits for tails focusing
+ggplot(densities_long, aes(x = x, y = Density, color = Distribution)) +
+  geom_line(size = 1) +
+  xlim(-0.05, 0.05) +
+  labs(title = "Density Comparison of Normal vs T-Distribution",
+       x = "Negative Log Returns",
+       y = "Density") +
+  theme_minimal()
+```
+
+Yes, we can expect more extreme events in the t-distribution compared to the normal distribution. The t-distribution is designed to account for data with heavier tails, meaning it better models the likelihood of extreme deviations from the mean. This is especially useful in financial data, where extreme market events (both positive and negative) are more frequent than the normal distribution predicts.
+
+Based on the characteristics of your negative log returns and the fit of the t-distribution, the heavy tails of the t-distribution suggest that Bitcoin returns are prone to extreme events. These events (like rapid price spikes or crashes) are better captured by the t-distribution than by the normal distribution. 
+Therefore, your data suggests that using a t-distribution is more appropriate for modeling extreme events in Bitcoin returns, highlighting the potential for more frequent unexpected outcomes than would be predicted by a normal distribution.
+
+
 
 
 ## Part 2 - Financial time series, heteroskedasticity and the random walk hypothesis
