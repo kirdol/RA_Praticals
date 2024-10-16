@@ -75,22 +75,29 @@ neg_log_returns_bitcoin <- negative_log_returns(bitcoin_prices)
 We can now plot the negative log returns series and the raw Bitcoin prices to compare.
 
 ```{r echo = FALSE, warning = FALSE}
-# Plot the negative log returns series
-plot(neg_log_returns_bitcoin,
-     type="l",
-     col="blue", 
-     main="Negative Log Returns of Bitcoin Prices", 
-     xlab="Time",
-     ylab="Negative Log Returns")
+# Remove the first price to match the length of neg_log_returns_bitcoin
+trimmed_bitcoin_prices <- bitcoin_prices[-1]
 
-# plot the Bitcoin prices
-plot(bitcoin_prices, type="l", col="red", 
-     main="Bitcoin Prices", xlab="Time", ylab="Price")
+# scale the negative log returns and the bitcoin prices
+scaled_b <- data.frame(neg_log_returns_bitcoin = neg_log_returns_bitcoin,
+                       trimmed_bitcoin_prices = trimmed_bitcoin_prices)
+scaled_b$scaled_neg_log_returns_bitcoin <- scale(scaled_b$neg_log_returns_bitcoin)
+scaled_b$scaled_trimmed_bitcoin_prices <- scale(scaled_b$trimmed_bitcoin_prices)
+
+# Plot the scaled negative log returns
+plot(scaled_b$scaled_neg_log_returns_bitcoin, type = "l", col = "blue", ylab = "Scaled Values", xlab = "Index", 
+     main = "Scaled Negative Log Returns and Bitcoin Prices", ylim = range(c(scaled_b$scaled_neg_log_returns_bitcoin, scaled_b$scaled_trimmed_bitcoin_prices)))
+
+# Add the scaled bitcoin prices to the same plot
+lines(scaled_b$scaled_trimmed_bitcoin_prices, col = "red")
+
+# Add a legend to differentiate the two lines
+legend("topright", legend = c("Scaled Neg Log Returns", "Scaled Bitcoin Prices"), col = c("blue", "red"), lty = 1)
 ```
 
-Let's also perform the Augmented Dickey-Fuller test to check if the negative log returns are stationary.
+Visually, the negative log returns series does not appear to indicate a clear trend or seasonality. The variance, although it fluctuates in the middle, seems relatively constant. This observation suggests that the series may be stationary. To confirm this, we will perform the Augmented Dickey-Fuller test to assess the stationarity of the negative log returns.
 
-```{r}
+```{r warning = FALSE}
 # Perform the Augmented Dickey-Fuller test on negative log returns
 adf_test_neg_log <- adf.test(neg_log_returns_bitcoin)
 
