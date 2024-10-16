@@ -10,7 +10,8 @@ packages <- c(
   "ggplot2",
   "patchwork",
   "forecast",
-  "fGarch"
+  "fGarch",
+  "fitdistrplus"
 )
 
 # Function that install the packages if not already installed on your computer
