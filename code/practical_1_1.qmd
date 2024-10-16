@@ -24,7 +24,7 @@ The working directory is set to: `r wd`
 
 ::: {.callout-note icon=false}
 
-## Statement
+## Question
 
 Read in the Bitcoin data from file Crypto data.csv. Then, assess the stationarity of the (raw)
 Bitcoin prices.
@@ -62,7 +62,7 @@ Since the p-value is significantly bigger than 0.05, we can not reject the null 
 
 ::: {.callout-note icon=false}
 
-## Statement
+## Question
 
 Create a function to transform the Bitcoin prices into their negative log returns counterparts. Plot
 the latter series and assess their stationarity. To compare the series, also plot the negative log
@@ -145,7 +145,7 @@ Since the p-value is significantly smaller than 0.05, we can reject the null hyp
 
 ::: {.callout-note icon=false}
 
-## Statement
+## Question
 
 Are the negative log returns normally distributed? Draw histograms, check QQ-plots and use an
 Anderson-Darling testing procedure to answer this question.
@@ -180,7 +180,7 @@ Even though the Histogram suggest that the negative log returns follows a normal
 
 ::: {.callout-note icon=false}
 
-## Statement
+## Question
 
 Fit a t-distribution to the negative log returns using `fitdistr()`. Using a QQ-plot, decide whether the fit is better than with a Normal distribution, based on your answer in [(c)](#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling).
 
@@ -226,7 +226,7 @@ As we can see, the QQ-plot for the t-distribution is closer to the 45-degree lin
 
 ::: {.callout-note icon=false}
 
-## Statement
+## Question
 
 Compare the tails of the density of the t-distribution and the normal distribution. Can we expect more extreme, unexpected events in t-distribution or in normal distribution? What can you conclude about the extreme events of our bitcoin data?
 
