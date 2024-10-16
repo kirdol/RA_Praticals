@@ -12,5 +12,5 @@ highlight-style: github
 code-tools: true
 ---
 
-```{r child = c("practical_1_1.qmd", "practical_1_2.qmd", "practical_1_3.qmd")}
+```{r child = c("practical_11_final.qmd")}
 ```
