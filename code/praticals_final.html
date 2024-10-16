@@ -6,8 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Lodrik Adam, Jeff Macaraeg, Julien Perini">
-<meta name="dcterms.date" content="2024-09-26">
+<meta name="author" content="Lodrik Adam, Alexandra Boado, Sophie Daya, Jeff Macaraeg, Julien Perini">
+<meta name="dcterms.date" content="2024-10-15">
 
 <title>Pratical 1 - Group XX</title>
 <style>
@@ -73,10 +73,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </head>
 
-<body class="fullcontent">
+<body>
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#part-1-financial-returns-and-normality" id="toc-part-1-financial-returns-and-normality" class="nav-link active" data-scroll-target="#part-1-financial-returns-and-normality">Part 1: Financial returns and normality</a>
+  <ul class="collapse">
+  <li><a href="#a-load-bitcoin-data-and-assess-price-stationarity" id="toc-a-load-bitcoin-data-and-assess-price-stationarity" class="nav-link" data-scroll-target="#a-load-bitcoin-data-and-assess-price-stationarity">a) Load Bitcoin data and assess price stationarity</a></li>
+  <li><a href="#b-create-and-plot-bitcoin-negative-log-returns-assess-stationarity" id="toc-b-create-and-plot-bitcoin-negative-log-returns-assess-stationarity" class="nav-link" data-scroll-target="#b-create-and-plot-bitcoin-negative-log-returns-assess-stationarity">b) Create and plot Bitcoin negative log returns, assess stationarity</a></li>
+  <li><a href="#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling" id="toc-c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling" class="nav-link" data-scroll-target="#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling">c) Check negative log returns normality with histograms, QQ-plots, Anderson-Darling</a></li>
+  <li><a href="#d-does-not-work-yet" id="toc-d-does-not-work-yet" class="nav-link" data-scroll-target="#d-does-not-work-yet">d) ((DOES NOT WORK YET))</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -91,14 +105,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Lodrik Adam, Jeff Macaraeg, Julien Perini </p>
+             <p>Lodrik Adam, Alexandra Boado, Sophie Daya, Jeff Macaraeg, Julien Perini </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 26, 2024</p>
+      <p class="date">October 15, 2024</p>
     </div>
   </div>
   
@@ -110,18 +124,190 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>The working directory is set to: /Users/jeffmacaraeg/Documents/GitHub/RA_Praticals</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>crypto_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"crypto_data.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="part-1-financial-returns-and-normality" class="level1">
+<h1>Part 1: Financial returns and normality</h1>
+<p>The working directory is set to: /Users/lodrik/Documents/GitHub/RA_Praticals</p>
+<section id="a-load-bitcoin-data-and-assess-price-stationarity" class="level2">
+<h2 class="anchored" data-anchor-id="a-load-bitcoin-data-and-assess-price-stationarity">a) Load Bitcoin data and assess price stationarity</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
 </div>
-<p>The working directory is set to: /Users/jeffmacaraeg/Documents/GitHub/RA_Praticals</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>crypto_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"crypto_data.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout-title-container flex-fill">
+Statement
 </div>
-<p>The working directory is set to: /Users/jeffmacaraeg/Documents/GitHub/RA_Praticals</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>crypto_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"crypto_data.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="callout-body-container callout-body">
+<p>Read in the Bitcoin data from file Crypto data.csv. Then, assess the stationarity of the (raw) Bitcoin prices.</p>
+</div>
+</div>
+<p>First, let’s take a look at the Bitcoin Prices on a plot.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The graph of the raw Bitcoin prices suggest that the series might not be stationary.</p>
+<p>Let’s perform the Augmented Dickey-Fuller test to check if the raw Bitcoin prices are stationary.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test for stationarity</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">adf.test</span>(crypto_data<span class="sc">$</span>Bitcoin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Augmented Dickey-Fuller Test
+
+data:  crypto_data$Bitcoin
+Dickey-Fuller = -2.4484, Lag order = 11, p-value = 0.3885
+alternative hypothesis: stationary</code></pre>
+</div>
+</div>
+<p>Since the p-value is significantly bigger than 0.05, we can not reject the null hypothesis and therefore, we can conclude that the raw Bitcoin prices are non-stationary.</p>
+</section>
+<section id="b-create-and-plot-bitcoin-negative-log-returns-assess-stationarity" class="level2">
+<h2 class="anchored" data-anchor-id="b-create-and-plot-bitcoin-negative-log-returns-assess-stationarity">b) Create and plot Bitcoin negative log returns, assess stationarity</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Statement
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Create a function to transform the Bitcoin prices into their negative log returns counterparts. Plot the latter series and assess their stationarity. To compare the series, also plot the negative log returns on a common scale.</p>
+</div>
+</div>
+<p>Let’s create a function to compute the negative log returns of a given price series. We will then apply this function to the Bitcoin prices to compute the negative log returns.</p>
+<p>We can now plot the negative log returns series and the raw Bitcoin prices to compare.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Let’s also perform the Augmented Dickey-Fuller test to check if the negative log returns are stationary.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform the Augmented Dickey-Fuller test on negative log returns</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>adf_test_neg_log <span class="ot">&lt;-</span> <span class="fu">adf.test</span>(neg_log_returns_bitcoin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in adf.test(neg_log_returns_bitcoin): p-value smaller than printed
+p-value</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the test results</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(adf_test_neg_log)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Augmented Dickey-Fuller Test
+
+data:  neg_log_returns_bitcoin
+Dickey-Fuller = -11.035, Lag order = 11, p-value = 0.01
+alternative hypothesis: stationary</code></pre>
+</div>
+</div>
+<p>Since the p-value is significantly smaller than 0.05, we can reject the null hypothesis and conclude that the negative log returns series is stationary.</p>
+</section>
+<section id="c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling" class="level2">
+<h2 class="anchored" data-anchor-id="c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling">c) Check negative log returns normality with histograms, QQ-plots, Anderson-Darling</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Statement
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Are the negative log returns normally distributed? Draw histograms, check QQ-plots and use an Anderson-Darling testing procedure to answer this question.</p>
+</div>
+</div>
+<p>Let’s first plot the histogram and QQ-plot of the negative log returns to visually assess the normality.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Anderson-Darling normality test
+
+data:  neg_log_returns_bitcoin
+A = 26.277, p-value &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>Even though the Histogram suggest that the negative log returns follows a normal distribution, the p-value when performing the Andersen-Darling test is smaller than 5%. It indicates that the data does not follow a normal distribution. The Normal Q-Q plot suggest also that the data does not follow a normal distribution.</p>
+</section>
+<section id="d-does-not-work-yet" class="level2">
+<h2 class="anchored" data-anchor-id="d-does-not-work-yet">d) ((DOES NOT WORK YET))</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Statement
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Fit a t-distribution to the negative log returns using <code>fitdistr()</code>. Using a QQ-plot, decide whether the fit is better than with a Normal distribution, based on your answer in (c).</p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Fit a t-distribution to the negative log returns</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_t &lt;- fitdistr(neg_log_returns_bitcoin, "t")</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># # Display the t-distribution fit parameters</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print(fit_t)</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># # Generate QQ-plot for t-distribution</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># df_t &lt;- fit_t$estimate[3]  # Degrees of freedom from the fit</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># qqplot(rt(length(neg_log_returns_bitcoin), df=df_t), </span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#        neg_log_returns_bitcoin, </span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#        main="QQ-plot for t-distribution", </span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#        xlab="Theoretical Quantiles (t-distribution)", </span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#        ylab="Sample Quantiles")</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># qqline(neg_log_returns_bitcoin, col="red")</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co"># # For comparison: QQ-plot for normal distribution</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co"># qqnorm(neg_log_returns_bitcoin, main="QQ-plot for Normal distribution")</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co"># qqline(neg_log_returns_bitcoin, col="blue")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The working directory is set to: /Users/lodrik/Documents/GitHub/RA_Praticals</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>crypto_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"crypto_data.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The working directory is set to: /Users/lodrik/Documents/GitHub/RA_Praticals</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>crypto_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"crypto_data.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
 
 </main>
 <!-- /main column -->

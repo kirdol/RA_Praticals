@@ -4,20 +4,29 @@
 source(here::here("code","setup.R"))
 
 # getiing the working directory
-wd <- here()
+wd <- here::here()
 
 # Loading the data
 crypto_data <- read.csv(here("data", "crypto_data.csv"))
 ```
 
-The working directory is set to: `r wd`
-
 # Part 1: Financial returns and normality
 
-## a)
+The working directory is set to: `r wd`
 
-> Read in the Bitcoin data from file Crypto data.csv. Then, assess the stationarity of the (raw)
+## a) Load Bitcoin data and assess price stationarity
+
+::: {.callout-note icon=false}
+
+## Statement
+
+Read in the Bitcoin data from file Crypto data.csv. Then, assess the stationarity of the (raw)
 Bitcoin prices.
+
+:::
+
+First, let's take a look at the Bitcoin Prices on a plot.
+
 
 ```{r echo = FALSE, warning = FALSE}
 # Extract the Bitcoin prices
@@ -26,17 +35,32 @@ bitcoin_prices <- crypto_data$Bitcoin
 # plot the Bitcoin prices
 plot(bitcoin_prices, type="l", col="red", 
      main="Bitcoin Prices", xlab="Time", ylab="Price")
+```
+
+The graph of the raw Bitcoin prices suggest that the series might not be stationary.
+
+Let's perform the Augmented Dickey-Fuller test to check if the raw Bitcoin prices are stationary.
+
+```{r}
 # test for stationarity
 adf.test(crypto_data$Bitcoin)
 ```
 
-Since the p-value is significantly bigger than 0.05, we can not reject the null hypothesis and conclude that the time serie is not stationary.
+Since the p-value is significantly bigger than 0.05, we can not reject the null hypothesis and therefore, we can conclude that the raw Bitcoin prices are non-stationary.
 
-## b)
+## b) Create and plot Bitcoin negative log returns, assess stationarity
 
-> Create a function to transform the Bitcoin prices into their negative log returns counterparts. Plot
+::: {.callout-note icon=false}
+
+## Statement
+
+Create a function to transform the Bitcoin prices into their negative log returns counterparts. Plot
 the latter series and assess their stationarity. To compare the series, also plot the negative log
 returns on a common scale.
+
+:::
+
+Let's create a function to compute the negative log returns of a given price series. We will then apply this function to the Bitcoin prices to compute the negative log returns.
 
 ```{r echo = FALSE, warning = FALSE}
 # Function to compute negative log returns
@@ -46,7 +70,11 @@ negative_log_returns <- function(prices) {
 
 # Compute negative log returns for Bitcoin prices
 neg_log_returns_bitcoin <- negative_log_returns(bitcoin_prices)
+```
 
+We can now plot the negative log returns series and the raw Bitcoin prices to compare.
+
+```{r echo = FALSE, warning = FALSE}
 # Plot the negative log returns series
 plot(neg_log_returns_bitcoin,
      type="l",
@@ -55,6 +83,14 @@ plot(neg_log_returns_bitcoin,
      xlab="Time",
      ylab="Negative Log Returns")
 
+# plot the Bitcoin prices
+plot(bitcoin_prices, type="l", col="red", 
+     main="Bitcoin Prices", xlab="Time", ylab="Price")
+```
+
+Let's also perform the Augmented Dickey-Fuller test to check if the negative log returns are stationary.
+
+```{r}
 # Perform the Augmented Dickey-Fuller test on negative log returns
 adf_test_neg_log <- adf.test(neg_log_returns_bitcoin)
 
@@ -64,10 +100,18 @@ print(adf_test_neg_log)
 
 Since the p-value is significantly smaller than 0.05, we can reject the null hypothesis and conclude that the negative log returns series is stationary.
 
-## c)
+## c) Check negative log returns normality with histograms, QQ-plots, Anderson-Darling
 
-> Are the negative log returns normally distributed? Draw histograms, check QQ-plots and use an
+::: {.callout-note icon=false}
+
+## Statement
+
+Are the negative log returns normally distributed? Draw histograms, check QQ-plots and use an
 Anderson-Darling testing procedure to answer this question.
+
+:::
+
+Let's first plot the histogram and QQ-plot of the negative log returns to visually assess the normality.
 
 ```{r echo = FALSE}
 # Plot histogram of the negative log returns
@@ -88,28 +132,57 @@ ad_test <- ad.test(neg_log_returns_bitcoin)
 print(ad_test)
 ```
 
-Even though the Histogram suggest that the negative log returns follows a normal distribution, the p-value when performing the Andersen-Darling test is smaller than 5%. It indicates that the data does not follow a normal distribution.
+Even though the Histogram suggest that the negative log returns follows a normal distribution, the p-value when performing the Andersen-Darling test is smaller than 5%. It indicates that the data does not follow a normal distribution. The Normal Q-Q plot suggest also that the data does not follow a normal distribution.
 
-## d) ((DOES NOT WORK YET))
+## d) Fit t-distribution, compare with Normal via QQ-plot analysis
 
-```{r}
-# # Fit a t-distribution to the negative log returns
-# fit_t <- fitdistr(neg_log_returns_bitcoin, "t")
-# 
-# # Display the t-distribution fit parameters
-# print(fit_t)
-# 
-# # Generate QQ-plot for t-distribution
-# df_t <- fit_t$estimate[3]  # Degrees of freedom from the fit
-# qqplot(rt(length(neg_log_returns_bitcoin), df=df_t), 
-#        neg_log_returns_bitcoin, 
-#        main="QQ-plot for t-distribution", 
-#        xlab="Theoretical Quantiles (t-distribution)", 
-#        ylab="Sample Quantiles")
-# qqline(neg_log_returns_bitcoin, col="red")
-# 
-# # For comparison: QQ-plot for normal distribution
-# qqnorm(neg_log_returns_bitcoin, main="QQ-plot for Normal distribution")
-# qqline(neg_log_returns_bitcoin, col="blue")
+::: {.callout-note icon=false}
+
+## Statement
+
+Fit a t-distribution to the negative log returns using `fitdistr()`. Using a QQ-plot, decide whether the fit is better than with a Normal distribution, based on your answer in [(c)](#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling).
+
+:::
+
+```{r warning = FALSE}
+# Fit a t-distribution to the negative log returns
+fit_t <- fitdistr(100000*neg_log_returns_bitcoin, "t") # Multiply by 100000 to avoid numerical issues
+
+# Display the t-distribution fit parameters
+print(fit_t)
 ```
+
+The t-distribution fit parameters are: `r round(fit_t$estimate[1], 2)` for the mean, `r round(fit_t$estimate[2], 2)` for the standard deviation, and `r round(fit_t$estimate[3], 2)` for the degrees of freedom. We can now compare the QQ-plot of the t-distribution with the QQ-plot of the normal distribution of [question c)](#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling).
+
+```{r warning = FALSE}
+par(mfrow = c(1, 2))
+
+# Generate QQ-plot for t-distribution
+df_t <- fit_t$estimate[3]  # Degrees of freedom from the fit
+qqplot(rt(length(neg_log_returns_bitcoin), df=df_t),
+       neg_log_returns_bitcoin,
+       main="QQ-plot for t-distribution",
+       xlab="Theoretical Quantiles (t-distribution)",
+       ylab="Sample Quantiles")
+qqline(neg_log_returns_bitcoin, col="red")
+
+# Generate QQ-plot for normal distribution
+qqnorm(neg_log_returns_bitcoin, main="QQ-plot for Normal distribution")
+qqline(neg_log_returns_bitcoin, col="blue")
+
+# Reset the graphic layout back to default
+par(mfrow = c(1, 1))
+```
+
+As we can see, the QQ-plot for the t-distribution is closer to the 45-degree line than the QQ-plot for the normal distribution. This suggests that the t-distribution is a better fit for the negative log returns than the normal distribution.
+
+## e) 
+
+::: {.callout-note icon=false}
+
+## Statement
+
+Compare the tails of the density of the t-distribution and the normal distribution. Can we expect more etreme, unexpected events in t-distribution or in normal distribution? What can you conclude about the extreme events of our bitcoin data?
+
+:::
 

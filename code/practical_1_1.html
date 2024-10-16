@@ -80,14 +80,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>The working directory is set to: /Users/lodrik/Documents/GitHub/RA_Praticals</p>
 <section id="part-1-financial-returns-and-normality" class="level1">
 <h1>Part 1: Financial returns and normality</h1>
-<section id="a" class="level2">
-<h2 class="anchored" data-anchor-id="a">a)</h2>
-<blockquote class="blockquote">
+<p>The working directory is set to: /Users/lodrik/Documents/GitHub/RA_Praticals</p>
+<section id="a-load-bitcoin-data-and-assess-price-stationarity" class="level2">
+<h2 class="anchored" data-anchor-id="a-load-bitcoin-data-and-assess-price-stationarity">a) Load Bitcoin data and assess price stationarity</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Statement
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>Read in the Bitcoin data from file Crypto data.csv. Then, assess the stationarity of the (raw) Bitcoin prices.</p>
-</blockquote>
+</div>
+</div>
+<p>First, let’s take a look at the Bitcoin Prices on a plot.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -96,6 +107,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 </div>
+</div>
+<p>The graph of the raw Bitcoin prices suggest that the series might not be stationary.</p>
+<p>Let’s perform the Augmented Dickey-Fuller test to check if the raw Bitcoin prices are stationary.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test for stationarity</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">adf.test</span>(crypto_data<span class="sc">$</span>Bitcoin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Augmented Dickey-Fuller Test
@@ -105,21 +122,51 @@ Dickey-Fuller = -2.4484, Lag order = 11, p-value = 0.3885
 alternative hypothesis: stationary</code></pre>
 </div>
 </div>
-<p>Since the p-value is significantly bigger than 0.05, we can not reject the null hypothesis and conclude that the time serie is not stationary.</p>
+<p>Since the p-value is significantly bigger than 0.05, we can not reject the null hypothesis and therefore, we can conclude that the raw Bitcoin prices are non-stationary.</p>
 </section>
-<section id="b" class="level2">
-<h2 class="anchored" data-anchor-id="b">b)</h2>
-<blockquote class="blockquote">
+<section id="b-create-and-plot-bitcoin-negative-log-returns-assess-stationarity" class="level2">
+<h2 class="anchored" data-anchor-id="b-create-and-plot-bitcoin-negative-log-returns-assess-stationarity">b) Create and plot Bitcoin negative log returns, assess stationarity</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Statement
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>Create a function to transform the Bitcoin prices into their negative log returns counterparts. Plot the latter series and assess their stationarity. To compare the series, also plot the negative log returns on a common scale.</p>
-</blockquote>
+</div>
+</div>
+<p>Let’s create a function to compute the negative log returns of a given price series. We will then apply this function to the Bitcoin prices to compute the negative log returns.</p>
+<p>We can now plot the negative log returns series and the raw Bitcoin prices to compare.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="practical_1_1_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="practical_1_1_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical_1_1_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Let’s also perform the Augmented Dickey-Fuller test to check if the negative log returns are stationary.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform the Augmented Dickey-Fuller test on negative log returns</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>adf_test_neg_log <span class="ot">&lt;-</span> <span class="fu">adf.test</span>(neg_log_returns_bitcoin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in adf.test(neg_log_returns_bitcoin): p-value smaller than printed
+p-value</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the test results</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(adf_test_neg_log)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Augmented Dickey-Fuller Test
@@ -131,23 +178,34 @@ alternative hypothesis: stationary</code></pre>
 </div>
 <p>Since the p-value is significantly smaller than 0.05, we can reject the null hypothesis and conclude that the negative log returns series is stationary.</p>
 </section>
-<section id="c" class="level2">
-<h2 class="anchored" data-anchor-id="c">c)</h2>
-<blockquote class="blockquote">
+<section id="c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling" class="level2">
+<h2 class="anchored" data-anchor-id="c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling">c) Check negative log returns normality with histograms, QQ-plots, Anderson-Darling</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Statement
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>Are the negative log returns normally distributed? Draw histograms, check QQ-plots and use an Anderson-Darling testing procedure to answer this question.</p>
-</blockquote>
+</div>
+</div>
+<p>Let’s first plot the histogram and QQ-plot of the negative log returns to visually assess the normality.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="practical_1_1_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="practical_1_1_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="practical_1_1_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="practical_1_1_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -159,30 +217,67 @@ data:  neg_log_returns_bitcoin
 A = 26.277, p-value &lt; 2.2e-16</code></pre>
 </div>
 </div>
-<p>Even though the Histogram suggest that the negative log returns follows a normal distribution, the p-value when performing the Andersen-Darling test is smaller than 5%. It indicates that the data does not follow a normal distribution.</p>
+<p>Even though the Histogram suggest that the negative log returns follows a normal distribution, the p-value when performing the Andersen-Darling test is smaller than 5%. It indicates that the data does not follow a normal distribution. The Normal Q-Q plot suggest also that the data does not follow a normal distribution.</p>
 </section>
-<section id="d-does-not-work-yet" class="level2">
-<h2 class="anchored" data-anchor-id="d-does-not-work-yet">d) ((DOES NOT WORK YET))</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Fit a t-distribution to the negative log returns</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_t &lt;- fitdistr(neg_log_returns_bitcoin, "t")</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># # Display the t-distribution fit parameters</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print(fit_t)</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># # Generate QQ-plot for t-distribution</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># df_t &lt;- fit_t$estimate[3]  # Degrees of freedom from the fit</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># qqplot(rt(length(neg_log_returns_bitcoin), df=df_t), </span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#        neg_log_returns_bitcoin, </span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#        main="QQ-plot for t-distribution", </span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#        xlab="Theoretical Quantiles (t-distribution)", </span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#        ylab="Sample Quantiles")</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># qqline(neg_log_returns_bitcoin, col="red")</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># # For comparison: QQ-plot for normal distribution</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co"># qqnorm(neg_log_returns_bitcoin, main="QQ-plot for Normal distribution")</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co"># qqline(neg_log_returns_bitcoin, col="blue")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="d-fit-t-distribution-compare-with-normal-via-qq-plot-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="d-fit-t-distribution-compare-with-normal-via-qq-plot-analysis">d) Fit t-distribution, compare with Normal via QQ-plot analysis</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
 </div>
+<div class="callout-title-container flex-fill">
+Statement
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Fit a t-distribution to the negative log returns using <code>fitdistr()</code>. Using a QQ-plot, decide whether the fit is better than with a Normal distribution, based on your answer in <a href="#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling">(c)</a>.</p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a t-distribution to the negative log returns</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>fit_t <span class="ot">&lt;-</span> <span class="fu">fitdistr</span>(<span class="dv">100000</span><span class="sc">*</span>neg_log_returns_bitcoin, <span class="st">"t"</span>) <span class="co"># Multiply by 100000 to avoid numerical issues</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the t-distribution fit parameters</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit_t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       m            s            df    
+   5.6468485   84.1530198    2.7745637 
+ ( 2.7300962) ( 3.0876868) ( 0.2447187)</code></pre>
+</div>
+</div>
+<p>The t-distribution fit parameters are: 5.65 for the mean, 84.15 for the standard deviation, and 2.77 for the degrees of freedom. We can now compare the QQ-plot of the t-distribution with the QQ-plot of the normal distribution of <a href="#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling">question c)</a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up the graphic layout to display 2 plots in 1 row (2 columns)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">2</span>) <span class="sc">+</span> <span class="fl">0.1</span>)  <span class="co"># Adjust margins for space</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate QQ-plot for t-distribution</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>df_t <span class="ot">&lt;-</span> fit_t<span class="sc">$</span>estimate[<span class="dv">3</span>]  <span class="co"># Degrees of freedom from the fit</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">qqplot</span>(<span class="fu">rt</span>(<span class="fu">length</span>(neg_log_returns_bitcoin), <span class="at">df=</span>df_t),</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>       neg_log_returns_bitcoin,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">main=</span><span class="st">"QQ-plot for t-distribution"</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">xlab=</span><span class="st">"Theoretical Quantiles (t-distribution)"</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">ylab=</span><span class="st">""</span>,  <span class="co"># Suppress y-axis label</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">yaxt=</span><span class="st">"n"</span>)  <span class="co"># Suppress y-axis ticks</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(neg_log_returns_bitcoin, <span class="at">col=</span><span class="st">"red"</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate QQ-plot for normal distribution</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(neg_log_returns_bitcoin, <span class="at">main=</span><span class="st">"QQ-plot for Normal distribution"</span>, <span class="at">ylab=</span><span class="st">""</span>, <span class="at">yaxt=</span><span class="st">"n"</span>)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(neg_log_returns_bitcoin, <span class="at">col=</span><span class="st">"blue"</span>)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a common y-axis label to the left side of the entire panel</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="fu">mtext</span>(<span class="st">"Sample Quantiles"</span>, <span class="at">side =</span> <span class="dv">2</span>, <span class="at">outer =</span> <span class="cn">TRUE</span>, <span class="at">line =</span> <span class="dv">1</span>, <span class="at">cex =</span> <span class="fl">1.2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical_1_1_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reset the graphic layout back to default</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As we can see, the QQ-plot for the t-distribution is closer to the 45-degree line than the QQ-plot for the normal distribution. This suggests that the t-distribution is a better fit for the negative log returns than the normal distribution.</p>
 </section>
 </section>
 

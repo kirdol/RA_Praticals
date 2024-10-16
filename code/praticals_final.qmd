@@ -1,7 +1,11 @@
 ---
 title: Pratical 1 - Group XX
-date: "`r Sys.Date()`"
-author: Lodrik Adam, Jeff Macaraeg, Julien Perini
+date: today
+date-format: long
+author: Lodrik Adam, Alexandra Boado, Sophie Daya, Jeff Macaraeg, Julien Perini
+toc: true
+format: html
+code-overflow: wrap
 ---
 
 ```{r child = c("practical_1_1.qmd", "practical_1_2.qmd", "practical_1_3.qmd")}
