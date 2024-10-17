@@ -88,31 +88,49 @@ plot(neg_log_returns_bitcoin,
 If we scale bitcoin prices and negative log returns, we can compare both time series on a plot with a common scale.
 
 ```{r warning = FALSE}
-# Remove the first price to match the length of neg_log_returns_bitcoin
-trimmed_bitcoin_prices <- bitcoin_prices[-1]
-
-# Scale the negative log returns and the bitcoin prices
-scaled_b <- data.frame(neg_log_returns_bitcoin = neg_log_returns_bitcoin,
-                       trimmed_bitcoin_prices = trimmed_bitcoin_prices)
-scaled_b$scaled_neg_log_returns_bitcoin <- scale(scaled_b$neg_log_returns_bitcoin)
-scaled_b$scaled_trimmed_bitcoin_prices <- scale(scaled_b$trimmed_bitcoin_prices)
-
-## Step 4: Plot both time series on a plot with common scale
-# Plot the scaled negative log returns
-plot(scaled_b$scaled_neg_log_returns_bitcoin,
+# Top Plot: Plot both time series on the same graph
+trimmed_bitcoin_prices <- bitcoin_prices[-1]  # Make sure lengths match
+plot(neg_log_returns_bitcoin,
      type = "l",
      col = "blue",
-     ylab = "Scaled Values",
+     ylab = "Values",
      xlab = "Index", 
-     main = "Scaled Negative Log Returns and Bitcoin Prices",
-     ylim = range(c(scaled_b$scaled_neg_log_returns_bitcoin,
-                    scaled_b$scaled_trimmed_bitcoin_prices)))
-lines(scaled_b$scaled_trimmed_bitcoin_prices,
-      col = "red")
-legend("topright",
-       legend = c("Scaled Neg Log Returns", "Scaled Bitcoin Prices"),
+     main = "Negative Log Returns and Bitcoin Prices",
+     ylim = range(c(neg_log_returns_bitcoin, trimmed_bitcoin_prices)))
+
+# Add Bitcoin prices on the same plot
+lines(trimmed_bitcoin_prices, col = "red")
+
+# Add a legend
+legend("right",
+       legend = c("Neg Log Returns", "Bitcoin Prices"),
        col = c("blue", "red"),
        lty = 1)
+
+# Reset the plotting area to default settings (optional, for future plots)
+par(mfrow=c(1,1))
+```
+
+
+```{r warning = FALSE}
+# Set up the plotting area to have 3 rows and 1 column
+par(mfrow=c(1,1))
+
+# Bottom Left Plot: Plot the negative log returns series
+plot(neg_log_returns_bitcoin,
+     type = "l",
+     col = "blue", 
+     main = "Negative Log Returns of Bitcoin Prices", 
+     xlab = "Time",
+     ylab = "Negative Log Returns")
+
+# Bottom Right Plot: Plot the Bitcoin prices
+plot(bitcoin_prices, 
+     type = "l", 
+     col = "red", 
+     main = "Bitcoin Prices", 
+     xlab = "Time", 
+     ylab = "Price")
 ```
 
 Visually, the negative log returns series does not appear to indicate a clear trend or seasonality. The variance, although it fluctuates in the middle, seems relatively constant. This observation suggests that the series may be stationary. To confirm this, we will perform the Augmented Dickey-Fuller test to assess the stationarity of the negative log returns.
