@@ -214,7 +214,6 @@ As we can see, the QQ-plot for the t-distribution is closer to the 45-degree lin
 ## e) Compare t-distribution and normal tails
 
 ::: {.callout-note icon="false"}
-
 ## Question
 
 Compare the tails of the density of the t-distribution and the normal distribution. Can we expect more extreme, unexpected events in t-distribution or in normal distribution? What can you conclude about the extreme events of our bitcoin data?
