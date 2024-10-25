@@ -1,0 +1,243 @@
+---
+title: "Practical 2 Jeff"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+```{r}
+# Load necessary libraries
+library(extRemes)
+library(ismev)
+library(ggplot2)
+
+# Load the data
+precip_data <- read.csv("/Users/jeffmacaraeg/Documents/GitHub/RA_Praticals/data/Precipitation_lausanne_full.csv")
+
+# Assuming the column name is 'Precipitation' and removing any non-numeric values
+precip_data$Precipitation <- as.numeric(precip_data$Precipitation)
+
+# Remove any rows with NA values resulting from coercion
+precip_data <- na.omit(precip_data)
+
+# Plot histogram of daily precipitation values
+ggplot(precip_data, aes(x = Precipitation)) +
+  geom_histogram(binwidth = 5, fill = "skyblue", color = "black") +
+  labs(title = "Histogram of Daily Precipitation", x = "Daily Precipitation (mm)", y = "Frequency") +
+  theme_minimal()
+```
+
+
+```{r}
+# Extract yearly maximum values
+yearly_max <- aggregate(Precipitation ~ format(as.Date(Date), "%Y"), data = precip_data, max)
+yearly_max_values <- yearly_max$Precipitation
+
+# Create a data frame for ggplot
+yearly_max_df <- data.frame(YearlyMax = yearly_max_values)
+
+# Plot histogram of yearly maximum precipitation values using ggplot2
+ggplot(yearly_max_df, aes(x = YearlyMax)) +
+  geom_histogram(binwidth = 5, fill = "lightgreen", color = "black") +
+  labs(title = "Histogram of Yearly Maximum Precipitation", x = "Yearly Maximum Precipitation (mm)", y = "Frequency") +
+  theme_minimal()
+```
+
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+
+# Fit linear model to yearly maximum values
+years <- as.numeric(yearly_max[, 1])
+linear_model <- lm(yearly_max_values ~ years)
+
+# Predict for the next 10 years
+future_years <- max(years) + 1:10
+predictions <- predict(linear_model, newdata = data.frame(years = future_years), interval = "confidence")
+
+# Create a data frame for plotting
+yearly_max_df <- data.frame(Year = years, MaxPrecipitation = yearly_max_values)
+predictions_df <- data.frame(Year = future_years, 
+                             Prediction = predictions[, 1], 
+                             Lower = predictions[, 2], 
+                             Upper = predictions[, 3])
+
+# Plot the linear model and predictions using ggplot2
+ggplot() +
+  geom_line(data = yearly_max_df, aes(x = Year, y = MaxPrecipitation), color = "black") +
+  geom_line(data = predictions_df, aes(x = Year, y = Prediction), color = "blue") +
+  geom_ribbon(data = predictions_df, aes(x = Year, ymin = Lower, ymax = Upper), fill = "red", alpha = 0.3) +
+  labs(title = "Linear Model Predictions", x = "Year", y = "Yearly Maximum Precipitation (mm)") +
+  theme_minimal()
+```
+
+
+```{r}
+# Fit GEV with constant parameters
+gev_fit_const <- fevd(yearly_max_values, type = "GEV")
+
+# Fit GEV with time-varying location parameter
+gev_fit_time <- gev.fit(yearly_max_values, ydat = data.frame(years))
+
+# Compare models using AIC
+aic_const <- AIC(gev_fit_const)
+aic_time <- gev.fit(yearly_max_values, ydat = data.frame(years))$aic
+print(c("AIC for constant GEV model:" = aic_const, "AIC for time-varying GEV model:" = aic_time))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+library(ggplot2)
+```
+
+### a)
+```{r}
+# Read in the data
+data <- read.csv("/Users/jeffmacaraeg/Documents/GitHub/RA_Praticals/data/Precipitation_lausanne_full.csv")
+
+# Convert the Date column to Date format
+data$Date <- as.Date(data$Date, format="%m/%d/%Y")
+
+# Plot a histogram of the daily precipitation values
+ggplot(data, aes(x = Precipitation)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black") +
+  labs(title = "Histogram of Daily Precipitation", x = "Precipitation (mm)", y = "Frequency") +
+  theme_minimal()
+
+# Use a fitting package to compare possible distributions
+library(fitdistrplus)
+
+fit <- fitdist(data$precipitation, "gamma")  # example for gamma distribution fitting
+summary(fit)
+plot(fit)
+```
+
+### b)
+```{r}
+# Extract year and add it as a column
+data$Year <- format(data$Date, "%Y")
+
+# Group by year and calculate the maximum precipitation per year
+yearly_max <- data %>%
+  group_by(Year) %>%
+  summarize(Max_Precipitation = max(Precipitation, na.rm = TRUE))
+
+# Plot a histogram of yearly maximum precipitation
+ggplot(yearly_max, aes(x = Max_Precipitation)) +
+  geom_histogram(binwidth = 2, fill = "lightblue", color = "black") +
+  labs(title = "Histogram of Yearly Maximum Precipitation", x = "Max Precipitation (mm)", y = "Frequency") +
+  theme_minimal()
+
+library(extRemes)
+
+# Fit a GEV distribution to the yearly maximum precipitation
+gev_model <- fevd(yearly_max$Max_Precipitation, type = "GEV")
+
+# Summary of the fitted GEV model
+summary(gev_model)
+
+# Plot diagnostics for the GEV model
+plot(gev_model)
+
+# AIC and BIC for the extRemes GEV model
+summary_gev_model <- summary(gev_model)
+
+# Extract AIC and BIC from the summary
+aic_gev_extRemes <- summary_gev_model$AIC
+bic_gev_extRemes <- summary_gev_model$BIC
+
+# Print the AIC and BIC
+print(paste("AIC (extRemes):", aic_gev_extRemes))
+print(paste("BIC (extRemes):", bic_gev_extRemes))
+```
+
+### c)
+
+```{r}
+# Fit a linear model for the yearly maximum precipitation
+linear_model <- lm(Max_Precipitation ~ Year, data = yearly_max)
+
+# Print the model summary to evaluate goodness-of-fit
+summary(linear_model)
+
+# Create a data frame with the next 10 years for predictions
+future_years <- data.frame(Year = seq(max(yearly_max$Year) + 1, max(yearly_max$Year) + 10))
+
+# Predict future precipitation values with confidence intervals
+predictions <- predict(linear_model, newdata = future_years, interval = "confidence")
+
+# Combine the predictions with future years for plotting
+future_data <- cbind(future_years, predictions)
+
+# Plot the linear model with actual data and future predictions
+ggplot(yearly_max, aes(x = Year, y = Max_Precipitation)) +
+  geom_point(color = "blue") +
+  geom_smooth(method = "lm", se = TRUE, color = "red") +
+  geom_line(data = future_data, aes(x = Year, y = fit), color = "green") +
+  labs(title = "Linear Model for Yearly Maximum Precipitation", x = "Year", y = "Max Precipitation (mm)")
+```
+
+
+
+
+
+
+## PART 3
+
+### a.
+
+```{r, message = F, warning = F}
+library(ggplot2)
+library(dplyr)
+geneva_data <- read.csv("/Users/jeffmacaraeg/Documents/GitHub/RA_Praticals/data/Geneva_temperature.csv")
+
+# Assuming the dataset has columns named "Year", "Month", and "Day" to create a Date column
+geneva_data <- geneva_data %>%
+  mutate(Date = ymd(paste(Year, Month, Day, sep = "-")))
+
+# Plot the full dataset
+ggplot(geneva_data, aes(x = Date, y = AvgTemperature)) +
+  geom_line() +
+  labs(x = "Date", y = "Temperature", title = "Geneva Temperature") +
+  theme_minimal()
+```
+
+```{r, message = F, warning = F}
+# Subset the data for summer months (June to September)
+summer_data <- geneva_data %>% filter(Month %in% c(6, 7, 8, 9))
+
+# Plot the summer data
+ggplot(summer_data, aes(x = Date, y = AvgTemperature)) +
+  geom_line() +
+  labs(x = "Date", y = "Temperature", title = "Summer Months Temperature") +
+  theme_minimal()
+```
+
+### b.
+
+```{r}
+# Choose a suitable threshold for extremes (95th percentile)
+threshold <- quantile(summer_data$Temperature, 0.95, na.rm = TRUE)
+
+extremal_index <- extremalindex(summer_data$Temperature, threshold)
+print(extremal_index)
+
+# Probability that tomorrow's temperature will also be extreme if today's is
+probability_extreme_tomorrow <- extremal_index$theta
+print(probability_extreme_tomorrow)
+
+```
+
