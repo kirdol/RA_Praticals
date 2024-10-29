@@ -1,0 +1,590 @@
+---
+title: "Practical 2: Precipitation in Lausanne"
+date: today
+date-format: long
+author: Lodrik Adam
+toc: true
+---
+
+# Part 1: Block maxima approach
+
+## (a)
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(here)
+library(dplyr)
+
+# Load the data
+data <- read.csv(here("data","Precipitation_lausanne_full.csv"))
+
+# Inspect the first few rows of the data to check its structure
+head(data)
+
+# Plot histogram of daily precipitation
+ggplot(data, aes(x = Precipitation)) +
+  geom_histogram(binwidth = 5, fill = "skyblue", color = "black") +
+  labs(title = "Histogram of Daily Precipitation in Lausanne",
+       x = "Daily Precipitation (mm)", 
+       y = "Frequency") +
+  theme_minimal()
+```
+
+## (b)
+
+```{r}
+# Ensure that the 'Date' column is in Date format (if not, convert it)
+data$Date <- as.Date(data$Date, format = "%m/%d/%Y")
+
+# Extract the year from each date
+data$Year <- format(data$Date, "%Y")
+
+# Calculate yearly maximum precipitation
+yearly_max <- data %>%
+  group_by(Year) %>%
+  summarize(MaxPrecipitation = max(Precipitation, na.rm = TRUE))
+
+# Plot histogram of yearly maximum values
+ggplot(yearly_max, aes(x = MaxPrecipitation)) +
+  geom_histogram(binwidth = 5, fill = "lightcoral", color = "black") +
+  labs(title = "Histogram of Yearly Maximum Precipitation in Lausanne",
+       x = "Yearly Maximum Precipitation (mm)", 
+       y = "Frequency") +
+  theme_minimal()
+```
+
+## (c)
+
+```{r}
+# Convert Date column to Date type and extract the Year
+data$Date <- as.Date(data$Date, format = "%m/%d/%Y")
+data$Year <- as.numeric(format(data$Date, "%Y"))
+
+# Calculate yearly maximum precipitation
+yearly_max <- data %>%
+  group_by(Year) %>%
+  summarize(MaxPrecipitation = max(Precipitation, na.rm = TRUE))
+
+# Fit a linear model to the yearly maximum precipitation values
+linear_model <- lm(MaxPrecipitation ~ Year, data = yearly_max)
+
+# Summarize the model
+summary(linear_model)
+
+# Predict for the next 10 years
+future_years <- data.frame(Year = (max(yearly_max$Year) + 1):(max(yearly_max$Year) + 10))
+predictions <- predict(linear_model, newdata = future_years, interval = "confidence")
+
+# Combine predictions with future_years
+future_predictions <- cbind(future_years, predictions)
+
+# Plot the historical data, linear model, and future predictions
+ggplot() +
+  geom_point(data = yearly_max, aes(x = Year, y = MaxPrecipitation), color = "blue") +
+  geom_smooth(data = yearly_max, aes(x = Year, y = MaxPrecipitation), method = "lm", se = FALSE, color = "red") +
+  geom_line(data = future_predictions, aes(x = Year, y = fit), color = "darkgreen", linetype = "dashed") +
+  geom_ribbon(data = future_predictions, aes(x = Year, ymin = lwr, ymax = upr), alpha = 0.2, fill = "lightblue") +
+  labs(title = "Yearly Maximum Precipitation with Linear Model Prediction",
+       x = "Year", 
+       y = "Maximum Precipitation (mm)") +
+  theme_minimal()
+```
+
+## (d)
+
+```{r}
+library(extRemes)
+
+# Fit a GEV model with constant parameters
+gev_constant <- fevd(yearly_max$MaxPrecipitation, type = "GEV")
+
+# Summary of the constant parameter model
+summary(gev_constant)
+
+# Fit a GEV model with a time-varying location parameter
+# Here, we add Year as a covariate for the location parameter
+gev_time_varying <- fevd(yearly_max$MaxPrecipitation, type = "GEV", location.fun = ~ Year, data = yearly_max)
+
+# Summary of the time-varying parameter model
+summary(gev_time_varying)
+
+# Calculate AIC and BIC manually
+# Extract log-likelihood and number of parameters for each model
+logLik_constant <- gev_constant$results$value # Log-likelihood for constant model
+logLik_time_varying <- gev_time_varying$results$value # Log-likelihood for time-varying model
+
+# Number of parameters: 3 for constant, 4 for time-varying (adding the Year parameter)
+n_params_constant <- 3
+n_params_time_varying <- 4
+
+# Sample size
+n <- nrow(yearly_max)
+
+# Calculate AIC
+aic_constant <- -2 * logLik_constant + 2 * n_params_constant
+aic_time_varying <- -2 * logLik_time_varying + 2 * n_params_time_varying
+
+print(paste("AIC for constant parameter model:", aic_constant))
+print(paste("AIC for time-varying location parameter model:", aic_time_varying))
+
+# Calculate BIC
+bic_constant <- -2 * logLik_constant + log(n) * n_params_constant
+bic_time_varying <- -2 * logLik_time_varying + log(n) * n_params_time_varying
+
+print(paste("BIC for constant parameter model:", bic_constant))
+print(paste("BIC for time-varying location parameter model:", bic_time_varying))
+
+# Model recommendation based on AIC or BIC
+if (aic_constant < aic_time_varying & bic_constant < bic_time_varying) {
+  print("The constant parameter model is preferred based on AIC and BIC.")
+} else {
+  print("The time-varying location parameter model is preferred based on AIC and BIC.")
+}
+```
+
+## (e)
+
+```{r}
+library(ismev)
+
+# Fit a GEV model with constant parameters using the ismev package
+gev_constant_fit <- gev.fit(yearly_max$MaxPrecipitation)
+
+# Diagnostic plots for the constant parameter GEV model
+gev.diag(gev_constant_fit)
+```
+
+## (f)
+
+```{r}
+# Calculate the 10-year return level using the fitted GEV model with constant parameters
+return_period <- 10
+gev_return_level <- return.level(gev_constant, return_period)
+
+# Create a data frame to store the return level for plotting
+return_level_data <- data.frame(
+  Year = yearly_max$Year,
+  ReturnLevel = rep(gev_return_level, length(yearly_max$Year))
+)
+
+# Plot the historical yearly maximum data with the 10-year return level
+ggplot(yearly_max, aes(x = Year, y = MaxPrecipitation)) +
+  geom_point(color = "blue") +
+  geom_line(data = return_level_data, aes(x = Year, y = ReturnLevel), color = "red", linetype = "dashed") +
+  labs(title = paste("Yearly Maximum Precipitation with", return_period, "-Year Return Level"),
+       x = "Year",
+       y = "Maximum Precipitation (mm)") +
+  theme_minimal() +
+  annotate("text", x = min(yearly_max$Year), y = gev_return_level, label = paste(return_period, "-Year Return Level"), hjust = 0, color = "red")
+```
+
+
+## (g)
+
+```{r}
+# Define the return periods to analyze
+return_periods <- c(10, 20, 50, 85)
+
+# Calculate return levels for each return period using the constant GEV model
+return_levels <- sapply(return_periods, function(period) return.level(gev_constant, period))
+
+# Create a data frame to store the results
+results <- data.frame(
+  ReturnPeriod = return_periods,
+  ReturnLevel = return_levels
+)
+
+# Count exceedances for each return level
+results$Exceedances <- sapply(results$ReturnLevel, function(level) sum(yearly_max$MaxPrecipitation > level))
+
+# Display results
+print(results)
+
+# Optional: Display results in a nicely formatted table (for Quarto or R Markdown)
+knitr::kable(results, caption = "Exceedances for Different Return Levels")
+```
+
+## (h)
+
+```{r}
+# Define the threshold precipitation level
+threshold <- 100
+
+# Calculate the exceedance probability using the fitted GEV model with constant parameters
+# `prob` is the probability that the yearly maximum exceeds the threshold
+prob <- 1 - pevd(threshold, loc = gev_constant$results$par[1],
+                 scale = gev_constant$results$par[2],
+                 shape = gev_constant$results$par[3], type = "GEV")
+
+# Calculate the return period as the inverse of this probability
+return_period_threshold <- 1 / prob
+
+# Display the return period
+cat("The return period for 100 mm of precipitation is approximately", round(return_period_threshold, 2), "years.\n")
+```
+
+## (i)
+
+```{r}
+# Define the threshold for exceedance
+threshold <- 150
+
+# Calculate the exceedance probability using the fitted GEV model with constant parameters
+# `prob_exceedance` is the probability that the yearly maximum exceeds 150 mm
+prob_exceedance <- 1 - pevd(threshold, loc = gev_constant$results$par[1],
+                            scale = gev_constant$results$par[2],
+                            shape = gev_constant$results$par[3], type = "GEV")
+
+# Display the probability
+cat("The probability of having a day in the next year with precipitation exceeding 150 mm is approximately",
+    round(prob_exceedance * 100, 2), "%.\n")
+```
+
+
+# Part 2: Peaks-over-threshold approach
+
+## (a)
+
+```{r}
+# Load the data (update the file path as needed)
+precip_data <- read.csv(here("data","Precipitation_lausanne_full.csv"))
+
+# Ensure the date column is in Date format, adjust "Date" if necessary
+precip_data$date <- as.Date(precip_data$Date, format = "%m/%d/%Y")
+
+# Plot the time series of daily precipitation
+ggplot(data = precip_data, aes(x = date, y = Precipitation)) +
+  geom_line(color = "blue") +
+  labs(title = "Daily Precipitation in Lausanne", 
+       x = "Date", 
+       y = "Precipitation (mm)") +
+  theme_minimal()
+```
+
+## (b)
+
+```{r}
+# Install and load the necessary libraries
+library(POT)
+
+# Generate the Mean Residual Life Plot
+mrlplot(precip_data$Precipitation, main = "Mean Residual Life Plot for Precipitation Data",
+        xlab = "Threshold", ylab = "Mean Excess")
+```
+
+```{r}
+# For illustration purposes, assume we choose a threshold of 40 mm
+threshold <- 40  # Update this value based on the MRL plot inspection
+
+# Highlight data exceeding the threshold in the time series plot
+precip_data$exceeds_threshold <- precip_data$Precipitation > threshold
+
+# Plot the time series and highlight points above the threshold
+ggplot(data = precip_data, aes(x = date, y = Precipitation)) +
+  geom_line(color = "blue") +
+  geom_point(data = subset(precip_data, exceeds_threshold), 
+             aes(x = date, y = Precipitation), color = "red") +
+  labs(title = "Daily Precipitation in Lausanne with Threshold Exceedances", 
+       x = "Date", 
+       y = "Precipitation (mm)") +
+  theme_minimal()
+```
+
+## (c)
+
+```{r}
+# Define the threshold based on the MRL plot inspection from Part 2(b)
+threshold <- 40  # Adjust this value based on the MRL plot results
+
+# Step 1: Filter the data for exceedances above the threshold
+exceedances <- precip_data$Precipitation[precip_data$Precipitation > threshold]
+exceedances <- as.numeric(exceedances)  # Ensure exceedances is a numeric vector
+
+# Step 2: Fit a Generalized Pareto Distribution (GPD) to the exceedances
+gpd_fit <- fitgpd(exceedances, threshold)
+
+# Step 3: Generate diagnostic plots to assess the fit
+plot(gpd_fit)  # Automatically generates QQ, PP, density, and return level plots
+```
+
+## (d)
+
+```{r}
+# Load the data (if not already loaded)
+precip_data <- read.csv(here("data", "Precipitation_lausanne_full.csv"))
+
+# Ensure the date column is in Date format
+precip_data$date <- as.Date(precip_data$Date, format = "%m/%d/%Y")
+
+# Define the threshold based on the MRL plot inspection from Part 2(b)
+threshold <- 40  # Adjust this value based on the MRL plot results
+
+# Step 1: Filter the data for exceedances above the threshold
+exceedances <- precip_data$Precipitation[precip_data$Precipitation > threshold]
+exceedances <- as.numeric(exceedances)  # Ensure exceedances is a numeric vector
+
+# Step 2: Fit a Generalized Pareto Distribution (GPD) to the exceedances
+gpd_fit <- fitgpd(exceedances, threshold)
+
+# Step 3: Calculate return levels for specific return periods
+return_periods <- c(10, 20, 50, 85)  # Return periods in years
+n <- length(precip_data$Precipitation)  # Total number of observations in the dataset
+exceedance_rate <- sum(precip_data$Precipitation > threshold) / n  # Exceedance rate
+
+# Calculate return levels using the fitted GPD model
+return_levels <- sapply(return_periods, function(T) {
+  return_level <- threshold + (gpd_fit$param["scale"] / gpd_fit$param["shape"]) * 
+    ((T / (n * exceedance_rate))^(gpd_fit$param["shape"]) - 1)
+  return(return_level)
+})
+
+# Display the return levels
+return_level_data <- data.frame(Return_Period = return_periods, Return_Level = return_levels)
+print(return_level_data)
+```
+
+## (e)
+
+```{r}
+# Define the threshold chosen in Part 2(b)
+threshold <- 40  # Adjust this value as necessary
+
+# Filter the data for exceedances above the threshold
+exceedances <- precip_data$Precipitation[precip_data$Precipitation > threshold]
+exceedances <- as.numeric(exceedances)
+
+# Fit a Generalized Pareto Distribution (GPD) to the exceedances
+gpd_fit <- fitgpd(exceedances, threshold)
+
+# Define the precipitation level of interest (100 mm)
+precip_level <- 100
+
+# Calculate the exceedance rate
+n <- length(precip_data$Precipitation)  # Total number of observations
+exceedance_rate <- sum(precip_data$Precipitation > threshold) / n  # Exceedance rate
+
+# Calculate the return period for 100 mm precipitation level
+if (precip_level > threshold) {
+  return_period <- 1 / (exceedance_rate * (1 - pgpd(precip_level - threshold, 
+                                                    loc = 0, 
+                                                    scale = gpd_fit$param["scale"], 
+                                                    shape = gpd_fit$param["shape"])))
+} else {
+  return_period <- Inf  # If precip_level is below threshold, set return period as infinite
+}
+
+# Display the result
+cat("Return period for precipitation exceeding 100 mm:", return_period, "years\n")
+```
+
+## (f)
+
+```{r}
+# Define the threshold chosen in Part 2(b)
+threshold <- 40  # Adjust this value as necessary
+
+# Filter the data for exceedances above the threshold
+exceedances <- precip_data$Precipitation[precip_data$Precipitation > threshold]
+exceedances <- as.numeric(exceedances)
+
+# Fit a Generalized Pareto Distribution (GPD) to the exceedances
+gpd_fit <- fitgpd(exceedances, threshold)
+
+# Define the precipitation level of interest (150 mm)
+precip_level <- 150
+
+# Calculate the exceedance rate
+n <- length(precip_data$Precipitation)  # Total number of observations
+exceedance_rate <- sum(precip_data$Precipitation > threshold) / n  # Exceedance rate
+
+# Step 1: Calculate the probability of exceeding 150 mm for any given day
+if (precip_level > threshold) {
+  daily_prob <- 1 - pgpd(precip_level - threshold, 
+                         loc = 0, 
+                         scale = gpd_fit$param["scale"], 
+                         shape = gpd_fit$param["shape"])
+} else {
+  daily_prob <- 0  # If precip_level is below threshold, probability is 0
+}
+
+# Step 2: Calculate the probability of having at least one day with >150 mm in the next year (365 days)
+annual_prob <- 1 - (1 - daily_prob)^365
+
+# Display the result
+cat("Probability of having at least one day with precipitation exceeding 150 mm in the next year:", annual_prob, "\n")
+```
+
+## (g)
+
+```{r}
+# Load and prepare the data (assumes yearly maxima are available as a 'yearly_max' column)
+yearly_max_data <- aggregate(precip_data$Precipitation, by = list(format(precip_data$date, "%Y")), max)
+colnames(yearly_max_data) <- c("Year", "YearlyMax")
+
+# Fit a GEV model to yearly maxima
+gev_fit <- fevd(yearly_max_data$YearlyMax, type = "GEV")
+
+# Define return periods
+return_periods <- c(10, 20, 50, 85)
+
+# Calculate return levels using the GEV model for the specified return periods
+gev_return_levels <- return.level(gev_fit, return_periods)
+print(gev_return_levels)
+```
+
+
+```{r}
+# Create a data frame for comparison
+comparison_data <- data.frame(
+  Return_Period = return_periods,
+  BM_Return_Level = gev_return_levels,
+  POT_Return_Level = return_level_data$Return_Level
+)
+
+# Print the comparison table
+print(comparison_data)
+
+# Plot the comparison for better visualization
+library(ggplot2)
+comparison_plot <- ggplot(comparison_data, aes(x = Return_Period)) +
+  geom_line(aes(y = BM_Return_Level, color = "Block Maxima"), size = 1) +
+  geom_line(aes(y = POT_Return_Level, color = "POT"), size = 1) +
+  labs(title = "Return Levels Comparison: Block Maxima vs. POT",
+       x = "Return Period (years)",
+       y = "Return Level (mm)") +
+  scale_color_manual(name = "Method", values = c("Block Maxima" = "blue", "POT" = "red")) +
+  theme_minimal()
+
+print(comparison_plot)
+```
+
+By visually inspecting the comparison_data table and the plot:
+
+* Advantages of BM: It’s a classic approach, suitable for data with natural periodic divisions (like yearly maxima). However, it may miss some extremes since only one maximum per block is used.
+* Advantages of POT: The POT method uses all data above a threshold, potentially offering more detail for extreme values. It may provide more precise estimates for high quantiles but depends heavily on appropriate threshold selection.
+
+
+# Part 3: Clustering and Seasonal Variations
+
+## (a)
+
+```{r}
+library(lubridate)
+
+# Load the Geneva temperature data
+geneva_data <- read.csv(here("data","Geneva_temperature.csv"))
+
+# Inspect the data structure
+str(geneva_data)
+
+# Create a Date column from Year, Month, and Day columns
+geneva_data$Date <- as.Date(with(geneva_data, paste(Year, Month, Day, sep = "-")), format = "%Y-%m-%d")
+
+# Plot the full Geneva temperature data
+ggplot(geneva_data, aes(x = Date, y = AvgTemperature)) +  # Ensure the temperature column is correctly named
+  geom_line(color = "blue") +
+  labs(title = "Geneva Temperature Over Time", x = "Date", y = "Temperature (°C)") +
+  theme_minimal()
+
+# Subset the data for the summer months (June to September)
+summer_data <- geneva_data %>%
+  filter(Month >= 6 & Month <= 9)
+
+# Plot the subsetted data for summer months
+ggplot(summer_data, aes(x = Date, y = AvgTemperature)) +  # Ensure the temperature column is correctly named
+  geom_line(color = "red") +
+  labs(title = "Geneva Temperature During Summer (June - September)", x = "Date", y = "Temperature (°C)") +
+  theme_minimal()
+```
+
+## (b)
+
+```{r}
+# Choose a threshold for extreme temperatures (e.g., 90th percentile)
+threshold <- quantile(summer_data$AvgTemperature, 0.90)
+
+# Calculate the extremal index using the 'extremalindex' function
+extremal_index_result <- extremalindex(summer_data$AvgTemperature, threshold = threshold)
+
+# Extract the extremal index (theta)
+extremal_index_value <- extremal_index_result[1]
+
+# Display the extremal index result
+cat("Chosen Threshold for Extremes:", threshold, "\n")
+cat("Extremal Index (θ):", extremal_index_value, "\n")
+
+# Determine if extremes occur in clusters
+if (extremal_index_value < 1) {
+  cat("The extremal index indicates that extremes tend to occur in clusters.\n")
+} else {
+  cat("The extremal index indicates that extremes are likely not clustered.\n")
+}
+
+# Calculate the probability that if today's temperature is extreme, tomorrow's will also be extreme
+probability_extreme_tomorrow_given_today <- extremal_index_value
+cat("Probability that if today's temperature is extreme, tomorrow's will also be extreme:", probability_extreme_tomorrow_given_today, "\n")
+```
+
+## (c)
+
+```{r}
+# Choose a threshold for declustering (e.g., 90th percentile)
+threshold <- quantile(summer_data$AvgTemperature, 0.90)
+
+# Decluster the data using the 'decluster' function with the 'runs' method
+declustered_values <- decluster(summer_data$AvgTemperature, threshold = threshold, run = 1)  # run=1 ensures single-day separation
+
+# Select the declustered data based on identified values
+declustered_data <- summer_data[declustered_values, ]
+
+# Plot the original and declustered data
+ggplot(summer_data, aes(x = Date, y = AvgTemperature)) +
+  geom_line(color = "blue", alpha = 0.4) +
+  geom_point(data = declustered_data, aes(x = Date, y = AvgTemperature), color = "red", size = 2) +
+  labs(title = "Declustered Extreme Temperatures in Geneva (Summer Months)", 
+       x = "Date", y = "Average Temperature (°C)") +
+  theme_minimal()
+```
+
+## (d)
+
+```{r}
+# Choose a lower threshold for extreme temperatures (e.g., 85th percentile)
+threshold <- quantile(summer_data$AvgTemperature, 0.85, na.rm = TRUE)
+
+# Check the data points above the new threshold
+extreme_data <- summer_data %>% filter(AvgTemperature > threshold)
+if (nrow(extreme_data) < 10) {
+  stop("Not enough data points above the threshold. Consider lowering the threshold further.")
+}
+
+# Fit a GPD to the raw data above the threshold
+gpd_fit_raw <- fevd(extreme_data$AvgTemperature, threshold = threshold, type = "GP", method = "MLE")
+
+# Increase the declustering run length to 2 or more
+declustered_indices <- decluster(summer_data$AvgTemperature, threshold = threshold, run = 2)
+declustered_data <- summer_data[declustered_indices, ] %>% filter(AvgTemperature > threshold)
+
+# Ensure there are sufficient declustered data points
+if (nrow(declustered_data) < 10) {
+  stop("Not enough declustered data points above the threshold. Consider lowering the threshold or further increasing the declustering run length.")
+}
+
+# Fit a GPD to the declustered data above the threshold
+gpd_fit_declustered <- fevd(declustered_data$AvgTemperature, threshold = threshold, type = "GP", method = "MLE")
+
+# Retrieve and display AIC values from summary output
+cat("AIC for GPD fit on raw data:", summary(gpd_fit_raw)$AIC, "\n")
+cat("AIC for GPD fit on declustered data:", summary(gpd_fit_declustered)$AIC, "\n")
+
+# Calculate the 10-year return level for each model
+return_period <- 10  # 10-year return level
+return_level_raw <- return.level(gpd_fit_raw, return.period = return_period)
+return_level_declustered <- return.level(gpd_fit_declustered, return.period = return_period)
+
+# Display results
+cat("10-year return level (raw data):", return_level_raw, "\n")
+cat("10-year return level (declustered data):", return_level_declustered, "\n")
+```
+
