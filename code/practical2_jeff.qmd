@@ -12,6 +12,10 @@ editor_options:
 library(ggplot2)
 library(fitdistrplus)
 library(POT)
+library(dplyr)
+library(lubridate)
+library(extRemes)
+library(ismev)
 ```
 
 ### a)
@@ -411,9 +415,7 @@ There is a 2.53% chance of having at least 1 day with precipitation exceeding 15
 ### a)
 
 ```{r, message = F, warning = F}
-library(ggplot2)
-library(dplyr)
-geneva_data <- read.csv("/Users/jeffmacaraeg/Documents/GitHub/RA_Praticals/data/Geneva_temperature.csv")
+geneva_data <- read.csv("data/Geneva_temperature.csv")
 
 # Assuming the dataset has columns named "Year", "Month", and "Day" to create a Date column
 geneva_data <- geneva_data %>%
@@ -451,19 +453,22 @@ The `extremalindex` function can give insights into the whether the extremes are
 ### c)
 
 ```{r, message = F, warning = F}
-# Decluster the data using the same threshold used to compute the extremal index
-declustered_values <- decluster(summer_data$AvgTemperature, threshold = thresh)
+# Decluster the data using the threshold and appropriate run length
+declustered_data <- decluster(summer_data$AvgTemperature, threshold = thresh, r = 1)
 
-# Create a data frame for plotting
-declustered_data <- data.frame(Date = summer_data$Date, AvgTemperature = summer_data$AvgTemperature)
-declustered_data <- declustered_data[declustered_values, ]
-# faux!!!!!!!!!!!!!!!!!
+# Filter the original data based on declustering result
+declustered_values <- summer_data$AvgTemperature[declustered_data == 0]
+declustered_dates <- summer_data$Date[declustered_data == 0]
+
+# Create a data frame with declustered values for plotting
+declustered_df <- data.frame(Date = declustered_dates, AvgTemperature = declustered_values)
 
 # Plot the declustered data
-ggplot(declustered_data, aes(x = Date, y = AvgTemperature)) +
+ggplot(declustered_df, aes(x = Date, y = AvgTemperature)) +
   geom_line() +
-  labs(x = "Date", y = "Temperature", title = "Declustered Summer Temperature Data in Geneva") +
+  labs(x = "Date", y = "Temperature", title = "Declustered Geneva Temperature - Summer Months") +
   theme_minimal()
+
 ```
 
 The declustering process aims to remove temporal dependence between extreme values by isolating independent extreme events.
