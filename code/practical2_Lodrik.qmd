@@ -24,7 +24,7 @@ head(data)
 
 # Plot histogram of daily precipitation
 ggplot(data, aes(x = Precipitation)) +
-  geom_histogram(binwidth = 5, fill = "skyblue", color = "black") +
+  geom_histogram(binwidth = 2, fill = "skyblue", color = "black") +
   labs(title = "Histogram of Daily Precipitation in Lausanne",
        x = "Daily Precipitation (mm)", 
        y = "Frequency") +
