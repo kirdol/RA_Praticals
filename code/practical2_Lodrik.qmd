@@ -24,12 +24,14 @@ head(data)
 
 # Plot histogram of daily precipitation
 ggplot(data, aes(x = Precipitation)) +
-  geom_histogram(binwidth = 2, fill = "skyblue", color = "black") +
+  geom_histogram(binwidth = 5, fill = "skyblue", color = "black") +
   labs(title = "Histogram of Daily Precipitation in Lausanne",
        x = "Daily Precipitation (mm)", 
        y = "Frequency") +
   theme_minimal()
 ```
+
+gamma distribution or weibull distribution
 
 ## (b)
 
@@ -53,6 +55,7 @@ ggplot(yearly_max, aes(x = MaxPrecipitation)) +
        y = "Frequency") +
   theme_minimal()
 ```
+GEV distribution
 
 ## (c)
 
@@ -90,6 +93,9 @@ ggplot() +
        y = "Maximum Precipitation (mm)") +
   theme_minimal()
 ```
+
+ADD table with the 10 values
+ok but it could be interesting to look at the monthly maximum and to find a better model more adapted to the data
 
 ## (d)
 
@@ -143,6 +149,8 @@ if (aic_constant < aic_time_varying & bic_constant < bic_time_varying) {
 }
 ```
 
+Constant better but not by much.
+
 ## (e)
 
 ```{r}
@@ -154,6 +162,8 @@ gev_constant_fit <- gev.fit(yearly_max$MaxPrecipitation)
 # Diagnostic plots for the constant parameter GEV model
 gev.diag(gev_constant_fit)
 ```
+
+good fit.
 
 ## (f)
 
@@ -205,6 +215,8 @@ print(results)
 knitr::kable(results, caption = "Exceedances for Different Return Levels")
 ```
 
+add a plot with a line for each return period.
+
 ## (h)
 
 ```{r}
@@ -223,6 +235,7 @@ return_period_threshold <- 1 / prob
 # Display the return period
 cat("The return period for 100 mm of precipitation is approximately", round(return_period_threshold, 2), "years.\n")
 ```
+OK
 
 ## (i)
 
@@ -275,7 +288,7 @@ mrlplot(precip_data$Precipitation, main = "Mean Residual Life Plot for Precipita
 
 ```{r}
 # For illustration purposes, assume we choose a threshold of 40 mm
-threshold <- 40  # Update this value based on the MRL plot inspection
+threshold <- 45  # Update this value based on the MRL plot inspection
 
 # Highlight data exceeding the threshold in the time series plot
 precip_data$exceeds_threshold <- precip_data$Precipitation > threshold
@@ -295,7 +308,7 @@ ggplot(data = precip_data, aes(x = date, y = Precipitation)) +
 
 ```{r}
 # Define the threshold based on the MRL plot inspection from Part 2(b)
-threshold <- 40  # Adjust this value based on the MRL plot results
+threshold <- 50  # Adjust this value based on the MRL plot results
 
 # Step 1: Filter the data for exceedances above the threshold
 exceedances <- precip_data$Precipitation[precip_data$Precipitation > threshold]
@@ -318,7 +331,7 @@ precip_data <- read.csv(here("data", "Precipitation_lausanne_full.csv"))
 precip_data$date <- as.Date(precip_data$Date, format = "%m/%d/%Y")
 
 # Define the threshold based on the MRL plot inspection from Part 2(b)
-threshold <- 40  # Adjust this value based on the MRL plot results
+threshold <- 50  # Adjust this value based on the MRL plot results
 
 # Step 1: Filter the data for exceedances above the threshold
 exceedances <- precip_data$Precipitation[precip_data$Precipitation > threshold]
@@ -348,7 +361,7 @@ print(return_level_data)
 
 ```{r}
 # Define the threshold chosen in Part 2(b)
-threshold <- 40  # Adjust this value as necessary
+threshold <- 50  # Adjust this value as necessary
 
 # Filter the data for exceedances above the threshold
 exceedances <- precip_data$Precipitation[precip_data$Precipitation > threshold]
@@ -382,7 +395,7 @@ cat("Return period for precipitation exceeding 100 mm:", return_period, "years\n
 
 ```{r}
 # Define the threshold chosen in Part 2(b)
-threshold <- 40  # Adjust this value as necessary
+threshold <- 50  # Adjust this value as necessary
 
 # Filter the data for exceedances above the threshold
 exceedances <- precip_data$Precipitation[precip_data$Precipitation > threshold]
@@ -398,12 +411,13 @@ precip_level <- 150
 n <- length(precip_data$Precipitation)  # Total number of observations
 exceedance_rate <- sum(precip_data$Precipitation > threshold) / n  # Exceedance rate
 
-# Step 1: Calculate the probability of exceeding 150 mm for any given day
+# Calculate the probability of exceeding 150 mm for any given day
 if (precip_level > threshold) {
   daily_prob <- 1 - pgpd(precip_level - threshold, 
                          loc = 0, 
                          scale = gpd_fit$param["scale"], 
                          shape = gpd_fit$param["shape"])
+  print(daily_prob)
 } else {
   daily_prob <- 0  # If precip_level is below threshold, probability is 0
 }
@@ -464,6 +478,8 @@ By visually inspecting the comparison_data table and the plot:
 * Advantages of BM: It’s a classic approach, suitable for data with natural periodic divisions (like yearly maxima). However, it may miss some extremes since only one maximum per block is used.
 * Advantages of POT: The POT method uses all data above a threshold, potentially offering more detail for extreme values. It may provide more precise estimates for high quantiles but depends heavily on appropriate threshold selection.
 
+POT better?
+
 
 # Part 3: Clustering and Seasonal Variations
 
@@ -498,11 +514,13 @@ ggplot(summer_data, aes(x = Date, y = AvgTemperature)) +  # Ensure the temperatu
   theme_minimal()
 ```
 
+remove the link between june september and june.
+
 ## (b)
 
 ```{r}
 # Choose a threshold for extreme temperatures (e.g., 90th percentile)
-threshold <- quantile(summer_data$AvgTemperature, 0.90)
+threshold <- quantile(summer_data$AvgTemperature, 0.95)
 
 # Calculate the extremal index using the 'extremalindex' function
 extremal_index_result <- extremalindex(summer_data$AvgTemperature, threshold = threshold)
@@ -530,7 +548,7 @@ cat("Probability that if today's temperature is extreme, tomorrow's will also be
 
 ```{r}
 # Choose a threshold for declustering (e.g., 90th percentile)
-threshold <- quantile(summer_data$AvgTemperature, 0.90)
+threshold <- quantile(summer_data$AvgTemperature, 0.95)
 
 # Decluster the data using the 'decluster' function with the 'runs' method
 declustered_values <- decluster(summer_data$AvgTemperature, threshold = threshold, run = 1)  # run=1 ensures single-day separation
@@ -547,11 +565,30 @@ ggplot(summer_data, aes(x = Date, y = AvgTemperature)) +
   theme_minimal()
 ```
 
+```{r}
+# Julien
+# Decluster the data using the chosen threshold
+declustered_data <- decluster(summer_data$AvgTemperature, threshold = threshold, run.length = 1)
+
+# Update the data frame to include only declustered values (setting non-extreme values to NA for clarity)
+summer_data$Declustered <- ifelse(summer_data$AvgTemperature >= threshold, declustered_data, NA)
+
+# Plot the original and declustered data
+ggplot() +
+  geom_line(data = summer_data, aes(x = Date, y = AvgTemperature), color = "blue", alpha = 0.5) +
+  geom_point(data = subset(summer_data, !is.na(Declustered)), aes(x = Date, y = Declustered), color = "red") +
+  labs(title = "Declustered Extreme Temperatures in Geneva (Summer Months)", 
+       x = "Date", y = "Temperature (°C)") +
+  theme_minimal()
+
+```
+
+
 ## (d)
 
 ```{r}
 # Choose a lower threshold for extreme temperatures (e.g., 85th percentile)
-threshold <- quantile(summer_data$AvgTemperature, 0.85, na.rm = TRUE)
+threshold <- quantile(summer_data$AvgTemperature, 0.80, na.rm = TRUE)
 
 # Check the data points above the new threshold
 extreme_data <- summer_data %>% filter(AvgTemperature > threshold)
