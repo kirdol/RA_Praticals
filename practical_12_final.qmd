@@ -2,6 +2,245 @@
 title: "practical_12_final"
 format: html
 editor: visual
+editor_options: 
+  chunk_output_type: console
 ---
 
-# Part 2
+# Part 2: Financial time series heteroskedasticity and the random walk hypothesis
+
+Another crucial hypothesis in asset pricing is the so-called homoscedasticity, i.e. constant variance of theresiduals. We would also like to check this assumption. We use the same Bitcoin data as in Part 1.
+
+```{r, message = F, warning = F}
+# load the required packages and install them if they are not.
+source(here::here("code","setup.R"))
+
+# getiing the working directory
+wd <- here::here()
+
+# Loading the data
+crypto_data <- read.csv(here("data", "crypto_data.csv"))
+
+# Extract the Bitcoin prices
+bitcoin_prices <- crypto_data$Bitcoin
+
+# Create a function to compute negative log returns
+negative_log_returns <- function(prices) {
+  return(-diff(log(prices)))
+}
+
+# Use the fucntion on Bitcoin prices
+neg_log_returns_bitcoin <- negative_log_returns(bitcoin_prices)
+```
+
+## a) ACF & negative log returns
+
+::: {.callout-note icon="false"}
+## Question
+
+Plot the ACF of the raw series as well as the negative log returns. Which one do you think are easier to model?
+:::
+
+```{r, message = F, warning = F}
+# Tracer l'ACF de la série brute des prix du Bitcoin
+acf(bitcoin_prices, main = "ACF of Raw Bitcoin Prices")
+
+# Tracer l'ACF des rendements logarithmiques négatifs (bitcoin_log_returns)
+acf(neg_log_returns_bitcoin, main = "ACF of Negative Log Returns")
+```
+
+1.  ACF or Raw Bitcoin Prices: The ACF plot for the Raw Bictoin Prices shows strong autocorrelation. The values are strongly correlated with their past values. This indicates that the raw series is non-stationary and has a long-term dependency.
+2.  ACF of Negative Log Returns: The ACF of Negative Log Returns shows that most of the correlations at higher lags fall withing the confidence interval. It implies that the negative log returns are more likely to be stationary and have less long-term dependence.
+
+Conclusion: The Negative Log Returns are likely easier to model due to their more stationary nature and lack of significant autocorrelation.
+
+## b) Ljung-Box procedure
+
+::: {.callout-note icon="false"}
+## Question
+
+Use a Ljung-Box procedure to formally test for (temporal) serial dependence in the raw series and in the negative log return series. What is your conclusion?
+:::
+
+```{r, message = F, warning = F}
+# Apply Ljung-Box test on raw Bitcoin prices
+ljung_box_raw <- Box.test(bitcoin_prices, lag = 20, type = "Ljung-Box")
+
+# Apply Ljung-Box test on negative log returns
+ljung_box_returns <- Box.test(neg_log_returns_bitcoin, lag = 20, type = "Ljung-Box")
+
+# Print results
+print(ljung_box_raw)
+print(ljung_box_returns)
+```
+
+The Ljung-Box test checks for serial dependence (autocorrelation) in the series. If the p-value is small (typically \< 0.05), it suggests that there is serial dependence, meaning the series is not independent over time.
+
+For the raw series: Since price data tends to show trends, we often expect serial dependence. For the negative log returns: These are typically expected to be more random (i.e., closer to white noise), so the test might indicate less serial dependence.
+
+Based on the results of the Ljung-Box tests: For the raw Bitcoin prices: - Raw Bictoin Prices: p-value \< 2.2e-16, the p-value is extremely small, which mean that we reject the null hypothesis of no autocorrelation in the raw Bictoin prices. The values are highly dependent on previous values, it confirms that the series is non-stationary. - Negative Log Returns: p-value = 0.03082, the p-value is also small, but higher than the raw prices. It indicates that there is still some autocorrelation in the series, although it is less pronounced compared to the raw Bitcoin prices. Ideally, negative log returns should behave more likke white noise, meaning no serial dependence
+
+## c) ARIMA models for the negative log returns series
+
+::: {.callout-note icon="false"}
+## Question
+
+Propose ARIMA models for the negative log returns series, based on visualization tools (e.g. ACF, PACF). Select an ARIMA model using auto.arima() (forecast package) for the negative log returns series. Comment on the difference. Assess the residuals of the resulting models.
+:::
+
+```{r, message = F, warning = F}
+# Step 1: Visualize ACF and PACF for negative log returns
+acf(neg_log_returns_bitcoin, main = "ACF of Negative Log Returns")
+pacf(neg_log_returns_bitcoin, main = "PACF of Negative Log Returns")
+
+# Step 2: Use auto.arima() to find the best ARIMA model for negative log returns
+auto_arima_model <- auto.arima(neg_log_returns_bitcoin)
+summary(auto_arima_model)
+
+# Step 3: Plot residuals of the ARIMA model to assess the goodness of fit
+checkresiduals(auto_arima_model)
+
+# Additional: Ljung-Box test on residuals to check if they are white noise
+Box.test(residuals(auto_arima_model), type="Ljung-Box")
+```
+
+The results from the ARIMA model fitting for the negative log returns of Bitcoin and the residual analysis suggest the following:
+
+ARIMA Model: The selected ARIMA model is ARIMA(2,0,2), meaning:
+
+AR(2): Two autoregressive terms are included. MA(2): Two moving average terms are included. d = 0: No differencing was applied, indicating that the series is already stationary (which aligns with the fact that negative log returns tend to be stationary). Coefficients:
+
+The AR1 and AR2 coefficients are -0.0520 and -0.5415, respectively. The MA1 and MA2 coefficients are 0.0853 and 0.4479, respectively. The mean of the series is very close to zero (1e-04). Error metrics:
+
+RMSE (Root Mean Square Error): 0.00142, which is relatively low, indicating that the model fits the data well. MAE (Mean Absolute Error): 0.000942, which is also quite low. ACF1 of residuals: 0.00455, suggesting that the residuals do not exhibit significant autocorrelation. Ljung-Box Test: The Ljung-Box test on residuals gives a p-value of 0.8628, which is much larger than 0.05. This indicates that there is no significant autocorrelation left in the residuals, implying that the model fits the data well. Conclusion: The ARIMA(2,0,2) model selected by auto.arima() seems to be a good fit for the negative log returns of Bitcoin, as evidenced by the low RMSE and MAE, as well as the results of the Ljung-Box test. The residuals behave like white noise, meaning that the model has successfully captured the patterns in the data. There is no significant temporal dependence left in the residuals, which supports the adequacy of this ARIMA model for the series. Overall, the ARIMA model chosen by auto.arima() fits the data well and leaves no significant autocorrelation in the residuals.
+
+## d) GARCH models
+
+::: {.callout-note icon="false"}
+## Question
+
+Fit GARCH models to the negative log returns with both normal and standardized t-distributions, with order (1, 1), using the garchFit() function from the fGarch library. Assess the quality of the fit by evaluating the residuals.
+:::
+
+```{r, message = F, warning = F, output = F}
+# Fit GARCH(1,1) model with normal distribution
+garch_normal <- garchFit(~ garch(1, 1), data = neg_log_returns_bitcoin, cond.dist = "norm")
+
+# Summary of the model
+summary(garch_normal)
+
+# Fit GARCH(1,1) model with standardized t-distribution
+garch_t <- garchFit(~ garch(1, 1), data = neg_log_returns_bitcoin, cond.dist = "std")
+
+# Summary of the model
+summary(garch_t)
+
+# Residuals from the normal GARCH model
+residuals_normal <- residuals(garch_normal)
+
+# Residuals from the t-distribution GARCH model
+residuals_t <- residuals(garch_t)
+
+# Plot residuals for the normal GARCH model
+plot(residuals_normal, main = "Residuals of GARCH(1,1) with Normal Distribution", type = "l")
+
+# Plot residuals for the t-distribution GARCH model
+plot(residuals_t, main = "Residuals of GARCH(1,1) with t-Distribution", type = "l")
+
+# ACF of residuals for the normal GARCH model
+acf(residuals_normal, main = "ACF of Residuals (Normal GARCH Model)")
+
+# ACF of residuals for the t-distribution GARCH model
+acf(residuals_t, main = "ACF of Residuals (t-Distribution GARCH Model)")
+
+# Ljung-Box test for normal GARCH model residuals
+Box.test(residuals_normal, lag = 20, type = "Ljung-Box")
+
+# Ljung-Box test for t-distribution GARCH model residuals
+Box.test(residuals_t, lag = 20, type = "Ljung-Box")
+```
+
+The results for fitting GARCH(1,1) models with both normal and standardized t-distributions to the negative log returns are as follows:
+
+GARCH(1,1) with Normal Distribution:
+
+The log-likelihood value is 7632.108. The coefficients for the GARCH model (omega, alpha1, and beta1) are significant (p-values \< 0.05), indicating that the model is well-fitted. The Ljung-Box test for the residuals shows a p-value of 0.3419 for 10 lags, which indicates no significant autocorrelation in the residuals, meaning the model fits well in terms of residual serial dependence. GARCH(1,1) with Standardized t-Distribution:
+
+The log-likelihood value is 7736.355, which is slightly better than the normal distribution model, indicating a potentially better fit. The coefficients are also significant (p-values \< 0.05), with the shape parameter of the t-distribution (shape = 4.28) indicating a heavier tail than the normal distribution. The Ljung-Box test for the residuals shows a p-value of 0.3507 for 10 lags, similar to the normal model, suggesting that there is no significant autocorrelation in the residuals. Conclusion: Both the GARCH(1,1) models (with normal and t-distributions) provide a good fit, with no significant residual autocorrelation based on the Ljung-Box test. However, the GARCH model with the standardized t-distribution has a higher log-likelihood and captures heavier tails (as indicated by the shape parameter), suggesting that it may be a better fit for the data due to the presence of tail risk or more extreme variations in the negative log returns of Bitcoin.
+
+## e)
+
+::: {.callout-note icon="false"}
+## Question
+
+Residual serial correlation can be present when fitting a GARCH directly on the negative log returns. Hence, in order to circumvent this problem, it is possible to use the following two-step approach:
+
+• Fit an ARIMA(p, d, q) on the negative log returns with the choices p, d and q from part (c);
+
+• Fit a GARCH(1, 1) on the residuals of the ARIMA(p, d, q) fit.
+
+Proceed with the above recipe. Assess the quality of the above fit.
+:::
+
+```{r, message = F, warning = F}
+# Step 1: Fit an ARIMA(p, d, q) model on the negative log returns
+# From part (c), we decided ARIMA(2, 0, 2)
+arima_model <- arima(neg_log_returns_bitcoin, order = c(2, 0, 2))
+
+# Extract the residuals from the ARIMA model
+arima_residuals <- residuals(arima_model)
+
+# Step 2: Fit a GARCH(1,1) model on the residuals from the ARIMA model
+garch_model_arima_residuals <- garchFit(~ garch(1, 1), data = arima_residuals, cond.dist = "norm")
+
+# Summary of the GARCH(1,1) model
+summary(garch_model_arima_residuals)
+
+# Plot the residuals from the ARIMA + GARCH model
+par(mfrow = c(2, 1))  # To display multiple plots together
+plot(arima_residuals, main = "Residuals from ARIMA(2, 0, 2)", type = "l")
+plot(residuals(garch_model_arima_residuals), main = "Residuals from ARIMA(2, 0, 2) + GARCH(1, 1)", type = "l")
+par(mfrow = c(1, 1))  # Reset plotting
+
+# Assess the quality of the fit using the Ljung-Box test on the GARCH model residuals
+ljung_box_test <- Box.test(residuals(garch_model_arima_residuals), lag = 20, type = "Ljung-Box")
+print(ljung_box_test)
+
+# Plot the ACF of the residuals to visually assess if there's still serial correlation
+acf(residuals(garch_model_arima_residuals), main = "ACF of Residuals (ARIMA + GARCH)")
+```
+
+Quality Assessment of the ARIMA + GARCH(1,1) Fit: Parameter Estimates:
+
+The fitted ARIMA + GARCH(1,1) model has significant coefficients for the GARCH components: Alpha1 (0.2599) and Beta1 (0.7579) are both highly significant (p-value < 2e-16), indicating that the GARCH(1,1) model has captured the volatility clustering effectively. The intercept (Mu) is not significant, suggesting that the mean of the residuals is close to zero, which is expected in a well-fitted model. Log-Likelihood and AIC:
+
+The log-likelihood of the model is high (7627.039), and the AIC (-10.59491) and BIC (-10.58026) indicate a good fit for the model. Lower AIC/BIC values suggest a better model fit. Residuals Analysis:
+
+Ljung-Box Test for Serial Correlation: The p-value of the Ljung-Box test (p = 0.9365) for the residuals of the ARIMA + GARCH(1,1) model is very high, indicating no significant serial correlation. This suggests that the model has captured the dependencies in the data well, and the residuals are essentially white noise. Jarque-Bera and Shapiro-Wilk Tests for Normality: Both tests indicate non-normality of the residuals (p-value = 0.000). This is common in financial time series data, as they often exhibit heavy tails and skewness. Ljung-Box Test on Squared Residuals: The p-values for the Ljung-Box test on squared residuals are also high, indicating no remaining conditional heteroscedasticity in the model, suggesting that the GARCH model has effectively modeled the conditional variance. Conclusion:
+
+The ARIMA + GARCH(1,1) model fits the data well, capturing both the autocorrelation in the returns and the conditional heteroscedasticity (volatility clustering). The residuals show no significant autocorrelation, and the GARCH model appears to have adequately handled the volatility. The model might still exhibit non-normality, but this is expected in financial data due to extreme returns or fat tails.
+
+## f) Model Comparison
+
+::: {.callout-note icon="false"}
+## Question
+
+Compare the three models from the previous parts. Which is more suitable? In which of these models is the homoscedasticity assumption violated?
+:::
+
+Comparison of the Three Models:
+
+Model 1: GARCH(1,1) with Normal Distribution
+
+Fit: This model captured the volatility clustering well. The Ljung-Box test on residuals and squared residuals showed no significant serial correlation, indicating that the model accounted for the time-varying volatility. Homoscedasticity: By definition, a GARCH model assumes heteroscedasticity, meaning that the volatility changes over time. Therefore, the assumption of constant variance (homoscedasticity) is explicitly violated in this model. Conclusion: This model is good for capturing conditional heteroscedasticity (changing volatility), and thus it is appropriate for financial time series data where volatility clustering is observed.
+
+Model 2: GARCH(1,1) with Standardized t-Distribution
+
+Fit: Similar to the GARCH with normal distribution, this model accounts for volatility clustering and captures extreme returns better due to the heavy tails of the t-distribution. Homoscedasticity: The GARCH structure still assumes heteroscedasticity, and therefore the homoscedasticity assumption is violated in this model as well. Conclusion: This model is better suited for capturing heavy-tailed data, like extreme price movements in financial markets, while still accounting for changing volatility. It can outperform the GARCH(1,1) with a normal distribution for financial data with fat tails.
+
+Model 3: ARIMA + GARCH(1,1) (Two-Step Approach)
+
+Fit: This two-step model first applies an ARIMA to remove autocorrelation from the log returns and then applies a GARCH(1,1) to model the remaining volatility clustering. The Ljung-Box tests on residuals showed no significant serial correlation, suggesting that the ARIMA model handled the autoregressive components well, and the GARCH captured the volatility. Homoscedasticity: As in the other GARCH models, this model also assumes heteroscedasticity, meaning the homoscedasticity assumption is violated here as well. Conclusion: This model is the most comprehensive because it first removes any autocorrelation in the series (via ARIMA) before modeling the volatility. It is typically more suitable for financial time series where both autocorrelation and volatility clustering are present.
+
+Conclusion: Most Suitable Model: The ARIMA + GARCH(1,1) model is the most suitable because it addresses both the autocorrelation in the log returns and the heteroscedasticity (changing volatility). It captures both the time-varying nature of volatility and any serial dependence in the data. Homoscedasticity Violation: In all three models, the homoscedasticity assumption is violated since all models incorporate the GARCH(1,1) structure, which models conditional heteroscedasticity (changing volatility over time).
+
+
