@@ -19,7 +19,7 @@ library(ismev)
 ```
 
 ### a)
-```{r, message = F, warning = F}
+```{r, message = F, warning = F, echo=F}
 # Read in the data
 prec_laus <- read.csv("data/Precipitation_lausanne_full.csv")
 
