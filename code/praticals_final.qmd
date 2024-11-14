@@ -5,7 +5,7 @@ date-format: long
 author: Lodrik Adam, Alexandra Boado, Sophie Daya, Jeff Macaraeg, Julien Perini
 toc: true
 format:
-  pdf:
+  html:
     code-fold: true
     code-block-border-left: "#0d6efd"
     code-block-bg: true

@@ -91,13 +91,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#part-3-financial-returns-and-normality" id="toc-part-3-financial-returns-and-normality" class="nav-link" data-scroll-target="#part-3-financial-returns-and-normality">Part 3: Financial returns and normality</a>
   <ul class="collapse">
-  <li><a href="#a-negative-log-returns-of-bitcoin-and-eth-independent" id="toc-a-negative-log-returns-of-bitcoin-and-eth-independent" class="nav-link" data-scroll-target="#a-negative-log-returns-of-bitcoin-and-eth-independent">a) Negative log returns of Bitcoin and ETH independent?</a></li>
-  <li><a href="#b" id="toc-b" class="nav-link" data-scroll-target="#b">b)</a></li>
-  <li><a href="#c" id="toc-c" class="nav-link" data-scroll-target="#c">c)</a></li>
-  <li><a href="#d" id="toc-d" class="nav-link" data-scroll-target="#d">d)</a>
+  <li><a href="#a-check-bitcoin-eth-dependence-using-correlation" id="toc-a-check-bitcoin-eth-dependence-using-correlation" class="nav-link" data-scroll-target="#a-check-bitcoin-eth-dependence-using-correlation">a) Check Bitcoin-ETH dependence using correlation</a></li>
+  <li><a href="#b-analyze-bitcoin-eth-cross-correlation-function" id="toc-b-analyze-bitcoin-eth-cross-correlation-function" class="nav-link" data-scroll-target="#b-analyze-bitcoin-eth-cross-correlation-function">b) Analyze Bitcoin-ETH cross-correlation function</a></li>
+  <li><a href="#c-assess-predictive-power-with-granger-test" id="toc-c-assess-predictive-power-with-granger-test" class="nav-link" data-scroll-target="#c-assess-predictive-power-with-granger-test">c) Assess predictive power with Granger test</a></li>
+  <li><a href="#d-predict-mutual-impacts-of-drops" id="toc-d-predict-mutual-impacts-of-drops" class="nav-link" data-scroll-target="#d-predict-mutual-impacts-of-drops">d) Predict mutual impacts of drops</a>
   <ul class="collapse">
-  <li><a href="#d.1" id="toc-d.1" class="nav-link" data-scroll-target="#d.1">d.1)</a></li>
-  <li><a href="#d.2" id="toc-d.2" class="nav-link" data-scroll-target="#d.2">d.2)</a></li>
+  <li><a href="#d.1-predict-eth-reaction-to-bitcoin-drop" id="toc-d.1-predict-eth-reaction-to-bitcoin-drop" class="nav-link" data-scroll-target="#d.1-predict-eth-reaction-to-bitcoin-drop">d.1) Predict ETH reaction to Bitcoin drop</a></li>
+  <li><a href="#d.2-predict-bitcoin-reaction-to-eth-drop" id="toc-d.2-predict-bitcoin-reaction-to-eth-drop" class="nav-link" data-scroll-target="#d.2-predict-bitcoin-reaction-to-eth-drop">d.2) Predict Bitcoin reaction to ETH drop</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -567,20 +567,16 @@ Question
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load the required packages and install them if they are not.</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"code"</span>,<span class="st">"setup.R"</span>))</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># getiing the working directory</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>wd <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>()</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading the data</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>crypto_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"crypto_data.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading the data</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>crypto_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"crypto_data.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
 </section>
 <section id="part-3-financial-returns-and-normality" class="level1">
 <h1>Part 3: Financial returns and normality</h1>
-<p>The working directory is set to: /Users/lodrik/Documents/GitHub/RA_Praticals</p>
-<section id="a-negative-log-returns-of-bitcoin-and-eth-independent" class="level2">
-<h2 class="anchored" data-anchor-id="a-negative-log-returns-of-bitcoin-and-eth-independent">a) Negative log returns of Bitcoin and ETH independent?</h2>
+<section id="a-check-bitcoin-eth-dependence-using-correlation" class="level2">
+<h2 class="anchored" data-anchor-id="a-check-bitcoin-eth-dependence-using-correlation">a) Check Bitcoin-ETH dependence using correlation</h2>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -668,8 +664,8 @@ sample estimates:
 </details>
 </div>
 </section>
-<section id="b" class="level2">
-<h2 class="anchored" data-anchor-id="b">b)</h2>
+<section id="b-analyze-bitcoin-eth-cross-correlation-function" class="level2">
+<h2 class="anchored" data-anchor-id="b-analyze-bitcoin-eth-cross-correlation-function">b) Analyze Bitcoin-ETH cross-correlation function</h2>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -702,8 +698,8 @@ Question
 </details>
 </div>
 </section>
-<section id="c" class="level2">
-<h2 class="anchored" data-anchor-id="c">c)</h2>
+<section id="c-assess-predictive-power-with-granger-test" class="level2">
+<h2 class="anchored" data-anchor-id="c-assess-predictive-power-with-granger-test">c) Assess predictive power with Granger test</h2>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -758,8 +754,8 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </details>
 </div>
 </section>
-<section id="d" class="level2">
-<h2 class="anchored" data-anchor-id="d">d)</h2>
+<section id="d-predict-mutual-impacts-of-drops" class="level2">
+<h2 class="anchored" data-anchor-id="d-predict-mutual-impacts-of-drops">d) Predict mutual impacts of drops</h2>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -773,8 +769,8 @@ Question
 <p>Based on your answer in (c), answer the following questions:</p>
 </div>
 </div>
-<section id="d.1" class="level3">
-<h3 class="anchored" data-anchor-id="d.1">d.1)</h3>
+<section id="d.1-predict-eth-reaction-to-bitcoin-drop" class="level3">
+<h3 class="anchored" data-anchor-id="d.1-predict-eth-reaction-to-bitcoin-drop">d.1) Predict ETH reaction to Bitcoin drop</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -789,8 +785,8 @@ Question
 </div>
 </div>
 </section>
-<section id="d.2" class="level3">
-<h3 class="anchored" data-anchor-id="d.2">d.2)</h3>
+<section id="d.2-predict-bitcoin-reaction-to-eth-drop" class="level3">
+<h3 class="anchored" data-anchor-id="d.2-predict-bitcoin-reaction-to-eth-drop">d.2) Predict Bitcoin reaction to ETH drop</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1289,16 +1285,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="an">date-format:</span><span class="co"> long</span></span>
 <span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> Lodrik Adam, Alexandra Boado, Sophie Daya, Jeff Macaraeg, Julien Perini</span></span>
 <span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> html</span></span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="an">code-fold:</span><span class="co"> true</span></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="an">code-block-border-left:</span><span class="co"> "#0d6efd"</span></span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="an">code-block-bg:</span><span class="co"> true</span></span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="an">highlight-style:</span><span class="co"> github</span></span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="an">code-tools:</span><span class="co"> true</span></span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a><span class="in">```{r child = c("practical_11_final.qmd", "practical_13_final.qmd")}</span></span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-border-left: "#0d6efd"</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-bg: true</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="co">    highlight-style: github</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="in">```{r child = c("practical_11_final.qmd", "practical_13_final.qmd")}</span></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

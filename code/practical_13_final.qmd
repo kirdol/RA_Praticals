@@ -8,7 +8,7 @@ crypto_data <- read.csv(here("data", "crypto_data.csv"))
 
 # Part 3: Financial returns and normality
 
-## a) Negative log returns of Bitcoin and ETH independent?
+## a) Check Bitcoin-ETH dependence using correlation
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -63,7 +63,7 @@ print(cor_test_result)
 #There could be, for example, a non-linear relationship between the 2.
 ```
 
-## b)
+## b) Analyze Bitcoin-ETH cross-correlation function
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -79,7 +79,7 @@ ccf(nlr_df$Ethereum, nlr_df$Bitcoin, main = "Cross-Correlation Function: Ethereu
 ```
 
 
-## c)
+## c) Assess predictive power with Granger test
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -102,7 +102,7 @@ print(granger_test_btc_to_eth)
 ```
 
 
-## d)
+## d) Predict mutual impacts of drops
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -110,7 +110,7 @@ print(granger_test_btc_to_eth)
 Based on your answer in (c), answer the following questions:
 :::
 
-### d.1)
+### d.1) Predict ETH reaction to Bitcoin drop
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -119,7 +119,7 @@ We observe an extreme sudden drop in Bitcoin stocks. What should we expect that 
 with ETH stocks?
 :::
 
-### d.2)
+### d.2) Predict Bitcoin reaction to ETH drop
 
 ::: {.callout-note icon="false"}
 ## Question
