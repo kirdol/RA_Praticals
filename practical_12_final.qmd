@@ -41,6 +41,8 @@ Plot the ACF of the raw series as well as the negative log returns. Which one do
 :::
 
 ```{r, message = F, warning = F}
+par(mfrow = c(2, 1)) 
+
 # Tracer l'ACF de la série brute des prix du Bitcoin
 acf(bitcoin_prices, main = "ACF of Raw Bitcoin Prices")
 
@@ -88,6 +90,7 @@ Propose ARIMA models for the negative log returns series, based on visualization
 :::
 
 ```{r, message = F, warning = F}
+par(mfrow = c(2, 1)) 
 # Step 1: Visualize ACF and PACF for negative log returns
 acf(neg_log_returns_bitcoin, main = "ACF of Negative Log Returns")
 pacf(neg_log_returns_bitcoin, main = "PACF of Negative Log Returns")
@@ -140,12 +143,14 @@ residuals_normal <- residuals(garch_normal)
 # Residuals from the t-distribution GARCH model
 residuals_t <- residuals(garch_t)
 
+par(mfrow = c(2, 1)) 
 # Plot residuals for the normal GARCH model
 plot(residuals_normal, main = "Residuals of GARCH(1,1) with Normal Distribution", type = "l")
 
 # Plot residuals for the t-distribution GARCH model
 plot(residuals_t, main = "Residuals of GARCH(1,1) with t-Distribution", type = "l")
 
+par(mfrow = c(2, 1)) 
 # ACF of residuals for the normal GARCH model
 acf(residuals_normal, main = "ACF of Residuals (Normal GARCH Model)")
 
