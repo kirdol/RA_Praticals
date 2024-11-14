@@ -388,7 +388,7 @@ if (precip_level > threshold) {
 }
 
 # Display the result
-cat("Return period for precipitation exceeding 100 mm:", return_period, "years\n")
+cat("Return period for precipitation exceeding 100 mm:", return_period/365, "years\n")
 ```
 
 ## (f)

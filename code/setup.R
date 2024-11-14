@@ -1,3 +1,6 @@
+# Set the CRAN mirror
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+
 # load the required packages and install them if they are not.
 packages <- c(
   "here",
@@ -11,7 +14,8 @@ packages <- c(
   "patchwork",
   "forecast",
   "fGarch",
-  "fitdistrplus"
+  "fitdistrplus",
+  "lmtest"
 )
 
 # Function that install the packages if not already installed on your computer

@@ -1,7 +1,4 @@
 ```{r message = FALSE}
-# Set the CRAN mirror
-options(repos = c(CRAN = "https://cloud.r-project.org"))
-
 # load the required packages and install them if they are not.
 source(here::here("code","setup.R"))
 

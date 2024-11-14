@@ -1,0 +1,131 @@
+```{r message = FALSE}
+# load the required packages and install them if they are not.
+source(here::here("code","setup.R"))
+
+# Loading the data
+crypto_data <- read.csv(here("data", "crypto_data.csv"))
+```
+
+# Part 3: Financial returns and normality
+
+## a) Negative log returns of Bitcoin and ETH independent?
+
+::: {.callout-note icon="false"}
+## Question
+
+Are the negative log returns of Bitcoin and ETH dependent? Compute the correlation using `cor.test()` function. Can we conclude that these series are independent?
+:::
+
+```{r}
+# Negative log returns function
+negative_log_returns <- function(prices) {
+  -diff(log(prices))
+}
+
+# Compute negative log returns for Bitcoin and Ethereum
+neglogret_eth <- negative_log_returns(crypto_data$Ethereum)
+neglogret_btc <- negative_log_returns(crypto_data$Bitcoin)
+
+# Create a sequence for time indices matching the length of negative log returns
+time_indices <- seq_along(neglogret_eth)
+
+# Create a data frame with time indices and negative log returns
+nlr_df <- data.frame(
+  Time = time_indices,
+  Ethereum = neglogret_eth,
+  Bitcoin = neglogret_btc
+)
+
+# Reshape data to long format for plotting
+nlr_long_df <- nlr_df %>%
+  pivot_longer(
+    cols = c(Ethereum, Bitcoin),
+    names_to = "Crypto",
+    values_to = "NegativeLogReturn"
+  )
+
+# Plot the negative log returns of Bitcoin and Ethereum
+ggplot(nlr_long_df, aes(x = Time, y = NegativeLogReturn, color = Crypto)) +
+  geom_line() +
+  labs(
+    title = "Negative Log Returns of Bitcoin and Ethereum",
+    x = "Time (Minutes)",
+    y = "Negative Log Return"
+  ) +
+  theme_minimal()
+
+# Perform correlation test between Ethereum and Bitcoin negative log returns
+cor_test_result <- cor.test(nlr_df$Ethereum, nlr_df$Bitcoin)
+print(cor_test_result)
+
+#No significant linear relationship between the variables (p-value = 1). However,
+#We cannot conclude that they are independant only based on the correlation test.
+#There could be, for example, a non-linear relationship between the 2.
+```
+
+## b)
+
+::: {.callout-note icon="false"}
+## Question
+
+Calculate the cross-correlation function (CCF) between the negative log returns of Bitcoin and
+ETH. What do you observe?
+:::
+
+```{r}
+# Calculate and plot the cross-correlation function (CCF)
+ccf(nlr_df$Ethereum, nlr_df$Bitcoin, main = "Cross-Correlation Function: Ethereum vs. Bitcoin Negative Log Returns")
+#We can see a very significant spike in cross correlation at around lag 5.
+```
+
+
+## c)
+
+::: {.callout-note icon="false"}
+## Question
+
+Is one of the time series good predictor of the second? Assess whether there is any predictive power
+between the negative log returns of Bitcoin and ETH. You can use `grangertest()` in the `lmtest`
+package with carefully chosen hyperparameter `order`. What is your conclusion?
+:::
+
+```{r}
+# Testing if Ethereum Granger-causes Bitcoin
+granger_test_eth_to_btc <- grangertest(Bitcoin ~ Ethereum, order = 5, data = nlr_df)
+print(granger_test_eth_to_btc)
+# Interpretation: A very tiny p-value suggests Ethereum Granger-causes Bitcoin
+
+# Testing if Bitcoin Granger-causes Ethereum
+granger_test_btc_to_eth <- grangertest(Ethereum ~ Bitcoin, order = 5, data = nlr_df)
+print(granger_test_btc_to_eth)
+# Interpretation: A large p-value suggests Bitcoin does not Granger-cause Ethereum
+```
+
+
+## d)
+
+::: {.callout-note icon="false"}
+## Question
+
+Based on your answer in (c), answer the following questions:
+:::
+
+### d.1)
+
+::: {.callout-note icon="false"}
+## Question
+
+We observe an extreme sudden drop in Bitcoin stocks. What should we expect that will happen
+with ETH stocks?
+:::
+
+### d.2)
+
+::: {.callout-note icon="false"}
+## Question
+
+We observe an extreme sudden drop in ETH stocks. What should we expect that will happen
+with Bitcoin stocks?
+:::
+
+
