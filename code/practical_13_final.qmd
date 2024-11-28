@@ -1,9 +1,12 @@
-```{r message = FALSE}
+```{r  echo = FALSE, message = FALSE}
 # load the required packages and install them if they are not.
 source(here::here("code","setup.R"))
 
 # Loading the data
 crypto_data <- read.csv(here("data", "crypto_data.csv"))
+
+# Parameters
+rounding_digits <- 4
 ```
 
 # Part 3: Financial returns and normality
@@ -16,7 +19,9 @@ crypto_data <- read.csv(here("data", "crypto_data.csv"))
 Are the negative log returns of Bitcoin and ETH dependent? Compute the correlation using `cor.test()` function. Can we conclude that these series are independent?
 :::
 
-```{r}
+To answer this question, we will first plot both negative log returns and then perform a correlation test.
+
+```{r echo = FALSE}
 # Negative log returns function
 negative_log_returns <- function(prices) {
   -diff(log(prices))
@@ -53,15 +58,16 @@ ggplot(nlr_long_df, aes(x = Time, y = NegativeLogReturn, color = Crypto)) +
     y = "Negative Log Return"
   ) +
   theme_minimal()
+```
 
+The graph could suggest that the negative log returns of Bitcoin and Ethereum are dependent. However, we will perform a correlation test to confirm this.
+
+```{r echo = FALSE}
 # Perform correlation test between Ethereum and Bitcoin negative log returns
 cor_test_result <- cor.test(nlr_df$Ethereum, nlr_df$Bitcoin)
-print(cor_test_result)
-
-#No significant linear relationship between the variables (p-value = 1). However,
-#We cannot conclude that they are independant only based on the correlation test.
-#There could be, for example, a non-linear relationship between the 2.
 ```
+
+The computed correlation between the negative log returns of Bitcoin and Ethereum using the `cor.test()` function is `r round(cor_test_result$estimate, rounding_digits)` and is not statistically significant (p-value = `r round(cor_test_result$p.value, rounding_digits)`). However, the lack of significance in the correlation test does not necessarily imply independence, as there may be a non-linear relationship or other factors influencing the association between the two variables.
 
 ## b) Analyze Bitcoin-ETH cross-correlation function
 
@@ -72,12 +78,13 @@ Calculate the cross-correlation function (CCF) between the negative log returns 
 ETH. What do you observe?
 :::
 
-```{r}
+```{r echo = FALSE}
 # Calculate and plot the cross-correlation function (CCF)
 ccf(nlr_df$Ethereum, nlr_df$Bitcoin, main = "Cross-Correlation Function: Ethereum vs. Bitcoin Negative Log Returns")
-#We can see a very significant spike in cross correlation at around lag 5.
 ```
 
+We can clearly observe a significant spike at lag 5 indicates that there is a notable correlation between Bitcoin’s returns and Ethereum’s returns when Ethereum’s returns are shifted by 5 minutes. Ethereum’s returns are correlated with past values of Bitcoin’s returns and thus may predict Etherum's returns with a 5 minutes delay. The spike indicates the strength of the correlation. In our case, the spike at lag 5 crosses the significance threshold (horizontal dashed lines). We can say with confidence that it is statistically significant and not likely due to random noise.
+However, it is important to keep in mind that cross-correlation does not imply causation. Other factors or indirect relationships might also explain this pattern.
 
 ## c) Assess predictive power with Granger test
 
@@ -89,18 +96,17 @@ between the negative log returns of Bitcoin and ETH. You can use `grangertest()`
 package with carefully chosen hyperparameter `order`. What is your conclusion?
 :::
 
-```{r}
+```{r echo = FALSE}
 # Testing if Ethereum Granger-causes Bitcoin
 granger_test_eth_to_btc <- grangertest(Bitcoin ~ Ethereum, order = 5, data = nlr_df)
-print(granger_test_eth_to_btc)
-# Interpretation: A very tiny p-value suggests Ethereum Granger-causes Bitcoin
 
 # Testing if Bitcoin Granger-causes Ethereum
 granger_test_btc_to_eth <- grangertest(Ethereum ~ Bitcoin, order = 5, data = nlr_df)
-print(granger_test_btc_to_eth)
-# Interpretation: A large p-value suggests Bitcoin does not Granger-cause Ethereum
 ```
 
+We performed here two grander test using the `grandertest()`function. The first tests if Ethereum’s past values do not Granger-cause Bitcoin’s returns. With a p-value of `r round(granger_test_eth_to_btc$"Pr(>F)"[2],rounding_digits)`, we cannot reject the null hypothesis. Therefore, there is no evidence to suggest that Ethereum’s past values have predictive power for Bitcoin’s returns.
+
+The second test examines if Bitcoin’s past values Granger-cause Ethereum’s returns. With a p-value of `r round(granger_test_btc_to_eth$"Pr(>F)"[2], rounding_digits)`, Bitcoin’s past values significantly Granger-cause Ethereum’s returns, meaning there is strong evidence of predictive power.
 
 ## d) Predict mutual impacts of drops
 
@@ -119,6 +125,8 @@ We observe an extreme sudden drop in Bitcoin stocks. What should we expect that 
 with ETH stocks?
 :::
 
+Given our results in question c), the sudden drop in Bitcoin stocks should have a significant impact on the Etherum stocks price. Given our analysis, the Ethereum stocks should drop 5 minutes (lag of 5 / question b)) after the Bitcoin stocks drop with a value close to 80% of the Bitcoin drop.
+
 ### d.2) Predict Bitcoin reaction to ETH drop
 
 ::: {.callout-note icon="false"}
@@ -127,5 +135,7 @@ with ETH stocks?
 We observe an extreme sudden drop in ETH stocks. What should we expect that will happen
 with Bitcoin stocks?
 :::
+
+Based on the Granger causality test results from question c), Ethereum’s past values do not Granger-cause Bitcoin’s returns, suggesting no significant predictive relationship. If Ethereum experiences an extreme sudden drop, it is less likely that Bitcoin will exhibit a direct or immediate reaction based on historical relationships. However, Bitcoin and Ethereum share common market factors and investor sentiment, so an indirect reaction (e.g., due to market-wide panic) is still possible, though it is not strongly supported by the causality analysis.
 
 
