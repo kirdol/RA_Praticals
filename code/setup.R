@@ -15,7 +15,13 @@ packages <- c(
   "forecast",
   "fGarch",
   "fitdistrplus",
-  "lmtest"
+  "lmtest",
+  "lubridate",
+  "evd",
+  "evir",
+  "ismev",
+  "tidyverse",
+  "extRemes"
 )
 
 # Function that install the packages if not already installed on your computer

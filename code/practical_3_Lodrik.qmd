@@ -1,55 +1,127 @@
+# Introduction
 
-```{r}
-# Load Geneva temperature and precipitation data
-GE_temp_prec <- read.table(here::here("data", "LA-climate-reports-tables-homogenized_GVE.txt"), header = FALSE, skip = 28, col.names = c("Year", "Month", "Temperature", "Precipitation"))
+In this analysis, we investigate whether a Generalized Extreme Value (GEV) distribution can accurately model annual maximum temperatures in Switzerland. Additionally, we compare the results of the block maxima approach with the Peaks-over-Threshold (POT) approach for temperature extremes.
 
-# First lines
-head(GE_temp_prec)
+# Data Loading and Preparation
 
-# Convert Year and Month to a Date format
-data <- GE_temp_prec %>%
-  mutate(Date = as.Date(paste(Year, Month, "01", sep = "-")))
+```{r echo = FALSE, message = FALSE}
+# load the required packages and install them if they are not.
+source(here::here("code","setup.R"))
 
-# Plot the temperature over time
-ggplot(data, aes(x = Date, y = Temperature)) +
-  geom_line() +
-  labs(title = "Temperature Evolution Over Time",
-       x = "Date", y = "Temperature (°C)") +
-  theme_minimal()
-grid()
+# Load the data
+data_temp <- read.csv(here("data", "Cleaned_Stations_Data_With_Names.csv"))
+
+# Filter data for Nyon and remove any rows with NA in TAVG_C
+data_nyon <- data_temp %>%
+  filter(station_name == "Nyon") %>%
+  select(DATE, TAVG_C) %>%
+  mutate(DATE = as.Date(DATE)) %>%
+  filter(!is.na(TAVG_C))
 ```
 
-```{r}
-install.packages("pxR")
-library(pxR)
-library(dplyr)
-data <- read.px(here::here("data", "px-x-1106010100_104.px"))
-data_df <- as.data.frame(data)
-head(data_df)
+We ensure that we have the necessary data for the analysis by filtering the temperature data for Nyon and removing any rows with missing values. We removed `r sum(is.na(data_temp$TAVG_C))` rows.
 
+# Block Maxima Approach (GEV Distribution)
 
-# Aggregate data by Jahr and sum the value column
-casualties_per_year <- data_df %>%
-  group_by(Jahr) %>%
-  summarize(total_casualties = sum(value))
+We calculate the annual maximum temperatures for Nyon and fit a GEV distribution to these maxima.
 
-# View the result
-print(casualties_per_year)
-
-
-# Install ggplot2 if you haven't already
-install.packages("ggplot2")
-
-# Load the ggplot2 package
-library(ggplot2)
-
-# Create a line plot of total casualties per year
-ggplot(casualties_per_year, aes(x = Jahr, y = total_casualties)) +
-  geom_line(color = "blue") +
-  geom_point(color = "red") +
-  labs(title = "Total Casualties per Year",
-       x = "Year",
-       y = "Number of Casualties") +
-  theme_minimal()
+```{r echo = FALSE}
+# Calculate annual maximum temperatures
+annual_maxima_nyon <- data_nyon %>%
+  mutate(Year = year(DATE)) %>%
+  group_by(Year) %>%
+  summarize(MaxTemp = max(TAVG_C), .groups = 'drop')
 ```
+
+```{r echo = FALSE}
+# Fit a GEV distribution to the annual maxima
+gev_fit <- fevd(annual_maxima_nyon$MaxTemp, type = "GEV")
+```
+
+```{r echo = FALSE}
+# Diagnostic plots for the GEV fit
+par(mfrow = c(2, 2))
+plot(gev_fit)
+```
+
+We have here the diagnostic plots for the GEV fit, which include the quantile-quantile plot, the return level plot, the probability plot, and the density plot. We see that overal the fit is good.
+
+```{r echo = FALSE}
+# Calculate return levels for 10, 50, and 100-year return periods
+gev_return_levels <- return.level(gev_fit, return.period = c(10, 50, 100))
+```
+
+# Peaks-over-Threshold Approach (GPD Distribution)
+
+```{r echo = FALSE}
+# Define a threshold at the 95th percentile
+threshold_nyon <- quantile(data_nyon$TAVG_C, 0.95)
+
+# Number of exceedances over the threshold
+num_exceedances <- sum(data_nyon$TAVG_C > threshold_nyon)
+```
+
+We now apply the Peaks-over-Threshold (POT) approach using a suitable threshold. With a 95% threshold, we have `r num_exceedances` exceedances over the threshold.
+
+```{r echo = FALSE}
+# Fit a GPD to the exceedances
+gpd_fit <- fevd(TAVG_C, data = data_nyon, threshold = threshold_nyon, type = "GP")
+```
+
+```{r echo = FALSE}
+# Diagnostic plots for the GPD fit
+par(mfrow = c(2, 2))
+plot(gpd_fit)
+```
+
+Again, we have the diagnostic plots for the GPD fit, which include the quantile-quantile plot, the return level plot, the probability plot, and the density plot. We see that overal the fit is good.
+
+```{r echo = FALSE}
+# Calculate return levels for 10, 50, and 100-year return periods
+gpd_return_levels <- return.level(gpd_fit, return.period = c(10, 50, 100))
+```
+
+# Our results
+
+## Based on the GEV model fit, we can conclude that:
+
+### Parameter Estimates:
+
+- The location parameter is `r round(gev_fit$results$par['location'], 2)`.
+- The scale parameter is `r round(gev_fit$results$par['scale'], 2)`.
+- The shape parameter is `r round(gev_fit$results$par['shape'], 2)`.
+
+### Return Levels:
+
+- The 10-year return level is `r round(gev_return_levels[1], 2)` degrees Celsius.
+- The 50-year return level is `r round(gev_return_levels[2], 2)` degrees Celsius.
+- The 100-year return level is `r round(gev_return_levels[3], 2)` degrees Celsius.
+
+## For the POT approach:
+
+### Threshold Selection:
+
+The threshold was set at the 95th percentile, which is `r round(threshold_nyon, 2)` degrees Celsius.
+
+### Number of Exceedances:
+
+There are `r num_exceedances` exceedances over the threshold.
+
+### GPD Fit and Return Levels:
+
+If the GPD model was successfully fitted, the return levels are:
+
+- The 10-year return level is `r if (exists('gpd_return_levels')) round(gpd_return_levels[1], 2) else 'N/A'` degrees Celsius.
+- The 50-year return level is `r if (exists('gpd_return_levels')) round(gpd_return_levels[2], 2) else 'N/A'` degrees Celsius.
+- The 100-year return level is `r if (exists('gpd_return_levels')) round(gpd_return_levels[3], 2) else 'N/A'` degrees Celsius.
+
+### Comparison of Approaches:
+
+The GEV model uses annual maxima and provides estimates based on the most extreme values each year. In contrast, the POT approach uses all values exceeding a high threshold, potentially providing more data for estimation.
+
+## Conclusions:
+
+The GEV distribution appears to fit the annual maximum temperatures reasonably well, as indicated by the diagnostic plots. Comparing the return levels from both approaches allows us to assess the differences in predicted extreme temperature events. The choice between the block maxima and POT approaches may depend on the specific context and data availability.
+
+
 

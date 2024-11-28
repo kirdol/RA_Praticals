@@ -1,0 +1,55 @@
+
+```{r}
+# Load Geneva temperature and precipitation data
+GE_temp_prec <- read.table(here::here("data", "LA-climate-reports-tables-homogenized_GVE.txt"), header = FALSE, skip = 28, col.names = c("Year", "Month", "Temperature", "Precipitation"))
+
+# First lines
+head(GE_temp_prec)
+
+# Convert Year and Month to a Date format
+data <- GE_temp_prec %>%
+  mutate(Date = as.Date(paste(Year, Month, "01", sep = "-")))
+
+# Plot the temperature over time
+ggplot(data, aes(x = Date, y = Temperature)) +
+  geom_line() +
+  labs(title = "Temperature Evolution Over Time",
+       x = "Date", y = "Temperature (°C)") +
+  theme_minimal()
+grid()
+```
+
+```{r}
+install.packages("pxR")
+library(pxR)
+library(dplyr)
+data <- read.px(here::here("data", "px-x-1106010100_104.px"))
+data_df <- as.data.frame(data)
+head(data_df)
+
+
+# Aggregate data by Jahr and sum the value column
+casualties_per_year <- data_df %>%
+  group_by(Jahr) %>%
+  summarize(total_casualties = sum(value))
+
+# View the result
+print(casualties_per_year)
+
+
+# Install ggplot2 if you haven't already
+install.packages("ggplot2")
+
+# Load the ggplot2 package
+library(ggplot2)
+
+# Create a line plot of total casualties per year
+ggplot(casualties_per_year, aes(x = Jahr, y = total_casualties)) +
+  geom_line(color = "blue") +
+  geom_point(color = "red") +
+  labs(title = "Total Casualties per Year",
+       x = "Year",
+       y = "Number of Casualties") +
+  theme_minimal()
+```
+
