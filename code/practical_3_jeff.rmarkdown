@@ -1,0 +1,54 @@
+# Introduction
+
+In this part, we will discuss the return periods & probability analysis of heatwaves in Switzerland.
+
+# Data Loading and Preparation
+
+
+
+```{r echo = FALSE, message = FALSE}
+# load the required packages and install them if they are not.
+source(here::here("code","setup.R"))
+
+# Load the data
+data_temp <- read.csv(here("data", "Cleaned_Stations_Data_With_Names.csv"))
+```
+
+
+
+# Return Period
+> What is the return period of extreme temperature events exceeding a specific threshold (e.g., 35°C)? 
+
+
+
+```{r}
+# Convert DATE column to Date type
+data_temp$DATE <- as.Date(data_temp$DATE)
+
+# Filter for maximum temperatures
+max_temps <- data_temp$TMAX_C
+
+# Calculate return period
+threshold <- 35
+exceedances <- max_temps[max_temps > threshold]
+num_exceedances <- length(exceedances)
+years_covered <- length(unique(format(data_temp$DATE, "%Y")))
+return_period <- years_covered / num_exceedances
+cat("Return period for temperatures > 35°C:", return_period, "years\n")
+
+# Fit GEV distribution
+gev_fit <- fgev(max_temps, method = "mle")
+
+# Current record high temperature
+current_record <- max(max_temps, na.rm = TRUE)
+
+# Probability of exceeding the current record
+prob_exceed <- 1 - pgev(current_record, loc = gev_fit$estimate["loc"], 
+                        scale = gev_fit$estimate["scale"], 
+                        shape = gev_fit$estimate["shape"])
+
+# Probability of observing a new record in the next decade
+prob_next_decade <- 1 - (1 - prob_exceed)^10
+cat("Probability of observing a new record within the next decade:", prob_next_decade, "\n")
+```
+

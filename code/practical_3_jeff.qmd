@@ -1,6 +1,6 @@
 # Introduction
 
-In this part, we will discuss the return periods & probability analysis of heatwaves in Switzerland.
+In this part, we will discuss the return periods & probability analysis of heatwaves in Switzerland. This part follows the GEV distributions part.
 
 # Data Loading and Preparation
 
@@ -10,11 +10,69 @@ source(here::here("code","setup.R"))
 
 # Load the data
 data_temp <- read.csv(here("data", "Cleaned_Stations_Data_With_Names.csv"))
+```
 
-# Filter data for Nyon and remove any rows with NA in TAVG_C
+```{r}
+# Load necessary libraries
+library(evd)
+library(dplyr)
+
+# Load and filter data for Nyon
 data_nyon <- data_temp %>%
   filter(station_name == "Nyon") %>%
-  select(DATE, TAVG_C) %>%
+  select(DATE, TMAX_C) %>%
   mutate(DATE = as.Date(DATE)) %>%
-  filter(!is.na(TAVG_C))
+  filter(!is.na(TMAX_C))
+
+# Calculate annual maximum temperatures for Nyon
+annual_maxima_nyon <- data_nyon %>%
+  mutate(Year = format(DATE, "%Y")) %>%
+  group_by(Year) %>%
+  summarize(MaxTemp = max(TMAX_C, na.rm = TRUE), .groups = 'drop')
+
+# Fit a GEV distribution to the annual maxima
+gev_fit <- fevd(annual_maxima_nyon$MaxTemp, type = "GEV")
+
+# Diagnostic plots for the GEV fit
+par(mfrow = c(2, 2))
+plot(gev_fit)
+
+# Extract the GEV parameters
+gev_params <- gev_fit$results$par
+
+# Probability of exceeding 35°C
+prob_35 <- 1 - pgev(35, 
+                    gev_params["location"], 
+                    gev_params["scale"], 
+                    gev_params["shape"])
+
+# Return period (years) for 35°C
+return_period_35 <- 1 / prob_35
+
+# Display the results
+cat("Probability of exceeding 35°C in Nyon:", prob_35, "\n")
+cat("Return period for 35°C in Nyon:", return_period_35, "years\n")
+```
+
+
+
+# Return Period
+> What is the return period of extreme temperature events exceeding a specific threshold (e.g., 35°C)? 
+
+```{r}
+# Extract the GEV parameters
+gev_params <- gev_fit$results$par
+
+# Probability of exceeding 35°C
+prob_35 <- 1 - pgev(35, 
+                    gev_params["location"], 
+                    gev_params["scale"], 
+                    gev_params["shape"])
+
+# Return period (years) for 35°C
+return_period_35 <- 1 / prob_35
+
+# Display the results
+cat("Probability of exceeding 35°C in Nyon:", prob_35, "\n")
+cat("Return period for 35°C in Nyon:", return_period_35, "years\n")
 ```
