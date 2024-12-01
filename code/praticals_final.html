@@ -6,8 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Lodrik Adam, Alexandra Boado, Sophie Daya, Jeff Macaraeg, Julien Perini">
-<meta name="dcterms.date" content="2024-11-14">
+<meta name="author" content="Lodrik Adam, Sophie Daya, Jeff Macaraeg, Julien Perini, Alexandra Maria Santana Boado">
+<meta name="dcterms.date" content="2024-12-01">
 
 <title>Pratical 1 - Group 01</title>
 <style>
@@ -89,6 +89,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#d-fit-t-distribution-compare-with-normal-via-qq-plot-analysis" id="toc-d-fit-t-distribution-compare-with-normal-via-qq-plot-analysis" class="nav-link" data-scroll-target="#d-fit-t-distribution-compare-with-normal-via-qq-plot-analysis">d) Fit t-distribution, compare with Normal via QQ-plot analysis</a></li>
   <li><a href="#e-compare-t-distribution-and-normal-tails" id="toc-e-compare-t-distribution-and-normal-tails" class="nav-link" data-scroll-target="#e-compare-t-distribution-and-normal-tails">e) Compare t-distribution and normal tails</a></li>
   </ul></li>
+  <li><a href="#part-2-financial-time-series-heteroskedasticity-and-the-random-walk-hypothesis" id="toc-part-2-financial-time-series-heteroskedasticity-and-the-random-walk-hypothesis" class="nav-link" data-scroll-target="#part-2-financial-time-series-heteroskedasticity-and-the-random-walk-hypothesis">Part 2: Financial time series heteroskedasticity and the random walk hypothesis</a>
+  <ul class="collapse">
+  <li><a href="#a-acf-negative-log-returns" id="toc-a-acf-negative-log-returns" class="nav-link" data-scroll-target="#a-acf-negative-log-returns">a) ACF &amp; negative log returns</a></li>
+  <li><a href="#b-ljung-box-procedure" id="toc-b-ljung-box-procedure" class="nav-link" data-scroll-target="#b-ljung-box-procedure">b) Ljung-Box procedure</a></li>
+  <li><a href="#c-arima-models-for-the-negative-log-returns-series" id="toc-c-arima-models-for-the-negative-log-returns-series" class="nav-link" data-scroll-target="#c-arima-models-for-the-negative-log-returns-series">c) ARIMA models for the negative log returns series</a></li>
+  <li><a href="#d-garch-models" id="toc-d-garch-models" class="nav-link" data-scroll-target="#d-garch-models">d) GARCH models</a></li>
+  <li><a href="#e-residual-serial-correlation" id="toc-e-residual-serial-correlation" class="nav-link" data-scroll-target="#e-residual-serial-correlation">e) Residual serial correlation</a></li>
+  <li><a href="#f-model-comparison" id="toc-f-model-comparison" class="nav-link" data-scroll-target="#f-model-comparison">f) Model Comparison</a></li>
+  </ul></li>
   <li><a href="#part-3-financial-returns-and-normality" id="toc-part-3-financial-returns-and-normality" class="nav-link" data-scroll-target="#part-3-financial-returns-and-normality">Part 3: Financial returns and normality</a>
   <ul class="collapse">
   <li><a href="#a-check-bitcoin-eth-dependence-using-correlation" id="toc-a-check-bitcoin-eth-dependence-using-correlation" class="nav-link" data-scroll-target="#a-check-bitcoin-eth-dependence-using-correlation">a) Check Bitcoin-ETH dependence using correlation</a></li>
@@ -117,14 +126,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Lodrik Adam, Alexandra Boado, Sophie Daya, Jeff Macaraeg, Julien Perini </p>
+             <p>Lodrik Adam, Sophie Daya, Jeff Macaraeg, Julien Perini, Alexandra Maria Santana Boado </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 14, 2024</p>
+      <p class="date">December 1, 2024</p>
     </div>
   </div>
   
@@ -154,7 +163,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="part-1-financial-returns-and-normality" class="level1">
 <h1>Part 1: Financial returns and normality</h1>
-<p>The working directory is set to: /Users/lodrik/Documents/GitHub/RA_Praticals</p>
+<p>The working directory is set to: /Users/jeffmacaraeg/Documents/GitHub/RA_Praticals</p>
 <section id="a-load-bitcoin-data-and-assess-price-stationarity" class="level2">
 <h2 class="anchored" data-anchor-id="a-load-bitcoin-data-and-assess-price-stationarity">a) Load Bitcoin data and assess price stationarity</h2>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -561,16 +570,544 @@ Question
 </div>
 </div>
 <p>Visually, the tails of the t-distribution are heavier than those of the normal distribution. This means that the t-distribution assigns more probability to extreme events than the normal distribution. Therefore, we can expect more extreme, unexpected events in the t-distribution than in the normal distribution. This observation is consistent with the QQ-plot analysis in <a href="#d-fit-t-distribution-compare-with-normal-via-qq-plot-analysis">question d)</a>, where the t-distribution was a better fit for the negative log returns than the normal distribution.</p>
+</section>
+</section>
+<section id="part-2-financial-time-series-heteroskedasticity-and-the-random-walk-hypothesis" class="level1">
+<h1>Part 2: Financial time series heteroskedasticity and the random walk hypothesis</h1>
+<p>Another crucial hypothesis in asset pricing is the so-called homoscedasticity, i.e.&nbsp;constant variance of theresiduals. We would also like to check this assumption. We use the same Bitcoin data as in Part 1.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load the required packages and install them if they are not.</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"code"</span>,<span class="st">"setup.R"</span>))</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading the data</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>crypto_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"crypto_data.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># getiing the working directory</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>wd <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>()</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading the data</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>crypto_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"crypto_data.csv"</span>))</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the Bitcoin prices</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>bitcoin_prices <span class="ot">&lt;-</span> crypto_data<span class="sc">$</span>Bitcoin</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a function to compute negative log returns</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>negative_log_returns <span class="ot">&lt;-</span> <span class="cf">function</span>(prices) {</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span><span class="fu">diff</span>(<span class="fu">log</span>(prices)))</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the fucntion on Bitcoin prices</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>neg_log_returns_bitcoin <span class="ot">&lt;-</span> <span class="fu">negative_log_returns</span>(bitcoin_prices)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<section id="a-acf-negative-log-returns" class="level2">
+<h2 class="anchored" data-anchor-id="a-acf-negative-log-returns">a) ACF &amp; negative log returns</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Plot the ACF of the raw series as well as the negative log returns. Which one do you think are easier to model?</p>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>)) </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Tracer l'ACF de la série brute des prix du Bitcoin</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(bitcoin_prices, <span class="at">main =</span> <span class="st">"ACF of Raw Bitcoin Prices"</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Tracer l'ACF des rendements logarithmiques négatifs (bitcoin_log_returns)</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(neg_log_returns_bitcoin, <span class="at">main =</span> <span class="st">"ACF of Negative Log Returns"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ol type="1">
+<li>ACF or Raw Bitcoin Prices: The ACF plot for the Raw Bictoin Prices shows strong autocorrelation. The values are strongly correlated with their past values. This indicates that the raw series is non-stationary and has a long-term dependency.</li>
+<li>ACF of Negative Log Returns: The ACF of Negative Log Returns shows that most of the correlations at higher lags fall withing the confidence interval. It implies that the negative log returns are more likely to be stationary and have less long-term dependence.</li>
+</ol>
+<p>Conclusion: The Negative Log Returns are likely easier to model due to their more stationary nature and lack of significant autocorrelation.</p>
+</section>
+<section id="b-ljung-box-procedure" class="level2">
+<h2 class="anchored" data-anchor-id="b-ljung-box-procedure">b) Ljung-Box procedure</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use a Ljung-Box procedure to formally test for (temporal) serial dependence in the raw series and in the negative log return series. What is your conclusion?</p>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply Ljung-Box test on raw Bitcoin prices</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>ljung_box_raw <span class="ot">&lt;-</span> <span class="fu">Box.test</span>(bitcoin_prices, <span class="at">lag =</span> <span class="dv">20</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply Ljung-Box test on negative log returns</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>ljung_box_returns <span class="ot">&lt;-</span> <span class="fu">Box.test</span>(neg_log_returns_bitcoin, <span class="at">lag =</span> <span class="dv">20</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print results</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ljung_box_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Box-Ljung test
+
+data:  bitcoin_prices
+X-squared = 26873, df = 20, p-value &lt; 2.2e-16</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ljung_box_returns)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Box-Ljung test
+
+data:  neg_log_returns_bitcoin
+X-squared = 33.356, df = 20, p-value = 0.03082</code></pre>
+</div>
+</div>
+<p>The Ljung-Box test checks for serial dependence (autocorrelation) in the series. If the p-value is small (typically &lt; 0.05), it suggests that there is serial dependence, meaning the series is not independent over time.</p>
+<p>For the raw series: Since price data tends to show trends, we often expect serial dependence. For the negative log returns: These are typically expected to be more random (i.e., closer to white noise), so the test might indicate less serial dependence.</p>
+<p>Based on the results of the Ljung-Box tests: For the raw Bitcoin prices: - Raw Bictoin Prices: p-value &lt; 2.2e-16, the p-value is extremely small, which mean that we reject the null hypothesis of no autocorrelation in the raw Bictoin prices. The values are highly dependent on previous values, it confirms that the series is non-stationary. - Negative Log Returns: p-value = 0.03082, the p-value is also small, but higher than the raw prices. It indicates that there is still some autocorrelation in the series, although it is less pronounced compared to the raw Bitcoin prices. Ideally, negative log returns should behave more likke white noise, meaning no serial dependence</p>
+</section>
+<section id="c-arima-models-for-the-negative-log-returns-series" class="level2">
+<h2 class="anchored" data-anchor-id="c-arima-models-for-the-negative-log-returns-series">c) ARIMA models for the negative log returns series</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Propose ARIMA models for the negative log returns series, based on visualization tools (e.g.&nbsp;ACF, PACF). Select an ARIMA model using auto.arima() (forecast package) for the negative log returns series. Comment on the difference. Assess the residuals of the resulting models.</p>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>)) </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Visualize ACF and PACF for negative log returns</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(neg_log_returns_bitcoin, <span class="at">main =</span> <span class="st">"ACF of Negative Log Returns"</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">pacf</span>(neg_log_returns_bitcoin, <span class="at">main =</span> <span class="st">"PACF of Negative Log Returns"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Use auto.arima() to find the best ARIMA model for negative log returns</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>auto_arima_model <span class="ot">&lt;-</span> <span class="fu">auto.arima</span>(neg_log_returns_bitcoin)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(auto_arima_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: neg_log_returns_bitcoin 
+ARIMA(2,0,2) with non-zero mean 
+
+Coefficients:
+          ar1      ar2     ma1     ma2   mean
+      -0.0520  -0.5415  0.0853  0.4479  1e-04
+s.e.   0.1717   0.1664  0.1824  0.1773  0e+00
+
+sigma^2 = 2.029e-06:  log likelihood = 7391.82
+AIC=-14771.65   AICc=-14771.59   BIC=-14740.02
+
+Training set error measures:
+                        ME        RMSE          MAE     MPE     MAPE      MASE
+Training set -1.965777e-07 0.001421946 0.0009423239 100.013 131.3896 0.7133069
+                   ACF1
+Training set 0.00455059</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Plot residuals of the ARIMA model to assess the goodness of fit</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">checkresiduals</span>(auto_arima_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-32-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Ljung-Box test
+
+data:  Residuals from ARIMA(2,0,2) with non-zero mean
+Q* = 4.7774, df = 6, p-value = 0.5727
+
+Model df: 4.   Total lags used: 10</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Additional: Ljung-Box test on residuals to check if they are white noise</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Box.test</span>(<span class="fu">residuals</span>(auto_arima_model), <span class="at">type=</span><span class="st">"Ljung-Box"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Box-Ljung test
+
+data:  residuals(auto_arima_model)
+X-squared = 0.029861, df = 1, p-value = 0.8628</code></pre>
+</div>
+</div>
+<p>The results from the ARIMA model fitting for the negative log returns of Bitcoin and the residual analysis suggest the following:</p>
+<p>ARIMA Model: The selected ARIMA model is ARIMA(2,0,2), meaning:</p>
+<p>AR(2): Two autoregressive terms are included. MA(2): Two moving average terms are included. d = 0: No differencing was applied, indicating that the series is already stationary (which aligns with the fact that negative log returns tend to be stationary). Coefficients:</p>
+<p>The AR1 and AR2 coefficients are -0.0520 and -0.5415, respectively. The MA1 and MA2 coefficients are 0.0853 and 0.4479, respectively. The mean of the series is very close to zero (1e-04). Error metrics:</p>
+<p>RMSE (Root Mean Square Error): 0.00142, which is relatively low, indicating that the model fits the data well. MAE (Mean Absolute Error): 0.000942, which is also quite low. ACF1 of residuals: 0.00455, suggesting that the residuals do not exhibit significant autocorrelation. Ljung-Box Test: The Ljung-Box test on residuals gives a p-value of 0.8628, which is much larger than 0.05. This indicates that there is no significant autocorrelation left in the residuals, implying that the model fits the data well. Conclusion: The ARIMA(2,0,2) model selected by auto.arima() seems to be a good fit for the negative log returns of Bitcoin, as evidenced by the low RMSE and MAE, as well as the results of the Ljung-Box test. The residuals behave like white noise, meaning that the model has successfully captured the patterns in the data. There is no significant temporal dependence left in the residuals, which supports the adequacy of this ARIMA model for the series. Overall, the ARIMA model chosen by auto.arima() fits the data well and leaves no significant autocorrelation in the residuals.</p>
+</section>
+<section id="d-garch-models" class="level2">
+<h2 class="anchored" data-anchor-id="d-garch-models">d) GARCH models</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Fit GARCH models to the negative log returns with both normal and standardized t-distributions, with order (1, 1), using the garchFit() function from the fGarch library. Assess the quality of the fit by evaluating the residuals.</p>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit GARCH(1,1) model with normal distribution</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>garch_normal <span class="ot">&lt;-</span> <span class="fu">garchFit</span>(<span class="sc">~</span> <span class="fu">garch</span>(<span class="dv">1</span>, <span class="dv">1</span>), <span class="at">data =</span> neg_log_returns_bitcoin, <span class="at">cond.dist =</span> <span class="st">"norm"</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary of the model</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(garch_normal)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit GARCH(1,1) model with standardized t-distribution</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>garch_t <span class="ot">&lt;-</span> <span class="fu">garchFit</span>(<span class="sc">~</span> <span class="fu">garch</span>(<span class="dv">1</span>, <span class="dv">1</span>), <span class="at">data =</span> neg_log_returns_bitcoin, <span class="at">cond.dist =</span> <span class="st">"std"</span>)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary of the model</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(garch_t)</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Residuals from the normal GARCH model</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>residuals_normal <span class="ot">&lt;-</span> <span class="fu">residuals</span>(garch_normal)</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Residuals from the t-distribution GARCH model</span></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>residuals_t <span class="ot">&lt;-</span> <span class="fu">residuals</span>(garch_t)</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>)) </span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot residuals for the normal GARCH model</span></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(residuals_normal, <span class="at">main =</span> <span class="st">"Residuals of GARCH(1,1) with Normal Distribution"</span>, <span class="at">type =</span> <span class="st">"l"</span>)</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot residuals for the t-distribution GARCH model</span></span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(residuals_t, <span class="at">main =</span> <span class="st">"Residuals of GARCH(1,1) with t-Distribution"</span>, <span class="at">type =</span> <span class="st">"l"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>)) </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ACF of residuals for the normal GARCH model</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(residuals_normal, <span class="at">main =</span> <span class="st">"ACF of Residuals (Normal GARCH Model)"</span>)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ACF of residuals for the t-distribution GARCH model</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(residuals_t, <span class="at">main =</span> <span class="st">"ACF of Residuals (t-Distribution GARCH Model)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ljung-Box test for normal GARCH model residuals</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Box.test</span>(residuals_normal, <span class="at">lag =</span> <span class="dv">20</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Ljung-Box test for t-distribution GARCH model residuals</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="fu">Box.test</span>(residuals_t, <span class="at">lag =</span> <span class="dv">20</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The results for fitting GARCH(1,1) models with both normal and standardized t-distributions to the negative log returns are as follows:</p>
+<p>GARCH(1,1) with Normal Distribution:</p>
+<p>The log-likelihood value is 7632.108. The coefficients for the GARCH model (omega, alpha1, and beta1) are significant (p-values &lt; 0.05), indicating that the model is well-fitted. The Ljung-Box test for the residuals shows a p-value of 0.3419 for 10 lags, which indicates no significant autocorrelation in the residuals, meaning the model fits well in terms of residual serial dependence. GARCH(1,1) with Standardized t-Distribution:</p>
+<p>The log-likelihood value is 7736.355, which is slightly better than the normal distribution model, indicating a potentially better fit. The coefficients are also significant (p-values &lt; 0.05), with the shape parameter of the t-distribution (shape = 4.28) indicating a heavier tail than the normal distribution. The Ljung-Box test for the residuals shows a p-value of 0.3507 for 10 lags, similar to the normal model, suggesting that there is no significant autocorrelation in the residuals. Conclusion: Both the GARCH(1,1) models (with normal and t-distributions) provide a good fit, with no significant residual autocorrelation based on the Ljung-Box test. However, the GARCH model with the standardized t-distribution has a higher log-likelihood and captures heavier tails (as indicated by the shape parameter), suggesting that it may be a better fit for the data due to the presence of tail risk or more extreme variations in the negative log returns of Bitcoin.</p>
+</section>
+<section id="e-residual-serial-correlation" class="level2">
+<h2 class="anchored" data-anchor-id="e-residual-serial-correlation">e) Residual serial correlation</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Residual serial correlation can be present when fitting a GARCH directly on the negative log returns. Hence, in order to circumvent this problem, it is possible to use the following two-step approach:</p>
+<p>• Fit an ARIMA(p, d, q) on the negative log returns with the choices p, d and q from part (c);</p>
+<p>• Fit a GARCH(1, 1) on the residuals of the ARIMA(p, d, q) fit.</p>
+<p>Proceed with the above recipe. Assess the quality of the above fit.</p>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Fit an ARIMA(p, d, q) model on the negative log returns</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># From part (c), we decided ARIMA(2, 0, 2)</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>arima_model <span class="ot">&lt;-</span> <span class="fu">arima</span>(neg_log_returns_bitcoin, <span class="at">order =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">2</span>))</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the residuals from the ARIMA model</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>arima_residuals <span class="ot">&lt;-</span> <span class="fu">residuals</span>(arima_model)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Fit a GARCH(1,1) model on the residuals from the ARIMA model</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>garch_model_arima_residuals <span class="ot">&lt;-</span> <span class="fu">garchFit</span>(<span class="sc">~</span> <span class="fu">garch</span>(<span class="dv">1</span>, <span class="dv">1</span>), <span class="at">data =</span> arima_residuals, <span class="at">cond.dist =</span> <span class="st">"norm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Series Initialization:
+ ARMA Model:                arma
+ Formula Mean:              ~ arma(0, 0)
+ GARCH Model:               garch
+ Formula Variance:          ~ garch(1, 1)
+ ARMA Order:                0 0
+ Max ARMA Order:            0
+ GARCH Order:               1 1
+ Max GARCH Order:           1
+ Maximum Order:             1
+ Conditional Dist:          norm
+ h.start:                   2
+ llh.start:                 1
+ Length of Series:          1439
+ Recursion Init:            mci
+ Series Scale:              0.001422441
+
+Parameter Initialization:
+ Initial Parameters:          $params
+ Limits of Transformations:   $U, $V
+ Which Parameters are Fixed?  $includes
+ Parameter Matrix:
+                      U            V        params includes
+    mu     -0.001381975 1.381975e-03 -0.0001381975     TRUE
+    omega   0.000001000 1.000000e+02  0.1000000000     TRUE
+    alpha1  0.000000010 1.000000e+00  0.1000000000     TRUE
+    gamma1 -0.999999990 1.000000e+00  0.1000000000    FALSE
+    beta1   0.000000010 1.000000e+00  0.8000000000     TRUE
+    delta   0.000000000 2.000000e+00  2.0000000000    FALSE
+    skew    0.100000000 1.000000e+01  1.0000000000    FALSE
+    shape   1.000000000 1.000000e+01  4.0000000000    FALSE
+ Index List of Parameters to be Optimized:
+    mu  omega alpha1  beta1 
+     1      2      3      5 
+ Persistence:                  0.9 
+
+
+--- START OF TRACE ---
+Selected Algorithm: nlminb 
+
+R coded nlminb Solver: 
+
+  0:     1877.5170: -0.000138197 0.100000 0.100000 0.800000
+  1:     1855.7714: -0.000138198 0.0726602 0.109431 0.786204
+  2:     1839.1695: -0.000138198 0.0680171 0.139755 0.795457
+  3:     1829.7062: -0.000138198 0.0532235 0.143295 0.790116
+  4:     1810.0200: -0.000138198 0.0267149 0.199381 0.807723
+  5:     1809.1646: -0.000138198 0.0219331 0.198987 0.805030
+  6:     1808.7267: -0.000138198 0.0249406 0.202100 0.801633
+  7:     1808.3177: -0.000138199 0.0257164 0.207720 0.792203
+  8:     1807.4361: -0.000138210 0.0315621 0.224320 0.778984
+  9:     1806.9719: -0.000138218 0.0251042 0.230515 0.781780
+ 10:     1806.9152: -0.000138230 0.0268312 0.234701 0.782044
+ 11:     1806.6955: -0.000138240 0.0271249 0.235641 0.777616
+ 12:     1806.4274: -0.000138242 0.0278457 0.249636 0.766085
+ 13:     1806.3620: -0.000138242 0.0290636 0.249980 0.766517
+ 14:     1806.3497: -0.000138251 0.0292906 0.250326 0.765248
+ 15:     1806.3450: -0.000138323 0.0305057 0.251714 0.763384
+ 16:     1806.3146: -0.000138526 0.0299426 0.253707 0.762550
+ 17:     1806.3008: -0.000139110 0.0300663 0.256681 0.761179
+ 18:     1806.2912: -0.000139772 0.0303903 0.258077 0.759281
+ 19:     1806.2891: -0.000140480 0.0304056 0.259412 0.758500
+ 20:     1806.2883: -0.000141953 0.0305967 0.259976 0.757903
+ 21:     1806.2879: -0.000145229 0.0306869 0.260363 0.757537
+ 22:     1806.2873: -0.000152139 0.0307685 0.260698 0.757217
+ 23:     1806.2854: -0.000177344 0.0309333 0.261376 0.756569
+ 24:     1806.2808: -0.000251181 0.0312215 0.262556 0.755442
+ 25:     1806.2700: -0.000436287 0.0316540 0.264316 0.753760
+ 26:     1806.2435: -0.000905201 0.0323112 0.266960 0.751230
+ 27:     1806.1898: -0.00138197 0.0322376 0.266573 0.751590
+ 28:     1806.1562: -0.00138197 0.0309672 0.261581 0.756386
+ 29:     1806.1541: -0.00138197 0.0305619 0.259903 0.757984
+ 30:     1806.1541: -0.00138197 0.0305834 0.259961 0.757926
+ 31:     1806.1541: -0.00138197 0.0305829 0.259962 0.757926
+
+Final Estimate of the Negative LLH:
+ LLH:  -7627.039    norm LLH:  -5.300236 
+           mu         omega        alpha1         beta1 
+-1.965777e-06  6.187958e-08  2.599616e-01  7.579261e-01 
+
+R-optimhess Difference Approximated Hessian Matrix:
+                  mu         omega        alpha1         beta1
+mu     -1.554923e+09  2.507936e+11  9.975053e+04 -2.026553e+04
+omega   2.507936e+11 -1.709771e+16 -6.864037e+09 -1.486634e+10
+alpha1  9.975053e+04 -6.864037e+09 -6.383094e+03 -9.576435e+03
+beta1  -2.026553e+04 -1.486634e+10 -9.576435e+03 -1.823892e+04
+attr(,"time")
+Time difference of 0.01284122 secs
+
+--- END OF TRACE ---
+
+
+Time to Estimate Parameters:
+ Time difference of 0.05238605 secs</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary of the GARCH(1,1) model</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(garch_model_arima_residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Title:
+ GARCH Modelling 
+
+Call:
+ garchFit(formula = ~garch(1, 1), data = arima_residuals, cond.dist = "norm") 
+
+Mean and Variance Equation:
+ data ~ garch(1, 1)
+&lt;environment: 0x120b08150&gt;
+ [data = arima_residuals]
+
+Conditional Distribution:
+ norm 
+
+Coefficient(s):
+         mu        omega       alpha1        beta1  
+-1.9658e-06   6.1880e-08   2.5996e-01   7.5793e-01  
+
+Std. Errors:
+ based on Hessian 
+
+Error Analysis:
+         Estimate  Std. Error  t value Pr(&gt;|t|)    
+mu     -1.966e-06   2.566e-05   -0.077    0.939    
+omega   6.188e-08   1.534e-08    4.034 5.49e-05 ***
+alpha1  2.600e-01   2.936e-02    8.854  &lt; 2e-16 ***
+beta1   7.579e-01   2.434e-02   31.134  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Log Likelihood:
+ 7627.039    normalized:  5.300236 
+
+Description:
+ Sun Dec  1 16:32:32 2024 by user:  
+
+
+Standardised Residuals Tests:
+                                  Statistic   p-Value
+ Jarque-Bera Test   R    Chi^2  2537.823714 0.0000000
+ Shapiro-Wilk Test  R    W         0.945703 0.0000000
+ Ljung-Box Test     R    Q(10)    10.890175 0.3661383
+ Ljung-Box Test     R    Q(15)    11.971102 0.6812151
+ Ljung-Box Test     R    Q(20)    13.626059 0.8489384
+ Ljung-Box Test     R^2  Q(10)    12.237348 0.2694857
+ Ljung-Box Test     R^2  Q(15)    13.290578 0.5798648
+ Ljung-Box Test     R^2  Q(20)    14.030759 0.8289330
+ LM Arch Test       R    TR^2     12.413093 0.4130994
+
+Information Criterion Statistics:
+      AIC       BIC       SIC      HQIC 
+-10.59491 -10.58026 -10.59493 -10.58944 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the residuals from the ARIMA + GARCH model</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>))  <span class="co"># To display multiple plots together</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(arima_residuals, <span class="at">main =</span> <span class="st">"Residuals from ARIMA(2, 0, 2)"</span>, <span class="at">type =</span> <span class="st">"l"</span>)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">residuals</span>(garch_model_arima_residuals), <span class="at">main =</span> <span class="st">"Residuals from ARIMA(2, 0, 2) + GARCH(1, 1)"</span>, <span class="at">type =</span> <span class="st">"l"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))  <span class="co"># Reset plotting</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Assess the quality of the fit using the Ljung-Box test on the GARCH model residuals</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>ljung_box_test <span class="ot">&lt;-</span> <span class="fu">Box.test</span>(<span class="fu">residuals</span>(garch_model_arima_residuals), <span class="at">lag =</span> <span class="dv">20</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>)</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ljung_box_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Box-Ljung test
+
+data:  residuals(garch_model_arima_residuals)
+X-squared = 11.355, df = 20, p-value = 0.9365</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the ACF of the residuals to visually assess if there's still serial correlation</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(<span class="fu">residuals</span>(garch_model_arima_residuals), <span class="at">main =</span> <span class="st">"ACF of Residuals (ARIMA + GARCH)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-34-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Quality Assessment of the ARIMA + GARCH(1,1) Fit: Parameter Estimates:</p>
+<p>The fitted ARIMA + GARCH(1,1) model has significant coefficients for the GARCH components: Alpha1 (0.2599) and Beta1 (0.7579) are both highly significant (p-value &lt; 2e-16), indicating that the GARCH(1,1) model has captured the volatility clustering effectively. The intercept (Mu) is not significant, suggesting that the mean of the residuals is close to zero, which is expected in a well-fitted model. Log-Likelihood and AIC:</p>
+<p>The log-likelihood of the model is high (7627.039), and the AIC (-10.59491) and BIC (-10.58026) indicate a good fit for the model. Lower AIC/BIC values suggest a better model fit. Residuals Analysis:</p>
+<p>Ljung-Box Test for Serial Correlation: The p-value of the Ljung-Box test (p = 0.9365) for the residuals of the ARIMA + GARCH(1,1) model is very high, indicating no significant serial correlation. This suggests that the model has captured the dependencies in the data well, and the residuals are essentially white noise. Jarque-Bera and Shapiro-Wilk Tests for Normality: Both tests indicate non-normality of the residuals (p-value = 0.000). This is common in financial time series data, as they often exhibit heavy tails and skewness. Ljung-Box Test on Squared Residuals: The p-values for the Ljung-Box test on squared residuals are also high, indicating no remaining conditional heteroscedasticity in the model, suggesting that the GARCH model has effectively modeled the conditional variance. Conclusion:</p>
+<p>The ARIMA + GARCH(1,1) model fits the data well, capturing both the autocorrelation in the returns and the conditional heteroscedasticity (volatility clustering). The residuals show no significant autocorrelation, and the GARCH model appears to have adequately handled the volatility. The model might still exhibit non-normality, but this is expected in financial data due to extreme returns or fat tails.</p>
+</section>
+<section id="f-model-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="f-model-comparison">f) Model Comparison</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Compare the three models from the previous parts. Which is more suitable? In which of these models is the homoscedasticity assumption violated?</p>
+</div>
+</div>
+<p>Comparison of the Three Models:</p>
+<p>Model 1: GARCH(1,1) with Normal Distribution</p>
+<p>Fit: This model captured the volatility clustering well. The Ljung-Box test on residuals and squared residuals showed no significant serial correlation, indicating that the model accounted for the time-varying volatility. Homoscedasticity: By definition, a GARCH model assumes heteroscedasticity, meaning that the volatility changes over time. Therefore, the assumption of constant variance (homoscedasticity) is explicitly violated in this model. Conclusion: This model is good for capturing conditional heteroscedasticity (changing volatility), and thus it is appropriate for financial time series data where volatility clustering is observed.</p>
+<p>Model 2: GARCH(1,1) with Standardized t-Distribution</p>
+<p>Fit: Similar to the GARCH with normal distribution, this model accounts for volatility clustering and captures extreme returns better due to the heavy tails of the t-distribution. Homoscedasticity: The GARCH structure still assumes heteroscedasticity, and therefore the homoscedasticity assumption is violated in this model as well. Conclusion: This model is better suited for capturing heavy-tailed data, like extreme price movements in financial markets, while still accounting for changing volatility. It can outperform the GARCH(1,1) with a normal distribution for financial data with fat tails.</p>
+<p>Model 3: ARIMA + GARCH(1,1) (Two-Step Approach)</p>
+<p>Fit: This two-step model first applies an ARIMA to remove autocorrelation from the log returns and then applies a GARCH(1,1) to model the remaining volatility clustering. The Ljung-Box tests on residuals showed no significant serial correlation, suggesting that the ARIMA model handled the autoregressive components well, and the GARCH captured the volatility. Homoscedasticity: As in the other GARCH models, this model also assumes heteroscedasticity, meaning the homoscedasticity assumption is violated here as well. Conclusion: This model is the most comprehensive because it first removes any autocorrelation in the series (via ARIMA) before modeling the volatility. It is typically more suitable for financial time series where both autocorrelation and volatility clustering are present.</p>
+<p>Conclusion: Most Suitable Model: The ARIMA + GARCH(1,1) model is the most suitable because it addresses both the autocorrelation in the log returns and the heteroscedasticity (changing volatility). It captures both the time-varying nature of volatility and any serial dependence in the data. Homoscedasticity Violation: In all three models, the homoscedasticity assumption is violated since all models incorporate the GARCH(1,1) structure, which models conditional heteroscedasticity (changing volatility over time).</p>
 </section>
 </section>
 <section id="part-3-financial-returns-and-normality" class="level1">
@@ -590,79 +1127,18 @@ Question
 <p>Are the negative log returns of Bitcoin and ETH dependent? Compute the correlation using <code>cor.test()</code> function. Can we conclude that these series are independent?</p>
 </div>
 </div>
+<p>To answer this question, we will first plot both negative log returns and then perform a correlation test.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Negative log returns function</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>negative_log_returns <span class="ot">&lt;-</span> <span class="cf">function</span>(prices) {</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fu">diff</span>(<span class="fu">log</span>(prices))</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute negative log returns for Bitcoin and Ethereum</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>neglogret_eth <span class="ot">&lt;-</span> <span class="fu">negative_log_returns</span>(crypto_data<span class="sc">$</span>Ethereum)</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>neglogret_btc <span class="ot">&lt;-</span> <span class="fu">negative_log_returns</span>(crypto_data<span class="sc">$</span>Bitcoin)</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a sequence for time indices matching the length of negative log returns</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>time_indices <span class="ot">&lt;-</span> <span class="fu">seq_along</span>(neglogret_eth)</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data frame with time indices and negative log returns</span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>nlr_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Time =</span> time_indices,</span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">Ethereum =</span> neglogret_eth,</span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">Bitcoin =</span> neglogret_btc</span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Reshape data to long format for plotting</span></span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>nlr_long_df <span class="ot">&lt;-</span> nlr_df <span class="sc">%&gt;%</span></span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(Ethereum, Bitcoin),</span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Crypto"</span>,</span>
-<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"NegativeLogReturn"</span></span>
-<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the negative log returns of Bitcoin and Ethereum</span></span>
-<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(nlr_long_df, <span class="fu">aes</span>(<span class="at">x =</span> Time, <span class="at">y =</span> NegativeLogReturn, <span class="at">color =</span> Crypto)) <span class="sc">+</span></span>
-<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Negative Log Returns of Bitcoin and Ethereum"</span>,</span>
-<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Time (Minutes)"</span>,</span>
-<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Negative Log Return"</span></span>
-<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="praticals_final_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform correlation test between Ethereum and Bitcoin negative log returns</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>cor_test_result <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(nlr_df<span class="sc">$</span>Ethereum, nlr_df<span class="sc">$</span>Bitcoin)</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(cor_test_result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-    Pearson's product-moment correlation
-
-data:  nlr_df$Ethereum and nlr_df$Bitcoin
-t = -0.11935, df = 1437, p-value = 0.905
-alternative hypothesis: true correlation is not equal to 0
-95 percent confidence interval:
- -0.05481486  0.04853492
-sample estimates:
-        cor 
--0.00314838 </code></pre>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#No significant linear relationship between the variables (p-value = 1). However,</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co">#We cannot conclude that they are independant only based on the correlation test.</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">#There could be, for example, a non-linear relationship between the 2.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
+<p>The graph could suggest that the negative log returns of Bitcoin and Ethereum are dependent. However, we will perform a correlation test to confirm this.</p>
+<p>The computed correlation between the negative log returns of Bitcoin and Ethereum using the <code>cor.test()</code> function is -0.0031 and is not statistically significant (p-value = 0.905). However, the lack of significance in the correlation test does not necessarily imply independence, as there may be a non-linear relationship or other factors influencing the association between the two variables.</p>
 </section>
 <section id="b-analyze-bitcoin-eth-cross-correlation-function" class="level2">
 <h2 class="anchored" data-anchor-id="b-analyze-bitcoin-eth-cross-correlation-function">b) Analyze Bitcoin-ETH cross-correlation function</h2>
@@ -680,23 +1156,15 @@ Question
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate and plot the cross-correlation function (CCF)</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ccf</span>(nlr_df<span class="sc">$</span>Ethereum, nlr_df<span class="sc">$</span>Bitcoin, <span class="at">main =</span> <span class="st">"Cross-Correlation Function: Ethereum vs. Bitcoin Negative Log Returns"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="praticals_final_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-45-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#We can see a very significant spike in cross correlation at around lag 5.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
+<p>We can clearly observe a significant spike at lag 5 indicates that there is a notable correlation between Bitcoin’s returns and Ethereum’s returns when Ethereum’s returns are shifted by 5 minutes. Ethereum’s returns are correlated with past values of Bitcoin’s returns and thus may predict Etherum’s returns with a 5 minutes delay. The spike indicates the strength of the correlation. In our case, the spike at lag 5 crosses the significance threshold (horizontal dashed lines). We can say with confidence that it is statistically significant and not likely due to random noise. However, it is important to keep in mind that cross-correlation does not imply causation. Other factors or indirect relationships might also explain this pattern.</p>
 </section>
 <section id="c-assess-predictive-power-with-granger-test" class="level2">
 <h2 class="anchored" data-anchor-id="c-assess-predictive-power-with-granger-test">c) Assess predictive power with Granger test</h2>
@@ -713,46 +1181,8 @@ Question
 <p>Is one of the time series good predictor of the second? Assess whether there is any predictive power between the negative log returns of Bitcoin and ETH. You can use <code>grangertest()</code> in the <code>lmtest</code> package with carefully chosen hyperparameter <code>order</code>. What is your conclusion?</p>
 </div>
 </div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Testing if Ethereum Granger-causes Bitcoin</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>granger_test_eth_to_btc <span class="ot">&lt;-</span> <span class="fu">grangertest</span>(Bitcoin <span class="sc">~</span> Ethereum, <span class="at">order =</span> <span class="dv">5</span>, <span class="at">data =</span> nlr_df)</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(granger_test_eth_to_btc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Granger causality test
-
-Model 1: Bitcoin ~ Lags(Bitcoin, 1:5) + Lags(Ethereum, 1:5)
-Model 2: Bitcoin ~ Lags(Bitcoin, 1:5)
-  Res.Df Df      F Pr(&gt;F)
-1   1423                 
-2   1428 -5 0.5828 0.7132</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Interpretation: A very tiny p-value suggests Ethereum Granger-causes Bitcoin</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Testing if Bitcoin Granger-causes Ethereum</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>granger_test_btc_to_eth <span class="ot">&lt;-</span> <span class="fu">grangertest</span>(Ethereum <span class="sc">~</span> Bitcoin, <span class="at">order =</span> <span class="dv">5</span>, <span class="at">data =</span> nlr_df)</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(granger_test_btc_to_eth)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Granger causality test
-
-Model 1: Ethereum ~ Lags(Ethereum, 1:5) + Lags(Bitcoin, 1:5)
-Model 2: Ethereum ~ Lags(Ethereum, 1:5)
-  Res.Df Df      F    Pr(&gt;F)    
-1   1423                        
-2   1428 -5 974.03 &lt; 2.2e-16 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Interpretation: A large p-value suggests Bitcoin does not Granger-cause Ethereum</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
+<p>We performed here two grander test using the <code>grandertest()</code>function. The first tests if Ethereum’s past values do not Granger-cause Bitcoin’s returns. With a p-value of 0.7132, we cannot reject the null hypothesis. Therefore, there is no evidence to suggest that Ethereum’s past values have predictive power for Bitcoin’s returns.</p>
+<p>The second test examines if Bitcoin’s past values Granger-cause Ethereum’s returns. With a p-value of 0, Bitcoin’s past values significantly Granger-cause Ethereum’s returns, meaning there is strong evidence of predictive power.</p>
 </section>
 <section id="d-predict-mutual-impacts-of-drops" class="level2">
 <h2 class="anchored" data-anchor-id="d-predict-mutual-impacts-of-drops">d) Predict mutual impacts of drops</h2>
@@ -766,7 +1196,7 @@ Question
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Based on your answer in (c), answer the following questions:</p>
+<p>Based on your answer in <a href="#c-assess-predictive-power-with-granger-test">(c)</a>, answer the following questions:</p>
 </div>
 </div>
 <section id="d.1-predict-eth-reaction-to-bitcoin-drop" class="level3">
@@ -784,6 +1214,7 @@ Question
 <p>We observe an extreme sudden drop in Bitcoin stocks. What should we expect that will happen with ETH stocks?</p>
 </div>
 </div>
+<p>Given our results in <a href="#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling">question c)</a>, the sudden drop in Bitcoin stocks should have a significant impact on the Etherum stocks price. Given our analysis, the Ethereum stocks should drop 5 minutes (lag of 5 / <a href="#b-analyze-bitcoin-eth-cross-correlation-function">question b)</a>) after the Bitcoin stocks drop with a value close to 80% of the Bitcoin drop.</p>
 </section>
 <section id="d.2-predict-bitcoin-reaction-to-eth-drop" class="level3">
 <h3 class="anchored" data-anchor-id="d.2-predict-bitcoin-reaction-to-eth-drop">d.2) Predict Bitcoin reaction to ETH drop</h3>
@@ -800,6 +1231,7 @@ Question
 <p>We observe an extreme sudden drop in ETH stocks. What should we expect that will happen with Bitcoin stocks?</p>
 </div>
 </div>
+<p>Based on the Granger causality test results from <a href="#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling">question c)</a>, Ethereum’s past values do not Granger-cause Bitcoin’s returns, suggesting no significant predictive relationship. If Ethereum experiences an extreme sudden drop, it is less likely that Bitcoin will exhibit a direct or immediate reaction based on historical relationships. However, Bitcoin and Ethereum share common market factors and investor sentiment, so an indirect reaction (e.g., due to market-wide panic) is still possible, though it is not strongly supported by the causality analysis.</p>
 <!-- -->
 
 </section>
@@ -1279,23 +1711,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb33" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Pratical 1 - Group 01</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="an">date-format:</span><span class="co"> long</span></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> Lodrik Adam, Alexandra Boado, Sophie Daya, Jeff Macaraeg, Julien Perini</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true</span></span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-border-left: "#0d6efd"</span></span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-bg: true</span></span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="co">    highlight-style: github</span></span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="in">```{r child = c("practical_11_final.qmd", "practical_13_final.qmd")}</span></span>
-<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb45" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Pratical 1 - Group 01</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="an">date-format:</span><span class="co"> long</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> Lodrik Adam, Sophie Daya, Jeff Macaraeg, Julien Perini, Alexandra Maria Santana Boado</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-border-left: "#0d6efd"</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-bg: true</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="co">    highlight-style: github</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a><span class="in">```{r child = c("practical_11_final.qmd", "practical_12_final.qmd", "practical_13_final.qmd")}</span></span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

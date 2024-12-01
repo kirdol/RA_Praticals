@@ -1,0 +1,20 @@
+# Introduction
+
+In this part, we will discuss the return periods & probability analysis of heatwaves in Switzerland.
+
+# Data Loading and Preparation
+
+```{r echo = FALSE, message = FALSE}
+# load the required packages and install them if they are not.
+source(here::here("code","setup.R"))
+
+# Load the data
+data_temp <- read.csv(here("data", "Cleaned_Stations_Data_With_Names.csv"))
+
+# Filter data for Nyon and remove any rows with NA in TAVG_C
+data_nyon <- data_temp %>%
+  filter(station_name == "Nyon") %>%
+  select(DATE, TAVG_C) %>%
+  mutate(DATE = as.Date(DATE)) %>%
+  filter(!is.na(TAVG_C))
+```
