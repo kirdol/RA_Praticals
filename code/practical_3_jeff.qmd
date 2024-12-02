@@ -9,70 +9,148 @@ In this part, we will discuss the return periods & probability analysis of heatw
 source(here::here("code","setup.R"))
 
 # Load the data
-data_temp <- read.csv(here("data", "Cleaned_Stations_Data_With_Names.csv"))
+data <- read.csv(here("data", "Cleaned_Stations_Data_With_Names.csv"))
 ```
 
-```{r}
-# Load necessary libraries
-library(evd)
-library(dplyr)
+# Nyon
 
-# Load and filter data for Nyon
-data_nyon <- data_temp %>%
+## BM - Extract yearly maximum values & GEV (Nyon) (partie Lodrik)
+
+```{r}
+# Filter data for Nyon and remove any rows with NA in TMAX_C
+data_nyon <- data %>%
   filter(station_name == "Nyon") %>%
   select(DATE, TMAX_C) %>%
   mutate(DATE = as.Date(DATE)) %>%
   filter(!is.na(TMAX_C))
 
-# Calculate annual maximum temperatures for Nyon
+# Calculate annual maximum temperatures
 annual_maxima_nyon <- data_nyon %>%
-  mutate(Year = format(DATE, "%Y")) %>%
+  mutate(Year = year(DATE)) %>%
   group_by(Year) %>%
-  summarize(MaxTemp = max(TMAX_C, na.rm = TRUE), .groups = 'drop')
+  summarize(MaxTemp = max(TMAX_C), .groups = 'drop')
 
 # Fit a GEV distribution to the annual maxima
 gev_fit <- fevd(annual_maxima_nyon$MaxTemp, type = "GEV")
 
-# Diagnostic plots for the GEV fit
-par(mfrow = c(2, 2))
-plot(gev_fit)
+# Calculate return levels for 10, 50, and 100-year return periods
+gev_return_levels <- return.level(gev_fit, return.period = c(10, 50, 100))
 
-# Extract the GEV parameters
+# Extract GEV parameters from the fitted model
 gev_params <- gev_fit$results$par
+location <- gev_params["location"]
+scale <- gev_params["scale"]
+shape <- gev_params["shape"]
 
-# Probability of exceeding 35°C
-prob_35 <- 1 - pgev(35, 
-                    gev_params["location"], 
-                    gev_params["scale"], 
-                    gev_params["shape"])
+# Set the temperature threshold
+temp_threshold <- 35
 
-# Return period (years) for 35°C
-return_period_35 <- 1 / prob_35
+# Calculate the CDF for 35 degrees
+cdf_value <- pevd(temp_threshold, loc = location, scale = scale, shape = shape, type = "GEV")
 
-# Display the results
-cat("Probability of exceeding 35°C in Nyon:", prob_35, "\n")
-cat("Return period for 35°C in Nyon:", return_period_35, "years\n")
+# Compute the return period
+return_period <- 1 / (1 - cdf_value)
+
+# Print the result
+cat("The return period for 35 degrees Celsius is approximately", return_period, "years.\n")
 ```
 
-
-
-# Return Period
-> What is the return period of extreme temperature events exceeding a specific threshold (e.g., 35°C)? 
+# Probability of new record high temperature in Nyon
 
 ```{r}
-# Extract the GEV parameters
-gev_params <- gev_fit$results$par
+# Filter data for Nyon
+data_nyon2 <- data %>%
+  filter(station_name == "Nyon") %>%
+  select(DATE, TMAX_C)
 
-# Probability of exceeding 35°C
-prob_35 <- 1 - pgev(35, 
-                    gev_params["location"], 
-                    gev_params["scale"], 
-                    gev_params["shape"])
+# Find the highest temperature in Nyon
+highest_temp_nyon <- data_nyon2 %>%
+  filter(!is.na(TMAX_C)) %>%
+  summarize(MaxTemp = max(TMAX_C))
 
-# Return period (years) for 35°C
-return_period_35 <- 1 / prob_35
+# Print the result
+cat("The highest temperature recorded in Nyon is", highest_temp_nyon$MaxTemp, "°C.\n")
 
-# Display the results
-cat("Probability of exceeding 35°C in Nyon:", prob_35, "\n")
-cat("Return period for 35°C in Nyon:", return_period_35, "years\n")
+# Set the current record high temperature in Switzerland (example: 41.5°C)
+current_record_temp <- 39.44
+
+# Calculate the probability of exceeding the current record in a single year
+prob_exceed <- 1 - pevd(current_record_temp, loc = location, scale = scale, shape = shape, type = "GEV")
+
+# Calculate the probability of observing at least one exceedance in the next decade
+prob_record_decade <- 1 - (1 - prob_exceed)^10
+
+# Print the results
+cat("The probability of observing a new record high temperature in Switzerland within the next decade is approximately",
+    round(prob_record_decade * 100, 2), "%.\n")
 ```
+
+# Säntis
+
+```{r}
+# Filter data for Säntis and remove any rows with NA in TMAX_C
+data_santis <- data %>%
+  filter(station_name == "Säntis") %>%
+  select(DATE, TMAX_C) %>%
+  mutate(DATE = as.Date(DATE)) %>%
+  filter(!is.na(TMAX_C))
+
+# Calculate annual maximum temperatures
+annual_maxima_santis <- data_santis %>%
+  mutate(Year = year(DATE)) %>%
+  group_by(Year) %>%
+  summarize(MaxTemp = max(TMAX_C), .groups = 'drop')
+
+# Fit a GEV distribution to the annual maxima
+gev_fit2 <- fevd(annual_maxima_santis$MaxTemp, type = "GEV")
+
+# Calculate return levels for 10, 50, and 100-year return periods
+gev_return_levels2 <- return.level(gev_fit2, return.period = c(10, 50, 100))
+
+# Extract GEV parameters from the fitted model
+gev_params2 <- gev_fit2$results$par
+location2 <- gev_params2["location"]
+scale2 <- gev_params2["scale"]
+shape2 <- gev_params2["shape"]
+
+# Set the temperature threshold
+temp_threshold <- 35
+
+# Calculate the CDF for 35 degrees
+cdf_value2 <- pevd(temp_threshold, loc = location2, scale = scale2, shape = shape2, type = "GEV")
+
+# Compute the return period
+return_period2 <- 1 / (1 - cdf_value2)
+
+# Print the result
+cat("The return period for 35 degrees Celsius is approximately", return_period, "years.\n")
+```
+
+```{r}
+# Filter data for Säntis
+data_santis2 <- data %>%
+  filter(station_name == "Säntis") %>%
+  select(DATE, TMAX_C)
+
+# Find the highest temperature in Säntis
+highest_temp_santis <- data_santis2 %>%
+  filter(!is.na(TMAX_C)) %>%
+  summarize(MaxTemp = max(TMAX_C))
+
+# Print the result
+cat("The highest temperature recorded in Säntis is", highest_temp_santis$MaxTemp, "°C.\n")
+
+# Set the current record high temperature in Switzerland (example: 41.5°C)
+current_record_temp <- 21.11
+
+# Calculate the probability of exceeding the current record in a single year
+prob_exceed <- 1 - pevd(current_record_temp, loc = location, scale = scale, shape = shape, type = "GEV")
+
+# Calculate the probability of observing at least one exceedance in the next decade
+prob_record_decade <- 1 - (1 - prob_exceed)^10
+
+# Print the results
+cat("The probability of observing a new record high temperature in Switzerland within the next decade is approximately",
+    round(prob_record_decade * 100, 2), "%.\n")
+```
+
