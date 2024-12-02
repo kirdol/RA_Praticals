@@ -2,8 +2,6 @@
 
 In this part, we will discuss the return periods & probability analysis of heatwaves in Switzerland. This part follows the GEV distributions part.
 
-# Data Loading and Preparation
-
 ```{r echo = FALSE, message = FALSE}
 # load the required packages and install them if they are not.
 source(here::here("code","setup.R"))
@@ -72,16 +70,16 @@ highest_temp_nyon <- data_nyon2 %>%
 cat("The highest temperature recorded in Nyon is", highest_temp_nyon$MaxTemp, "°C.\n")
 
 # Set the current record high temperature in Switzerland (example: 41.5°C)
-current_record_temp <- 39.44
+current_record_temp_nyon <- 39.44
 
 # Calculate the probability of exceeding the current record in a single year
-prob_exceed <- 1 - pevd(current_record_temp, loc = location, scale = scale, shape = shape, type = "GEV")
+prob_exceed_nyon <- 1 - pevd(current_record_temp_nyon, loc = location, scale = scale, shape = shape, type = "GEV")
 
 # Calculate the probability of observing at least one exceedance in the next decade
-prob_record_decade <- 1 - (1 - prob_exceed)^10
+prob_record_decade_nyon <- 1 - (1 - prob_exceed_nyon)^10
 
 # Print the results
-cat("The probability of observing a new record high temperature in Switzerland within the next decade is approximately",
+cat("The probability of observing a new record high temperature in Nyon within the next decade is approximately",
     round(prob_record_decade * 100, 2), "%.\n")
 ```
 
@@ -141,16 +139,85 @@ highest_temp_santis <- data_santis2 %>%
 cat("The highest temperature recorded in Säntis is", highest_temp_santis$MaxTemp, "°C.\n")
 
 # Set the current record high temperature in Switzerland (example: 41.5°C)
-current_record_temp <- 21.11
+current_record_temp_santis <- 21.11
 
 # Calculate the probability of exceeding the current record in a single year
-prob_exceed <- 1 - pevd(current_record_temp, loc = location, scale = scale, shape = shape, type = "GEV")
+prob_exceed_santis <- 1 - pevd(current_record_temp_santis, loc = location2, scale = scale2, shape = shape2, type = "GEV")
 
 # Calculate the probability of observing at least one exceedance in the next decade
-prob_record_decade <- 1 - (1 - prob_exceed)^10
+prob_record_decade_santis <- 1 - (1 - prob_exceed_santis)^10
 
 # Print the results
-cat("The probability of observing a new record high temperature in Switzerland within the next decade is approximately",
-    round(prob_record_decade * 100, 2), "%.\n")
+cat("The probability of observing a new record high temperature in Säntis within the next decade is approximately",
+    round(prob_record_decade_santis * 100, 2), "%.\n")
+```
+
+# Locarno
+
+```{r}
+# Filter data for Nyon and remove any rows with NA in TMAX_C
+data_locarno <- data %>%
+  filter(station_name == "Locarno") %>%
+  select(DATE, TMAX_C) %>%
+  mutate(DATE = as.Date(DATE)) %>%
+  filter(!is.na(TMAX_C))
+
+# Calculate annual maximum temperatures
+annual_maxima_locarno <- data_locarno %>%
+  mutate(Year = year(DATE)) %>%
+  group_by(Year) %>%
+  summarize(MaxTemp = max(TMAX_C), .groups = 'drop')
+
+# Fit a GEV distribution to the annual maxima
+gev_fit3 <- fevd(annual_maxima_locarno$MaxTemp, type = "GEV")
+
+# Calculate return levels for 10, 50, and 100-year return periods
+gev_return_levels3 <- return.level(gev_fit3, return.period = c(10, 50, 100))
+
+# Extract GEV parameters from the fitted model
+gev_params <- gev_fit$results$par
+location3 <- gev_params["location"]
+scale3 <- gev_params["scale"]
+shape3 <- gev_params["shape"]
+
+# Set the temperature threshold
+temp_threshold <- 35
+
+# Calculate the CDF for 35 degrees
+cdf_value3 <- pevd(temp_threshold, loc = location3, scale = scale3, shape = shape3, type = "GEV")
+
+# Compute the return period
+return_period3 <- 1 / (1 - cdf_value3)
+
+# Print the result
+cat("The return period for 35 degrees Celsius is approximately", return_period3, "years.\n")
+```
+
+```{r}
+# Filter data for Säntis
+data_locarno2 <- data %>%
+  filter(station_name == "Locarno") %>%
+  select(DATE, TMAX_C)
+
+# Find the highest temperature in Säntis
+highest_temp_locarno <- data_locarno2 %>%
+  filter(!is.na(TMAX_C)) %>%
+  summarize(MaxTemp = max(TMAX_C))
+
+# Print the result
+cat("The highest temperature recorded in Säntis is", highest_temp_locarno$MaxTemp, "°C.\n")
+
+# Set the current record high temperature in Switzerland (example: 41.5°C)
+current_record_temp_locarno <- 36.11
+
+# Calculate the probability of exceeding the current record in a single year
+prob_exceed_locarno <- 1 - pevd(current_record_temp_locarno, loc = location3, scale = scale3, shape = shape3, type = "GEV")
+
+# Calculate the probability of observing at least one exceedance in the next decade
+prob_record_decade_locarno <- 1 - (1 - prob_exceed_locarno)^10
+
+# Print the results
+cat("The probability of observing a new record high temperature in Locarno within the next decade is approximately",
+    round(prob_record_decade_locarno * 100, 2), "%.\n")
 ```
 
