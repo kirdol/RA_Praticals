@@ -83,7 +83,7 @@ highest_temp_nyon <- data_nyon2 %>%
 # Print the result
 cat("The highest temperature recorded in Nyon is", highest_temp_nyon$MaxTemp, "°C.\n")
 
-# Set the current record high temperature in Switzerland (example: 41.5°C)
+# Set the current record high temperature in Nyon
 current_record_temp_nyon <- 39.44
 
 # Calculate the probability of exceeding the current record in a single year
@@ -268,7 +268,7 @@ highest_temp_santis <- data_santis2 %>%
 # Print the result
 cat("The highest temperature recorded in Säntis is", highest_temp_santis$MaxTemp, "°C.\n")
 
-# Set the current record high temperature in Switzerland (example: 41.5°C)
+# Set the current record high temperature in Säntis
 current_record_temp_santis <- 21.11
 
 # Calculate the probability of exceeding the current record in a single year
@@ -448,9 +448,9 @@ highest_temp_locarno <- data_locarno2 %>%
   summarize(MaxTemp = max(TMAX_C))
 
 # Print the result
-cat("The highest temperature recorded in Säntis is", highest_temp_locarno$MaxTemp, "°C.\n")
+cat("The highest temperature recorded in Locarno is", highest_temp_locarno$MaxTemp, "°C.\n")
 
-# Set the current record high temperature in Switzerland (example: 41.5°C)
+# Set the current record high temperature in Locarno
 current_record_temp_locarno <- 36.11
 
 # Calculate the probability of exceeding the current record in a single year
