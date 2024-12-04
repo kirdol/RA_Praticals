@@ -11,15 +11,15 @@ source(here::here("code","setup.R"))
 # Load the data
 data_temp <- read.csv(here("data", "Cleaned_Stations_Data_With_Names.csv"))
 
-# Filter data for Nyon and remove any rows with NA in TAVG_C
+# Filter data for Nyon and remove any rows with NA in TMAX_C
 data_nyon <- data_temp %>%
   filter(station_name == "Nyon") %>%
-  select(DATE, TAVG_C) %>%
+  select(DATE, TMAX_C) %>%
   mutate(DATE = as.Date(DATE)) %>%
-  filter(!is.na(TAVG_C))
+  filter(!is.na(TMAX_C))
 ```
 
-We ensure that we have the necessary data for the analysis by filtering the temperature data for Nyon and removing any rows with missing values. We removed `r sum(is.na(data_temp$TAVG_C))` rows.
+We ensure that we have the necessary data for the analysis by filtering the temperature data for Nyon and removing any rows with missing values. We removed `r sum(is.na(data_temp$TMAX_C))` rows.
 
 # Block Maxima Approach (GEV Distribution)
 
@@ -30,7 +30,7 @@ We calculate the annual maximum temperatures for Nyon and fit a GEV distribution
 annual_maxima_nyon <- data_nyon %>%
   mutate(Year = year(DATE)) %>%
   group_by(Year) %>%
-  summarize(MaxTemp = max(TAVG_C), .groups = 'drop')
+  summarize(MaxTemp = max(TMAX_C), .groups = 'drop')
 ```
 
 ```{r echo = FALSE}
@@ -55,17 +55,17 @@ gev_return_levels <- return.level(gev_fit, return.period = c(10, 50, 100))
 
 ```{r echo = FALSE}
 # Define a threshold at the 95th percentile
-threshold_nyon <- quantile(data_nyon$TAVG_C, 0.95)
+threshold_nyon <- quantile(data_nyon$TMAX_C, 0.95)
 
 # Number of exceedances over the threshold
-num_exceedances <- sum(data_nyon$TAVG_C > threshold_nyon)
+num_exceedances <- sum(data_nyon$TMAX_C > threshold_nyon)
 ```
 
 We now apply the Peaks-over-Threshold (POT) approach using a suitable threshold. With a 95% threshold, we have `r num_exceedances` exceedances over the threshold.
 
 ```{r echo = FALSE}
 # Fit a GPD to the exceedances
-gpd_fit <- fevd(TAVG_C, data = data_nyon, threshold = threshold_nyon, type = "GP")
+gpd_fit <- fevd(TMAX_C, data = data_nyon, threshold = threshold_nyon, type = "GP")
 ```
 
 ```{r echo = FALSE}
