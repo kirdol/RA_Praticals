@@ -11,23 +11,51 @@ source(here::here("code","setup.R"))
 # Load the data
 data_temp <- read.csv(here("data", "Cleaned_Stations_Data_With_Names.csv"))
 
-# Filter data for Nyon and remove any rows with NA in TMAX_C
+# Filter data for all cities and remove any rows with NA in TMAX_C
+# Nyon
 data_nyon <- data_temp %>%
+  filter(!is.na(TMAX_C)) %>%
   filter(station_name == "Nyon") %>%
   select(DATE, TMAX_C) %>%
-  mutate(DATE = as.Date(DATE)) %>%
-  filter(!is.na(TMAX_C))
+  mutate(DATE = as.Date(DATE))
+
+# Santïs
+data_santis <- data_temp %>%
+  filter(!is.na(TMAX_C)) %>%
+  filter(station_name == "Säntis") %>%
+  select(DATE, TMAX_C) %>%
+  mutate(DATE = as.Date(DATE))
+
+# Locarno
+data_locarno <- data_temp %>%
+  filter(!is.na(TMAX_C)) %>%
+  filter(station_name == "Locarno") %>%
+  select(DATE, TMAX_C) %>%
+  mutate(DATE = as.Date(DATE))
 ```
 
-We ensure that we have the necessary data for the analysis by filtering the temperature data for Nyon and removing any rows with missing values. We removed `r sum(is.na(data_temp$TMAX_C))` rows.
+We ensure that we have the necessary data for the analysis by filtering the temperature data for all three cities and removing any rows with missing values. We removed `r sum(is.na(data_temp$TMAX_C))` rows.
 
 # Block Maxima Approach (GEV Distribution)
 
-We calculate the annual maximum temperatures for Nyon and fit a GEV distribution to these maxima.
+We calculate the annual maximum temperatures for Nyon, Santïs and Locarno and fit a GEV distribution to these maxima.
 
 ```{r echo = FALSE}
 # Calculate annual maximum temperatures
+# Nyon
 annual_maxima_nyon <- data_nyon %>%
+  mutate(Year = year(DATE)) %>%
+  group_by(Year) %>%
+  summarize(MaxTemp = max(TMAX_C), .groups = 'drop')
+
+# Santïs
+annual_maxima_santis <- data_santis %>%
+  mutate(Year = year(DATE)) %>%
+  group_by(Year) %>%
+  summarize(MaxTemp = max(TMAX_C), .groups = 'drop')
+
+# Locarno
+annual_maxima_locarno <- data_locarno %>%
   mutate(Year = year(DATE)) %>%
   group_by(Year) %>%
   summarize(MaxTemp = max(TMAX_C), .groups = 'drop')
@@ -35,50 +63,110 @@ annual_maxima_nyon <- data_nyon %>%
 
 ```{r echo = FALSE}
 # Fit a GEV distribution to the annual maxima
-gev_fit <- fevd(annual_maxima_nyon$MaxTemp, type = "GEV")
+# Nyon
+gev_fit_nyon <- fevd(annual_maxima_nyon$MaxTemp, type = "GEV")
+
+# Santïs
+gev_fit_santis <- fevd(annual_maxima_santis$MaxTemp, type = "GEV")
+
+# Locarno
+gev_fit_locarno <- fevd(annual_maxima_locarno$MaxTemp, type = "GEV")
 ```
 
 ```{r echo = FALSE}
 # Diagnostic plots for the GEV fit
+# Nyon
 par(mfrow = c(2, 2))
-plot(gev_fit)
+plot(gev_fit_nyon)
+
+# Santïs
+par(mfrow = c(2, 2))
+plot(gev_fit_santis)
+
+# Locarno
+par(mfrow = c(2, 2))
+plot(gev_fit_locarno)
 ```
 
 We have here the diagnostic plots for the GEV fit, which include the quantile-quantile plot, the return level plot, the probability plot, and the density plot. We see that overal the fit is good.
 
 ```{r echo = FALSE}
 # Calculate return levels for 10, 50, and 100-year return periods
-gev_return_levels <- return.level(gev_fit, return.period = c(10, 50, 100))
+# Nyon
+gev_return_levels_nyon <- return.level(gev_fit_nyon, return.period = c(10, 50, 100))
+
+# Santïs
+gev_return_levels_santis <- return.level(gev_fit_santis, return.period = c(10, 50, 100))
+
+# Locarno
+gev_return_levels_locarno <- return.level(gev_fit_locarno, return.period = c(10, 50, 100))
 ```
 
 # Peaks-over-Threshold Approach (GPD Distribution)
 
 ```{r echo = FALSE}
 # Define a threshold at the 95th percentile
+# Nyon
 threshold_nyon <- quantile(data_nyon$TMAX_C, 0.95)
 
+# Santïs
+threshold_santis <- quantile(data_santis$TMAX_C, 0.95)
+
+# Locarno
+threshold_locarno <- quantile(data_locarno$TMAX_C, 0.95)
+
 # Number of exceedances over the threshold
-num_exceedances <- sum(data_nyon$TMAX_C > threshold_nyon)
+# Nyon
+num_exceedances_nyon <- sum(data_nyon$TMAX_C > threshold_nyon)
+
+# Santïs
+num_exceedances_santis <- sum(data_santis$TMAX_C > threshold_santis)
+
+# Locarno
+num_exceedances_locarno <- sum(data_locarno$TMAX_C > threshold_locarno)
 ```
 
-We now apply the Peaks-over-Threshold (POT) approach using a suitable threshold. With a 95% threshold, we have `r num_exceedances` exceedances over the threshold.
+We now apply the Peaks-over-Threshold (POT) approach using a suitable threshold. With a 95% threshold, we have `r num_exceedances_nyon` exceedances over the threshold for Nyon, `r num_exceedances_santis` for Santïs, and `r num_exceedances_locarno` for Locarno.
 
 ```{r echo = FALSE}
 # Fit a GPD to the exceedances
-gpd_fit <- fevd(TMAX_C, data = data_nyon, threshold = threshold_nyon, type = "GP")
+# Nyon
+gpd_fit_nyon <- fevd(TMAX_C, data = data_nyon, threshold = threshold_nyon, type = "GP")
+
+# Santïs
+gpd_fit_santis <- fevd(TMAX_C, data = data_santis, threshold = threshold_santis, type = "GP")
+
+# Locarno
+gpd_fit_locarno <- fevd(TMAX_C, data = data_locarno, threshold = threshold_locarno, type = "GP")
 ```
 
 ```{r echo = FALSE}
 # Diagnostic plots for the GPD fit
+# Nyon
 par(mfrow = c(2, 2))
-plot(gpd_fit)
+plot(gpd_fit_nyon)
+
+# Santïs
+par(mfrow = c(2, 2))
+plot(gpd_fit_santis)
+
+# Locarno
+par(mfrow = c(2, 2))
+plot(gpd_fit_locarno)
 ```
 
 Again, we have the diagnostic plots for the GPD fit, which include the quantile-quantile plot, the return level plot, the probability plot, and the density plot. We see that overal the fit is good.
 
 ```{r echo = FALSE}
 # Calculate return levels for 10, 50, and 100-year return periods
-gpd_return_levels <- return.level(gpd_fit, return.period = c(10, 50, 100))
+# Nyon
+gpd_return_levels_nyon <- return.level(gpd_fit_nyon, return.period = c(10, 50, 100))
+
+# Santïs
+gpd_return_levels_santis <- return.level(gpd_fit_santis, return.period = c(10, 50, 100))
+
+# Locarno
+gpd_return_levels_locarno <- return.level(gpd_fit_locarno, return.period = c(10, 50, 100))
 ```
 
 # Our results
@@ -87,33 +175,83 @@ gpd_return_levels <- return.level(gpd_fit, return.period = c(10, 50, 100))
 
 ### Parameter Estimates:
 
-- The location parameter is `r round(gev_fit$results$par['location'], 2)`.
-- The scale parameter is `r round(gev_fit$results$par['scale'], 2)`.
-- The shape parameter is `r round(gev_fit$results$par['shape'], 2)`.
+**The location parameter**
 
-### Return Levels:
+- `r round(gev_fit_nyon$results$par['location'], 2)` for Nyon
+- `r round(gev_fit_santis$results$par['location'], 2)` for Santïs
+- `r round(gev_fit_locarno$results$par['location'], 2)` for Locarno
 
-- The 10-year return level is `r round(gev_return_levels[1], 2)` degrees Celsius.
-- The 50-year return level is `r round(gev_return_levels[2], 2)` degrees Celsius.
-- The 100-year return level is `r round(gev_return_levels[3], 2)` degrees Celsius.
+**The scale parameter**
+
+- `r round(gev_fit_nyon$results$par['scale'], 2)` for Nyon
+- `r round(gev_fit_santis$results$par['scale'], 2)` for Santïs
+- `r round(gev_fit_locarno$results$par['scale'], 2)` for Locarno
+
+**The shape parameter**
+
+- `r round(gev_fit_nyon$results$par['shape'], 2)` for Nyon
+- `r round(gev_fit_santis$results$par['shape'], 2)` for Santïs
+- `r round(gev_fit_locarno$results$par['shape'], 2)` for Locarno
+
+### GEV Return Levels:
+
+**Nyon** (400m):
+
+- The 10-year return level is `r round(gev_return_levels_nyon[1], 2)` degrees Celsius.
+- The 50-year return level is `r round(gev_return_levels_nyon[2], 2)` degrees Celsius.
+- The 100-year return level is `r round(gev_return_levels_nyon[3], 2)` degrees Celsius.
+
+**Santïs** (2500m):
+
+- The 10-year return level is `r round(gev_return_levels_santis[1], 2)` degrees Celsius.
+- The 50-year return level is `r round(gev_return_levels_santis[2], 2)` degrees Celsius.
+- The 100-year return level is `r round(gev_return_levels_santis[3], 2)` degrees Celsius.
+
+**Locarno** (270m):
+
+- The 10-year return level is `r round(gev_return_levels_locarno[1], 2)` degrees Celsius.
+- The 50-year return level is `r round(gev_return_levels_locarno[2], 2)` degrees Celsius.
+- The 100-year return level is `r round(gev_return_levels_locarno[3], 2)` degrees Celsius.
 
 ## For the POT approach:
 
 ### Threshold Selection:
 
-The threshold was set at the 95th percentile, which is `r round(threshold_nyon, 2)` degrees Celsius.
+The threshold was set at the 95th percentile, which is `r round(threshold_nyon, 2)` degrees Celsius for Nyon.
+
+The threshold was set at the 95th percentile, which is `r round(threshold_santis, 2)` degrees Celsius for Santïs.
+
+The threshold was set at the 95th percentile, which is `r round(threshold_locarno, 2)` degrees Celsius for Locarno.
 
 ### Number of Exceedances:
 
-There are `r num_exceedances` exceedances over the threshold.
+There are `r num_exceedances_nyon` exceedances over the threshold for Nyon.
 
-### GPD Fit and Return Levels:
+There are `r num_exceedances_santis` exceedances over the threshold for Santïs.
+
+There are `r num_exceedances_locarno` exceedances over the threshold for Locarno.
+
+### GPD Return Levels:
 
 If the GPD model was successfully fitted, the return levels are:
 
-- The 10-year return level is `r if (exists('gpd_return_levels')) round(gpd_return_levels[1], 2) else 'N/A'` degrees Celsius.
-- The 50-year return level is `r if (exists('gpd_return_levels')) round(gpd_return_levels[2], 2) else 'N/A'` degrees Celsius.
-- The 100-year return level is `r if (exists('gpd_return_levels')) round(gpd_return_levels[3], 2) else 'N/A'` degrees Celsius.
+**Nyon** (400m):
+
+- The 10-year return level is `r if (exists('gpd_return_levels_nyon')) round(gpd_return_levels_nyon[1], 2) else 'N/A'` degrees Celsius.
+- The 50-year return level is `r if (exists('gpd_return_levels_nyon')) round(gpd_return_levels_nyon[2], 2) else 'N/A'` degrees Celsius.
+- The 100-year return level is `r if (exists('gpd_return_levels_nyon')) round(gpd_return_levels_nyon[3], 2) else 'N/A'` degrees Celsius.
+
+**Santïs** (2500m):
+
+- The 10-year return level is `r if (exists('gpd_return_levels_santis')) round(gpd_return_levels_santis[1], 2) else 'N/A'` degrees Celsius.
+- The 50-year return level is `r if (exists('gpd_return_levels_santis')) round(gpd_return_levels_santis[2], 2) else 'N/A'` degrees Celsius.
+- The 100-year return level is `r if (exists('gpd_return_levels_santis')) round(gpd_return_levels_santis[3], 2) else 'N/A'` degrees Celsius.
+
+**Locarno** (270m):
+
+- The 10-year return level is `r if (exists('gpd_return_levels_locarno')) round(gpd_return_levels_locarno[1], 2) else 'N/A'` degrees Celsius.
+- The 50-year return level is `r if (exists('gpd_return_levels_locarno')) round(gpd_return_levels_locarno[2], 2) else 'N/A'` degrees Celsius.
+- The 100-year return level is `r if (exists('gpd_return_levels_locarno')) round(gpd_return_levels_locarno[3], 2) else 'N/A'` degrees Celsius.
 
 ### Comparison of Approaches:
 
