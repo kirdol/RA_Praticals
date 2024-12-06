@@ -1,39 +1,81 @@
 # Introduction
 
-In this part, we will discuss the return periods & probability analysis of having a new record of heatwaves in the cities of Nyon, Säntis & Locarno. We will be using both approaches (Block Maxima & Peaks-over-Threshold) to assess which approahc is better and provides the most relevant results.
+In this part, we will discuss the return periods & probability analysis of having a new record of heatwaves in the cities of Geneva, Saentis and Lugano. We will be using both approaches (Block Maxima & Peaks-over-Threshold) to assess which approach is better and provides the most relevant results.
 
 ```{r echo = FALSE, message = FALSE}
 # load the required packages and install them if they are not.
 source(here::here("code","setup.R"))
 
 # Load the data
-data <- read.csv(here("data", "Cleaned_Stations_Data_With_Names.csv"))
+data <- read.csv(here("data", "Cleaned_Stations_Data.csv"))
 ```
 
-# Nyon
+# Geneva
+
+## Declustering 
+
+```{r, message = F, warning = F}
+# Filter data for Geneva and remove rows with NA in TMAX
+data_geneva <- data %>%
+  filter(NAME == "Genève") %>%
+  select(DATE, TMAX) %>%
+  mutate(DATE = as.Date(DATE)) %>%
+  filter(!is.na(TMAX))
+
+# Filter for summer months (June, July, August, September)
+geneva_summer <- subset(data_geneva, format(DATE, "%m") %in% c("06", "07", "08", "09"))
+
+# Plot summer maximum temperatures
+plot(geneva_summer$DATE, geneva_summer$TMAX, type = "l", col = "blue",
+     main = "Evolution of Summer Maximum Temperatures - Genève",
+     xlab = "Date", ylab = "Maximum Temperature (°C)")
+
+# Calculate 95th percentile threshold
+threshold_geneva <- quantile(geneva_summer$TMAX, 0.95, na.rm = TRUE)
+cat("Threshold Geneva :", threshold_geneva, "\n")
+
+# Plot Mean Residual Life
+cat("Mean Residual Life Plot for Geneva\n")
+mrlplot(geneva_summer$TMAX, main = "Mean Residual Life Plot - Geneva")
+
+# Identify extreme days
+geneva_extreme_days <- geneva_summer[geneva_summer$TMAX > threshold_geneva, ]
+cat("Number of extreme days for Geneva :", nrow(geneva_extreme_days), "\n")
+
+# Calculate Extremal Index
+extremal_index_geneva <- extremalindex(geneva_summer$TMAX, threshold = threshold_geneva)
+cat("Extremal index for Geneva :", extremal_index_geneva, "\n")
+
+# Decluster data
+geneva_declustered <- decluster(geneva_summer$TMAX, threshold = threshold_geneva, run.length = 1)
+
+# Add declustered values to the dataset
+geneva_summer$Declustered <- ifelse(geneva_summer$TMAX >= threshold_geneva, geneva_declustered, NA)
+
+# Plot declustered temperatures
+ggplot() +
+  geom_line(data = geneva_summer, aes(x = DATE, y = TMAX), color = "blue", alpha = 0.5) +
+  geom_point(data = subset(geneva_summer, !is.na(Declustered)), aes(x = DATE, y = Declustered), color = "red") +
+  labs(title = "Declustered Temperatures - Geneva", x = "Date", y = "Max Temperature (°C)") +
+  theme_minimal()
+```
 
 ## Block Maxima
 
-### Annual Maximmum Temperatures, GEV Distribution & Return Levels
+### Annual Maximum Temperatures, GEV Distribution & Return Levels
 
-We will begin by filtering the data, then calculating the annual maximum and finally fitting the GEV distribution.
+We will begin by calculating the annual maximum based on the declustered data and finally fitting the GEV distribution.
 
-```{r, message = F, warning = F}
-# Filter data for Nyon and remove any rows with NA in TMAX_C
-data_nyon <- data %>%
-  filter(station_name == "Nyon") %>%
-  select(DATE, TMAX_C) %>%
-  mutate(DATE = as.Date(DATE)) %>%
-  filter(!is.na(TMAX_C))
-
+```{r}
 # Calculate annual maximum temperatures
-annual_maxima_nyon <- data_nyon %>%
+annual_maxima_geneva <- data_geneva %>%
   mutate(Year = year(DATE)) %>%
   group_by(Year) %>%
-  summarize(MaxTemp = max(TMAX_C), .groups = 'drop')
+  summarize(MaxTemp = max(TMAX), .groups = 'drop') %>%
+  filter(!is.na(MaxTemp))
 
 # Fit a GEV distribution to the annual maxima
-gev_fit <- fevd(annual_maxima_nyon$MaxTemp, type = "GEV")
+gev_fit <- fevd(annual_maxima_geneva$MaxTemp, type = "GEV")
 
 # Calculate return levels for 10, 50, and 100-year return periods
 gev_return_levels <- return.level(gev_fit, return.period = c(10, 50, 100))
@@ -63,144 +105,261 @@ return_period <- 1 / (1 - cdf_value)
 cat("The return period for 35 degrees Celsius is approximately", return_period, "years.\n")
 ```
 
-As a result, we obtain a return period of around 2.06 years of having a temperature exceeding 35°C.
+As a result, we obtain a return period of around 4.15 years of having a temperature exceeding 35°C.
 
 ### Probability of New Record High Temperature
 
-Now, we will have a look at the probability of having a new temperature record in the following decade (ALSO SEE FOR LESS, E.G. 2 years). For this, we  will set the current temperature record for Nyon since the beginning of our dataset and calculate the probability of having a higher temperature.
+Now, we will have a look at the probability of having a new temperature record in the following decade (ALSO SEE FOR LESS, E.G. 2 years). For this, we will set the current temperature record for Nyon since the beginning of our dataset and calculate the probability of having a higher temperature.
 
 ```{r, message = F, warning = F}
-# Filter data for Nyon
-data_nyon2 <- data %>%
-  filter(station_name == "Nyon") %>%
-  select(DATE, TMAX_C)
+# Filter data for Geneva
+data_geneva2 <- data_geneva %>%
+  select(DATE, TMAX)
 
-# Find the highest temperature in Nyon
-highest_temp_nyon <- data_nyon2 %>%
-  filter(!is.na(TMAX_C)) %>%
-  summarize(MaxTemp = max(TMAX_C))
+# Find the highest temperature in Geneva
+highest_temp_geneva <- data_geneva2 %>%
+  filter(!is.na(TMAX)) %>%
+  summarize(MaxTemp = max(TMAX))
 
 # Print the result
-cat("The highest temperature recorded in Nyon is", highest_temp_nyon$MaxTemp, "°C.\n")
+cat("The highest temperature recorded in Geneva is", highest_temp_geneva$MaxTemp, "°C.\n")
 
-# Set the current record high temperature in Nyon
-current_record_temp_nyon <- 39.44
+# Set the current record high temperature in Geneva
+current_record_temp_geneva <- 39.7
 
 # Calculate the probability of exceeding the current record in a single year
-prob_exceed_nyon <- 1 - pevd(current_record_temp_nyon, loc = location, scale = scale, shape = shape, type = "GEV")
+prob_exceed_geneva <- 1 - pevd(current_record_temp_geneva, loc = location, scale = scale, shape = shape, type = "GEV")
 
 # Calculate the probability of observing at least one exceedance in the next decade
-prob_record_decade_nyon <- 1 - (1 - prob_exceed_nyon)^10
+prob_record_decade_geneva <- 1 - (1 - prob_exceed_geneva)^10
 
 # Print the results
-cat("The probability of observing a new record high temperature in Nyon within the next decade is approximately",
-    round(prob_record_decade_nyon * 100, 2), "%.\n")
+cat("The probability of observing a new record high temperature in Geneva within the next decade is approximately",
+    round(prob_record_decade_geneva * 100, 2), "%.\n")
 ```
+
+The current maximum temperature in Nyon is 39.7°C. By taking this into account and calculating the probability of exceeding the current record in the next year is around 0.6%, and in the next decade 5.96%.
 
 ## Peaks-over-Threshold
 
 ### Exceedances & GDP Fitting
 
 ```{r, message = F, warning = F}
-# Filter data for Nyon and remove any rows with NA in TMAX_C
-data_nyon <- data %>%
-  filter(station_name == "Nyon") %>%
-  select(DATE, TMAX_C) %>%
-  mutate(DATE = as.Date(DATE)) %>%
-  filter(!is.na(TMAX_C))
+# Total number of years in the dataset for Geneva
+total_years_geneva <- length(unique(year(data_geneva$DATE)))
 
-# Define a threshold at the 95th percentile for Nyon
-threshold_nyon <- quantile(data_nyon$TMAX_C, 0.95)
+# Number of exceedances over the threshold for Geneva
+num_exceedances_geneva <- sum(data_geneva$TMAX > threshold_geneva)
 
-# Total number of years in the dataset for Nyon
-total_years_nyon <- length(unique(year(data_nyon$DATE)))
+# Rate of exceedance per year for Geneva
+lambda_u_geneva <- num_exceedances_geneva / total_years_geneva
 
-# Number of exceedances over the threshold for Nyon
-num_exceedances_nyon <- sum(data_nyon$TMAX_C > threshold_nyon)
-
-# Rate of exceedance per year for Nyon
-lambda_u_nyon <- num_exceedances_nyon / total_years_nyon
-
-# Fit a GPD to the exceedances for Nyon
-gpd_fit_nyon <- fevd(TMAX_C, data = data_nyon, threshold = threshold_nyon, type = "GP")
+# Fit a GPD to the exceedances for Geneva
+gpd_fit_geneva <- fevd(TMAX, data = data_geneva, threshold = threshold_geneva, type = "GP")
 ```
 
 ### Return Period
 
 ```{r, message = F, warning = F}
-# Extract GPD parameters from the fitted model for Nyon
-gpd_params_nyon <- gpd_fit_nyon$results$par
-scale_nyon <- gpd_params_nyon["scale"]
-shape_nyon <- gpd_params_nyon["shape"]
+# Extract GPD parameters from the fitted model for Geneva
+gpd_params_geneva <- gpd_fit_geneva$results$par
+scale_geneva <- gpd_params_geneva["scale"]
+shape_geneva <- gpd_params_geneva["shape"]
 
-# Set the temperature threshold for Nyon
-temp_threshold_nyon <- 35
+# Set the temperature threshold for Geneva
+temp_threshold_geneva <- 35
 
-# Check if temp_threshold_nyon is above threshold_nyon
-if (temp_threshold_nyon <= threshold_nyon) {
-  stop("Temperature threshold must be above the GPD threshold for Nyon.")
+# Check if temp_threshold_nyon is above threshold_geneva
+if (temp_threshold_geneva <= threshold_geneva) {
+  stop("Temperature threshold must be above the GPD threshold for Geneva.")
 }
 
-# Calculate the exceedance over the threshold for Nyon
-x_excess_nyon <- temp_threshold_nyon - threshold_nyon
+# Calculate the exceedance over the threshold for Geneva
+x_excess_geneva <- temp_threshold_geneva - threshold_geneva
 
-# Calculate the exceedance probability over the threshold using pevd for Nyon
-prob_exceedance_nyon <- 1 - pevd(
-  x_excess_nyon,
+# Calculate the exceedance probability over the threshold using pevd for Geneva
+prob_exceedance_geneva <- 1 - pevd(
+  x_excess_geneva,
   threshold = 0,      # For exceedances, threshold is set to 0
-  scale = scale_nyon, # Scale parameter for Nyon
-  shape = shape_nyon, # Shape parameter for Nyon
+  scale = scale_geneva, # Scale parameter for Geneva
+  shape = shape_geneva, # Shape parameter for Geneva
   type = "GP"         # Generalized Pareto Distribution
 )
 
-# Adjust the exceedance probability by the rate of exceedance for Nyon
-annual_prob_exceedance_nyon <- lambda_u_nyon * prob_exceedance_nyon
+# Adjust the exceedance probability by the rate of exceedance for Geneva
+annual_prob_exceedance_geneva <- lambda_u_geneva * prob_exceedance_geneva
 
-# Compute the return period for Nyon
-return_period_35_nyon <- 1 / annual_prob_exceedance_nyon
+# Compute the return period for Geneva
+return_period_35_geneva <- 1 / annual_prob_exceedance_geneva
 
 # Print the result
-cat("The return period for 35 degrees Celsius in Nyon is approximately", return_period_35_nyon, "years.\n")
+cat("The return period for 35 degrees Celsius in Geneva is approximately", return_period_35_geneva, "years.\n")
 ```
 
 ### Probability of New Record High Temperature
 
 ```{r, message = F, warning = F}
-# Maximum observed temperature in Nyon
-max_temp_nyon <- max(data_nyon$TMAX_C)
+# Maximum observed temperature in Geneva
+max_temp_geneva <- max(data_geneva$TMAX)
 
-# Ensure max_temp_nyon is above the threshold
-if (max_temp_nyon <= threshold_nyon) {
-  stop("Maximum observed temperature must be above the GPD threshold for Nyon.")
+# Ensure max_temp_geneva is above the threshold
+if (max_temp_geneva <= threshold_geneva) {
+  stop("Maximum observed temperature must be above the GPD threshold for Geneva.")
 }
 
-# Exceedance over the threshold for the record temperature in Nyon
-x_excess_record_nyon <- max_temp_nyon - threshold_nyon
+# Exceedance over the threshold for the record temperature in Geneva
+x_excess_record_geneva <- max_temp_geneva - threshold_geneva
 
-# Calculate the exceedance probability over the maximum observed temperature for Nyon
-prob_exceedance_over_record_nyon <- 1 - pevd(
-  x_excess_record_nyon,
+# Calculate the exceedance probability over the maximum observed temperature for Geneva
+prob_exceedance_over_record_geneva <- 1 - pevd(
+  x_excess_record_geneva,
   threshold = 0,       # For exceedances, threshold is set to 0
-  scale = scale_nyon,  # Scale parameter for Nyon
-  shape = shape_nyon,  # Shape parameter for Nyon
+  scale = scale_geneva,  # Scale parameter for Geneva
+  shape = shape_geneva,  # Shape parameter for Geneva
   type = "GP"          # Generalized Pareto Distribution
 )
 
-# Annual rate of exceedances over the threshold for Nyon
-lambda_u_nyon <- num_exceedances_nyon / total_years_nyon
+# Annual rate of exceedances over the threshold for Geneva
+lambda_u_geneva <- num_exceedances_geneva / total_years_geneva
 
-# Annual probability of breaking the record for Nyon
-annual_prob_new_record_nyon <- lambda_u_nyon * prob_exceedance_over_record_nyon
+# Annual probability of breaking the record for Geneva
+annual_prob_new_record_geneva <- lambda_u_geneva * prob_exceedance_over_record_geneva
 
-# Calculate the probability of breaking the record at least once in the next decade for Nyon
-prob_record_decade_nyon <- 1 - (1 - annual_prob_new_record_nyon)^10
+# Calculate the probability of breaking the record at least once in the next decade for Geneva
+prob_record_decade_geneva <- 1 - (1 - annual_prob_new_record_geneva)^10
 
 # Print the result
 cat(
-  "The probability of observing a new record high temperature in Nyon within the next decade is approximately",
-  round(prob_record_decade_nyon * 100, 2), "%.\n"
+  "The probability of observing a new record high temperature in Geneva within the next decade is approximately",
+  round(prob_record_decade_geneva * 100, 2), "%.\n"
 )
 ```
+
+# Säntis
+
+## Declustering
+
+```{r, message = F, warning = F}
+# Filter data for Säntis and remove rows with NA in TMAX
+data_santis <- data %>%
+  filter(NAME == "Saentis") %>%
+  select(DATE, TMAX) %>%
+  mutate(DATE = as.Date(DATE)) %>%
+  filter(!is.na(TMAX))
+
+# Filter for summer months (June, July, August, September)
+santis_summer <- subset(data_santis, format(DATE, "%m") %in% c("06", "07", "08", "09"))
+
+# Plot summer maximum temperatures
+plot(santis_summer$DATE, santis_summer$TMAX, type = "l", col = "blue",
+     main = "Evolution of Summer Maximum Temperatures - Säntis",
+     xlab = "Date", ylab = "Maximum Temperature (°C)")
+
+# Calculate 95th percentile threshold
+threshold_santis <- quantile(santis_summer$TMAX, 0.95, na.rm = TRUE)
+cat("Threshold Säntis :", threshold_santis, "\n")
+
+# Plot Mean Residual Life
+cat("Mean Residual Life Plot for Säntis\n")
+mrlplot(santis_summer$TMAX, main = "Mean Residual Life Plot - Säntis")
+
+# Identify extreme days
+santis_extreme_days <- santis_summer[santis_summer$TMAX > threshold_santis, ]
+cat("Number of extreme days for Säntis :", nrow(santis_extreme_days), "\n")
+
+# Calculate Extremal Index
+extremal_index_santis <- extremalindex(santis_summer$TMAX, threshold = threshold_santis)
+cat("Extremal index for Säntis :", extremal_index_santis, "\n")
+
+# Decluster data
+santis_declustered <- decluster(santis_summer$TMAX, threshold = threshold_santis, run.length = 1)
+
+# Add declustered values to the dataset
+santis_summer$Declustered <- ifelse(santis_summer$TMAX >= threshold_santis, santis_declustered, NA)
+
+# Plot declustered temperatures
+ggplot() +
+  geom_line(data = santis_summer, aes(x = DATE, y = TMAX), color = "blue", alpha = 0.5) +
+  geom_point(data = subset(santis_summer, !is.na(Declustered)), aes(x = DATE, y = Declustered), color = "red") +
+  labs(title = "Declustered Temperatures - Säntis", x = "Date", y = "Max Temperature (°C)") +
+  theme_minimal()
+```
+
+## Block Maxima
+
+## Peaks-over-Threshold
+
+# Lugano
+
+## Declustering
+
+```{r, message = F, warning = F}
+# Filter data for Lugano and remove rows with NA in TMAX
+data_lugano <- data %>%
+  filter(NAME == "Lugano") %>%
+  select(DATE, TMAX) %>%
+  mutate(DATE = as.Date(DATE)) %>%
+  filter(!is.na(TMAX))
+
+# Filter for summer months (June, July, August, September)
+lugano_summer <- subset(data_lugano, format(DATE, "%m") %in% c("06", "07", "08", "09"))
+
+# Plot summer maximum temperatures
+plot(lugano_summer$DATE, lugano_summer$TMAX, type = "l", col = "blue",
+     main = "Evolution of Summer Maximum Temperatures - Lugano",
+     xlab = "Date", ylab = "Maximum Temperature (°C)")
+
+# Calculate 95th percentile threshold
+threshold_lugano <- quantile(lugano_summer$TMAX, 0.95, na.rm = TRUE)
+cat("Threshold Lugano :", threshold_lugano, "\n")
+
+# Plot Mean Residual Life
+cat("Mean Residual Life Plot for Lugano\n")
+mrlplot(lugano_summer$TMAX, main = "Mean Residual Life Plot - Lugano")
+
+# Identify extreme days
+lugano_extreme_days <- lugano_summer[lugano_summer$TMAX > threshold_lugano, ]
+cat("Number of extreme days for Lugano :", nrow(lugano_extreme_days), "\n")
+
+# Calculate Extremal Index
+extremal_index_lugano <- extremalindex(lugano_summer$TMAX, threshold = threshold_lugano)
+cat("Extremal index for Lugano :", extremal_index_lugano, "\n")
+
+# Decluster data
+lugano_declustered <- decluster(lugano_summer$TMAX, threshold = threshold_lugano, run.length = 1)
+
+# Add declustered values to the dataset
+lugano_summer$Declustered <- ifelse(lugano_summer$TMAX >= threshold_lugano, lugano_declustered, NA)
+
+# Plot declustered temperatures
+ggplot() +
+  geom_line(data = lugano_summer, aes(x = DATE, y = TMAX), color = "blue", alpha = 0.5) +
+  geom_point(data = subset(lugano_summer, !is.na(Declustered)), aes(x = DATE, y = Declustered), color = "red") +
+  labs(title = "Declustered Temperatures - Lugano", x = "Date", y = "Max Temperature (°C)") +
+  theme_minimal()
+```
+
+## Block Maxima
+
+## Peaks-over-Threshold
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Säntis
