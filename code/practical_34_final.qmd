@@ -224,7 +224,7 @@ gpd_return_levels_Lugano <- return.level(gpd_fit_lugano, return.period = c(10, 5
 
 # Our results
 
-## Based on the GEV model fit, we can conclude that:
+## Block Maxima Approach (GEV Distribution):
 
 ### Parameter Estimates:
 
@@ -242,7 +242,7 @@ gpd_return_levels_Lugano <- return.level(gpd_fit_lugano, return.period = c(10, 5
 | Santïs  | 2500m      | `r round(gev_return_levels_santis[1], 2)` | `r round(gev_return_levels_santis[2], 2)` | `r round(gev_return_levels_santis[3], 2)` |
 | Lugano  | 275m       | `r round(gev_return_levels_Lugano[1], 2)` | `r round(gev_return_levels_Lugano[2], 2)` | `r round(gev_return_levels_Lugano[3], 2)` |
 
-## For the POT approach:
+## Peaks-over-Threshold Approach (GPD Distribution):
 
 ### Threshold Selection:
 

@@ -13,5 +13,5 @@ format:
     code-tools: true
 ---
 
-```{r child = c("practical_11_final.qmd", "practical_12_final.qmd", "practical_13_final.qmd")}
+```{r child = c("practical_11_final.qmd", "practical_12_final.qmd", "practical_13_final.qmd", "practical_34_final.qmd)}
 ```
