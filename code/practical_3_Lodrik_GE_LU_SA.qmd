@@ -273,28 +273,3 @@ The return levels are:
 ### Comparison of Approaches:
 
 In comparing the block maxima approach (GEV) to the Peaks-over-Threshold approach (GPD) for modeling temperature extremes, we find that the POT method often provides more nuanced information about the tail behavior of the distribution. While the GEV model uses only the annual maximum values, which can lead to relatively large uncertainty due to a limited amount of extreme data, the POT approach utilizes all temperature values above a chosen high threshold. This generally results in more data points to characterize the tail, potentially yielding more stable and reliable estimates of parameters and return levels. However, the POT approach depends on careful threshold selection and declustering, which introduces additional steps not required by the simpler block maxima method. In practice, the POT approach can lead to different (often more precise) return level estimates, giving a potentially more accurate picture of the frequency and magnitude of extreme temperature events.
-
-```{r}
-# For the GEV model (Block Maxima approach)
-negLL_gev_geneva <- gev_fit_geneva$results$negllh
-k_gev <- length(gev_fit_geneva$results$par)
-n_gev <- length(annual_maxima_geneva$MaxTemp) # sample size is # of annual maxima
-
-aic_gev_geneva <- 2 * negLL_gev_geneva + 2 * k_gev
-bic_gev_geneva <- 2 * negLL_gev_geneva + log(n_gev) * k_gev
-
-cat("GEV (Geneva) AIC:", aic_gev_geneva, "\n")
-cat("GEV (Geneva) BIC:", bic_gev_geneva, "\n")
-
-# For the GPD model (POT approach)
-negLL_gpd_geneva <- gpd_fit_geneva$results$negllh
-k_gpd <- length(gpd_fit_geneva$results$par)
-n_gpd <- length(extreme_values_geneva) # number of exceedances used in the fit
-
-aic_gpd_geneva <- 2 * negLL_gpd_geneva + 2 * k_gpd
-bic_gpd_geneva <- 2 * negLL_gpd_geneva + log(n_gpd) * k_gpd
-
-cat("GPD (Geneva) AIC:", aic_gpd_geneva, "\n")
-cat("GPD (Geneva) BIC:", bic_gpd_geneva, "\n")
-```
-
