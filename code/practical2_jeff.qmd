@@ -19,6 +19,7 @@ library(ismev)
 ```
 
 ### a)
+
 ```{r, message = F, warning = F, echo=F}
 # Read in the data
 prec_laus <- read.csv("data/Precipitation_lausanne_full.csv")
@@ -34,6 +35,7 @@ ggplot(prec_laus, aes(x = Precipitation)) +
 Which distribution??
 
 ### b)
+
 ```{r, message = F, warning = F}
 # Extract year from the Date column
 prec_laus$Year <- format(prec_laus$Date, "%Y")
@@ -270,7 +272,6 @@ if (1 + xi * (threshold - mu) / sigma > 0) {
 }
 ```
 
-
 ## PART 2 - Peaks-Over-Threshold Approach
 
 ### a)
@@ -408,8 +409,6 @@ There is a 2.53% chance of having at least 1 day with precipitation exceeding 15
 
 ### g)
 
-
-
 ## PART 3
 
 ### a)
@@ -471,10 +470,7 @@ ggplot(declustered_df, aes(x = Date, y = AvgTemperature)) +
 
 ```
 
-The declustering process aims to remove temporal dependence between extreme values by isolating independent extreme events.
-After declustering, the resulting plot appears to have fewer data points compared to the raw series, indicating that clusters of extremes were effectively reduced.
-This is important for more accurate extreme value analysis, as the presence of clusters can bias the estimation of return levels.
-The declustered plot now reflects independent extreme values that are suitable for Generalized Pareto Distribution (GPD) fitting, leading to more reliable inferences about return levels.
+The declustering process aims to remove temporal dependence between extreme values by isolating independent extreme events. After declustering, the resulting plot appears to have fewer data points compared to the raw series, indicating that clusters of extremes were effectively reduced. This is important for more accurate extreme value analysis, as the presence of clusters can bias the estimation of return levels. The declustered plot now reflects independent extreme values that are suitable for Generalized Pareto Distribution (GPD) fitting, leading to more reliable inferences about return levels.
 
 ### d)
 
