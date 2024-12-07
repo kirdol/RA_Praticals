@@ -125,7 +125,7 @@ We observe an extreme sudden drop in Bitcoin stocks. What should we expect that 
 with ETH stocks?
 :::
 
-Given our results in [question c)](#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling), the sudden drop in Bitcoin stocks should have a significant impact on the Etherum stocks price. Given our analysis, the Ethereum stocks should drop 5 minutes (lag of 5 / [question b)](#b-analyze-bitcoin-eth-cross-correlation-function)) after the Bitcoin stocks drop with a value close to 80% of the Bitcoin drop.
+Given our results in [question c)](#c-assess-predictive-power-with-granger-test), the sudden drop in Bitcoin stocks should have a significant impact on the Etherum stocks price. Given our analysis, the Ethereum stocks should drop 5 minutes (lag of 5 / [question b)](#b-analyze-bitcoin-eth-cross-correlation-function)) after the Bitcoin stocks drop with a value close to 80% of the Bitcoin drop.
 
 ### d.2) Predict Bitcoin reaction to ETH drop
 
@@ -136,6 +136,6 @@ We observe an extreme sudden drop in ETH stocks. What should we expect that will
 with Bitcoin stocks?
 :::
 
-Based on the Granger causality test results from [question c)](#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling), Ethereum’s past values do not Granger-cause Bitcoin’s returns, suggesting no significant predictive relationship. If Ethereum experiences an extreme sudden drop, it is less likely that Bitcoin will exhibit a direct or immediate reaction based on historical relationships. However, Bitcoin and Ethereum share common market factors and investor sentiment, so an indirect reaction (e.g., due to market-wide panic) is still possible, though it is not strongly supported by the causality analysis.
+Based on the Granger causality test results from [question c)](#c-assess-predictive-power-with-granger-test), Ethereum’s past values do not Granger-cause Bitcoin’s returns, suggesting no significant predictive relationship. If Ethereum experiences an extreme sudden drop, it is less likely that Bitcoin will exhibit a direct or immediate reaction based on historical relationships. However, Bitcoin and Ethereum share common market factors and investor sentiment, so an indirect reaction (e.g., due to market-wide panic) is still possible, though it is not strongly supported by the causality analysis.
 
 

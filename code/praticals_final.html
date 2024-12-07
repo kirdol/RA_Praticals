@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Lodrik Adam, Sophie Daya, Jeff Macaraeg, Julien Perini, Alexandra Maria Santana Boado">
-<meta name="dcterms.date" content="2024-12-01">
+<meta name="dcterms.date" content="2024-12-07">
 
-<title>Pratical 1 - Group 01</title>
+<title>Pratical 1,2 and 3 for Group 1</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -116,7 +116,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Pratical 1 - Group 01</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<div class="quarto-title-block"><div><h1 class="title">Pratical 1,2 and 3 for Group 1</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -133,7 +133,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">December 1, 2024</p>
+      <p class="date">December 7, 2024</p>
     </div>
   </div>
   
@@ -163,7 +163,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="part-1-financial-returns-and-normality" class="level1">
 <h1>Part 1: Financial returns and normality</h1>
-<p>The working directory is set to: /Users/jeffmacaraeg/Documents/GitHub/RA_Praticals</p>
+<p>The working directory is set to: /Users/lodrik/Documents/GitHub/RA_Praticals</p>
 <section id="a-load-bitcoin-data-and-assess-price-stationarity" class="level2">
 <h2 class="anchored" data-anchor-id="a-load-bitcoin-data-and-assess-price-stationarity">a) Load Bitcoin data and assess price stationarity</h2>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
@@ -969,13 +969,13 @@ omega   2.507936e+11 -1.709771e+16 -6.864037e+09 -1.486634e+10
 alpha1  9.975053e+04 -6.864037e+09 -6.383094e+03 -9.576435e+03
 beta1  -2.026553e+04 -1.486634e+10 -9.576435e+03 -1.823892e+04
 attr(,"time")
-Time difference of 0.01284122 secs
+Time difference of 0.004492044 secs
 
 --- END OF TRACE ---
 
 
 Time to Estimate Parameters:
- Time difference of 0.05238605 secs</code></pre>
+ Time difference of 0.02654505 secs</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -992,7 +992,7 @@ Call:
 
 Mean and Variance Equation:
  data ~ garch(1, 1)
-&lt;environment: 0x120b08150&gt;
+&lt;environment: 0x12d0f2be0&gt;
  [data = arima_residuals]
 
 Conditional Distribution:
@@ -1018,7 +1018,7 @@ Log Likelihood:
  7627.039    normalized:  5.300236 
 
 Description:
- Sun Dec  1 16:32:32 2024 by user:  
+ Sat Dec  7 17:07:39 2024 by user:  
 
 
 Standardised Residuals Tests:
@@ -1214,7 +1214,7 @@ Question
 <p>We observe an extreme sudden drop in Bitcoin stocks. What should we expect that will happen with ETH stocks?</p>
 </div>
 </div>
-<p>Given our results in <a href="#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling">question c)</a>, the sudden drop in Bitcoin stocks should have a significant impact on the Etherum stocks price. Given our analysis, the Ethereum stocks should drop 5 minutes (lag of 5 / <a href="#b-analyze-bitcoin-eth-cross-correlation-function">question b)</a>) after the Bitcoin stocks drop with a value close to 80% of the Bitcoin drop.</p>
+<p>Given our results in <a href="#c-assess-predictive-power-with-granger-test">question c)</a>, the sudden drop in Bitcoin stocks should have a significant impact on the Etherum stocks price. Given our analysis, the Ethereum stocks should drop 5 minutes (lag of 5 / <a href="#b-analyze-bitcoin-eth-cross-correlation-function">question b)</a>) after the Bitcoin stocks drop with a value close to 80% of the Bitcoin drop.</p>
 </section>
 <section id="d.2-predict-bitcoin-reaction-to-eth-drop" class="level3">
 <h3 class="anchored" data-anchor-id="d.2-predict-bitcoin-reaction-to-eth-drop">d.2) Predict Bitcoin reaction to ETH drop</h3>
@@ -1231,7 +1231,7 @@ Question
 <p>We observe an extreme sudden drop in ETH stocks. What should we expect that will happen with Bitcoin stocks?</p>
 </div>
 </div>
-<p>Based on the Granger causality test results from <a href="#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling">question c)</a>, Ethereum’s past values do not Granger-cause Bitcoin’s returns, suggesting no significant predictive relationship. If Ethereum experiences an extreme sudden drop, it is less likely that Bitcoin will exhibit a direct or immediate reaction based on historical relationships. However, Bitcoin and Ethereum share common market factors and investor sentiment, so an indirect reaction (e.g., due to market-wide panic) is still possible, though it is not strongly supported by the causality analysis.</p>
+<p>Based on the Granger causality test results from <a href="#c-assess-predictive-power-with-granger-test">question c)</a>, Ethereum’s past values do not Granger-cause Bitcoin’s returns, suggesting no significant predictive relationship. If Ethereum experiences an extreme sudden drop, it is less likely that Bitcoin will exhibit a direct or immediate reaction based on historical relationships. However, Bitcoin and Ethereum share common market factors and investor sentiment, so an indirect reaction (e.g., due to market-wide panic) is still possible, though it is not strongly supported by the causality analysis.</p>
 <!-- -->
 
 </section>
@@ -1712,7 +1712,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="sourceCode" id="cb45" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Pratical 1 - Group 01</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Pratical 1,2 and 3 for Group 1</span></span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
 <span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="an">date-format:</span><span class="co"> long</span></span>
 <span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> Lodrik Adam, Sophie Daya, Jeff Macaraeg, Julien Perini, Alexandra Maria Santana Boado</span></span>

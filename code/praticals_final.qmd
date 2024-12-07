@@ -1,5 +1,5 @@
 ---
-title: Pratical 1 - Group 01
+title: Pratical 1,2 and 3 for Group 1
 date: today
 date-format: long
 author: Lodrik Adam, Sophie Daya, Jeff Macaraeg, Julien Perini, Alexandra Maria Santana Boado
