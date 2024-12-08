@@ -16,21 +16,21 @@ data_temp <- read.csv(here("data", "Cleaned_Stations_Data_With_Names.csv"))
 data_nyon <- data_temp %>%
   filter(!is.na(TMAX_C)) %>%
   filter(station_name == "Nyon") %>%
-  select(DATE, TMAX_C) %>%
+  dplyr::select(DATE, TMAX_C) %>%
   mutate(DATE = as.Date(DATE))
 
 # Santïs
 data_santis <- data_temp %>%
   filter(!is.na(TMAX_C)) %>%
   filter(station_name == "Säntis") %>%
-  select(DATE, TMAX_C) %>%
+  dplyr::select(DATE, TMAX_C) %>%
   mutate(DATE = as.Date(DATE))
 
 # Locarno
 data_locarno <- data_temp %>%
   filter(!is.na(TMAX_C)) %>%
   filter(station_name == "Locarno") %>%
-  select(DATE, TMAX_C) %>%
+  dplyr::select(DATE, TMAX_C) %>%
   mutate(DATE = as.Date(DATE))
 ```
 
