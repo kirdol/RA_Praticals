@@ -5,7 +5,6 @@ install.packages("nortest")
 install.packages("MASS")
 install.packages("tseries")
 install.packages("forecast")
-install.packages("fGarch")
 install.packages("lmtest")
 ################################################Part 1
 #Seeing if the time series is stationary :
