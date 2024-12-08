@@ -6,7 +6,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Part 2: Financial time series heteroskedasticity and the random walk hypothesis
+## Part 2: Financial time series heteroskedasticity and the random walk hypothesis
 
 Another crucial hypothesis in asset pricing is the so-called homoscedasticity, i.e. constant variance of theresiduals. We would also like to check this assumption. We use the same Bitcoin data as in Part 1.
 
@@ -32,7 +32,7 @@ negative_log_returns <- function(prices) {
 neg_log_returns_bitcoin <- negative_log_returns(bitcoin_prices)
 ```
 
-## a) ACF & negative log returns
+### a) ACF & negative log returns
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -55,7 +55,7 @@ acf(neg_log_returns_bitcoin, main = "ACF of Negative Log Returns")
 
 Conclusion: The Negative Log Returns are likely easier to model due to their more stationary nature and lack of significant autocorrelation.
 
-## b) Ljung-Box procedure
+### b) Ljung-Box procedure
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -81,7 +81,7 @@ For the raw series: Since price data tends to show trends, we often expect seria
 
 Based on the results of the Ljung-Box tests: For the raw Bitcoin prices: - Raw Bictoin Prices: p-value \< 2.2e-16, the p-value is extremely small, which mean that we reject the null hypothesis of no autocorrelation in the raw Bictoin prices. The values are highly dependent on previous values, it confirms that the series is non-stationary. - Negative Log Returns: p-value = 0.03082, the p-value is also small, but higher than the raw prices. It indicates that there is still some autocorrelation in the series, although it is less pronounced compared to the raw Bitcoin prices. Ideally, negative log returns should behave more likke white noise, meaning no serial dependence
 
-## c) ARIMA models for the negative log returns series
+### c) ARIMA models for the negative log returns series
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -116,7 +116,7 @@ The AR1 and AR2 coefficients are -0.0520 and -0.5415, respectively. The MA1 and 
 
 RMSE (Root Mean Square Error): 0.00142, which is relatively low, indicating that the model fits the data well. MAE (Mean Absolute Error): 0.000942, which is also quite low. ACF1 of residuals: 0.00455, suggesting that the residuals do not exhibit significant autocorrelation. Ljung-Box Test: The Ljung-Box test on residuals gives a p-value of 0.8628, which is much larger than 0.05. This indicates that there is no significant autocorrelation left in the residuals, implying that the model fits the data well. Conclusion: The ARIMA(2,0,2) model selected by auto.arima() seems to be a good fit for the negative log returns of Bitcoin, as evidenced by the low RMSE and MAE, as well as the results of the Ljung-Box test. The residuals behave like white noise, meaning that the model has successfully captured the patterns in the data. There is no significant temporal dependence left in the residuals, which supports the adequacy of this ARIMA model for the series. Overall, the ARIMA model chosen by auto.arima() fits the data well and leaves no significant autocorrelation in the residuals.
 
-## d) GARCH models
+### d) GARCH models
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -172,7 +172,7 @@ The log-likelihood value is 7632.108. The coefficients for the GARCH model (omeg
 
 The log-likelihood value is 7736.355, which is slightly better than the normal distribution model, indicating a potentially better fit. The coefficients are also significant (p-values \< 0.05), with the shape parameter of the t-distribution (shape = 4.28) indicating a heavier tail than the normal distribution. The Ljung-Box test for the residuals shows a p-value of 0.3507 for 10 lags, similar to the normal model, suggesting that there is no significant autocorrelation in the residuals. Conclusion: Both the GARCH(1,1) models (with normal and t-distributions) provide a good fit, with no significant residual autocorrelation based on the Ljung-Box test. However, the GARCH model with the standardized t-distribution has a higher log-likelihood and captures heavier tails (as indicated by the shape parameter), suggesting that it may be a better fit for the data due to the presence of tail risk or more extreme variations in the negative log returns of Bitcoin.
 
-## e) Residual serial correlation
+### e) Residual serial correlation
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -224,7 +224,7 @@ Ljung-Box Test for Serial Correlation: The p-value of the Ljung-Box test (p = 0.
 
 The ARIMA + GARCH(1,1) model fits the data well, capturing both the autocorrelation in the returns and the conditional heteroscedasticity (volatility clustering). The residuals show no significant autocorrelation, and the GARCH model appears to have adequately handled the volatility. The model might still exhibit non-normality, but this is expected in financial data due to extreme returns or fat tails.
 
-## f) Model Comparison
+### f) Model Comparison
 
 ::: {.callout-note icon="false"}
 ## Question

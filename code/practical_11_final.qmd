@@ -12,11 +12,13 @@ crypto_data <- read.csv(here("data", "crypto_data.csv"))
 scaling_factor <- 100000
 ```
 
-# Part 1: Financial returns and normality
+# Practical 1: Financial returns and normality
+
+## Part 1: Financial returns and normality
 
 The working directory is set to: `r wd`
 
-## a) Load Bitcoin data and assess price stationarity
+### a) Load Bitcoin data and assess price stationarity
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -50,7 +52,7 @@ adf.test(crypto_data$Bitcoin)
 
 Since the p-value is significantly bigger than 0.05, we can not reject the null hypothesis and therefore, we can conclude that the raw Bitcoin prices are non-stationary.
 
-## b) Create and plot Bitcoin negative log returns, assess stationarity
+### b) Create and plot Bitcoin negative log returns, assess stationarity
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -139,7 +141,7 @@ adf.test(neg_log_returns_bitcoin)
 
 Since the p-value is significantly smaller than 0.05, we can reject the null hypothesis and conclude that the negative log returns series is stationary.
 
-## c) Check negative log returns normality with histograms, QQ-plots, Anderson-Darling {#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling}
+### c) Check negative log returns normality with histograms, QQ-plots, Anderson-Darling {#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling}
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -177,7 +179,7 @@ ad.test(neg_log_returns_bitcoin)
 
 Even though the Histogram suggest that the negative log returns follows a normal distribution, the p-value when performing the Andersen-Darling test is smaller than 5%. It indicates that the data does not follow a normal distribution. The Normal Q-Q plot suggest also that the data does not follow a normal distribution.
 
-## d) Fit t-distribution, compare with Normal via QQ-plot analysis {#d-fit-t-distribution-compare-with-normal-via-qq-plot-analysis}
+### d) Fit t-distribution, compare with Normal via QQ-plot analysis {#d-fit-t-distribution-compare-with-normal-via-qq-plot-analysis}
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -226,7 +228,7 @@ par(mfrow = c(1, 1))
 
 As we can see, the QQ-plot for the t-distribution is closer to the 45-degree line than the QQ-plot for the normal distribution. This suggests that the t-distribution is a better fit for the negative log returns than the normal distribution.
 
-## e) Compare t-distribution and normal tails
+### e) Compare t-distribution and normal tails
 
 ::: {.callout-note icon="false"}
 ## Question

@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Lodrik Adam, Sophie Daya, Jeff Macaraeg, Julien Perini, Alexandra Maria Santana Boado">
-<meta name="dcterms.date" content="2024-12-07">
+<meta name="dcterms.date" content="2024-12-08">
 
-<title>Pratical 1,2 and 3 for Group 1</title>
+<title>Pratical 1,2 and 3 for Group 1 (In full)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,7 +81,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#part-1-financial-returns-and-normality" id="toc-part-1-financial-returns-and-normality" class="nav-link active" data-scroll-target="#part-1-financial-returns-and-normality">Part 1: Financial returns and normality</a>
+  <li><a href="#practical-1-financial-returns-and-normality" id="toc-practical-1-financial-returns-and-normality" class="nav-link active" data-scroll-target="#practical-1-financial-returns-and-normality">Practical 1: Financial returns and normality</a>
+  <ul class="collapse">
+  <li><a href="#part-1-financial-returns-and-normality" id="toc-part-1-financial-returns-and-normality" class="nav-link" data-scroll-target="#part-1-financial-returns-and-normality">Part 1: Financial returns and normality</a>
   <ul class="collapse">
   <li><a href="#a-load-bitcoin-data-and-assess-price-stationarity" id="toc-a-load-bitcoin-data-and-assess-price-stationarity" class="nav-link" data-scroll-target="#a-load-bitcoin-data-and-assess-price-stationarity">a) Load Bitcoin data and assess price stationarity</a></li>
   <li><a href="#b-create-and-plot-bitcoin-negative-log-returns-assess-stationarity" id="toc-b-create-and-plot-bitcoin-negative-log-returns-assess-stationarity" class="nav-link" data-scroll-target="#b-create-and-plot-bitcoin-negative-log-returns-assess-stationarity">b) Create and plot Bitcoin negative log returns, assess stationarity</a></li>
@@ -103,10 +105,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#a-check-bitcoin-eth-dependence-using-correlation" id="toc-a-check-bitcoin-eth-dependence-using-correlation" class="nav-link" data-scroll-target="#a-check-bitcoin-eth-dependence-using-correlation">a) Check Bitcoin-ETH dependence using correlation</a></li>
   <li><a href="#b-analyze-bitcoin-eth-cross-correlation-function" id="toc-b-analyze-bitcoin-eth-cross-correlation-function" class="nav-link" data-scroll-target="#b-analyze-bitcoin-eth-cross-correlation-function">b) Analyze Bitcoin-ETH cross-correlation function</a></li>
   <li><a href="#c-assess-predictive-power-with-granger-test" id="toc-c-assess-predictive-power-with-granger-test" class="nav-link" data-scroll-target="#c-assess-predictive-power-with-granger-test">c) Assess predictive power with Granger test</a></li>
-  <li><a href="#d-predict-mutual-impacts-of-drops" id="toc-d-predict-mutual-impacts-of-drops" class="nav-link" data-scroll-target="#d-predict-mutual-impacts-of-drops">d) Predict mutual impacts of drops</a>
+  <li><a href="#d-predict-mutual-impacts-of-drops" id="toc-d-predict-mutual-impacts-of-drops" class="nav-link" data-scroll-target="#d-predict-mutual-impacts-of-drops">d) Predict mutual impacts of drops</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#part-4-comparing-gev-and-pot-approaches" id="toc-part-4-comparing-gev-and-pot-approaches" class="nav-link" data-scroll-target="#part-4-comparing-gev-and-pot-approaches">Part 4: Comparing GEV and POT approaches</a></li>
+  <li><a href="#data-loading-and-preparation" id="toc-data-loading-and-preparation" class="nav-link" data-scroll-target="#data-loading-and-preparation">Data Loading and Preparation</a></li>
+  <li><a href="#block-maxima-approach-gev-distribution" id="toc-block-maxima-approach-gev-distribution" class="nav-link" data-scroll-target="#block-maxima-approach-gev-distribution">Block Maxima Approach (GEV Distribution)</a></li>
+  <li><a href="#peaks-over-threshold-approach-gpd-distribution" id="toc-peaks-over-threshold-approach-gpd-distribution" class="nav-link" data-scroll-target="#peaks-over-threshold-approach-gpd-distribution">Peaks-over-Threshold Approach (GPD Distribution)</a></li>
+  <li><a href="#our-results" id="toc-our-results" class="nav-link" data-scroll-target="#our-results">Our results</a>
   <ul class="collapse">
-  <li><a href="#d.1-predict-eth-reaction-to-bitcoin-drop" id="toc-d.1-predict-eth-reaction-to-bitcoin-drop" class="nav-link" data-scroll-target="#d.1-predict-eth-reaction-to-bitcoin-drop">d.1) Predict ETH reaction to Bitcoin drop</a></li>
-  <li><a href="#d.2-predict-bitcoin-reaction-to-eth-drop" id="toc-d.2-predict-bitcoin-reaction-to-eth-drop" class="nav-link" data-scroll-target="#d.2-predict-bitcoin-reaction-to-eth-drop">d.2) Predict Bitcoin reaction to ETH drop</a></li>
+  <li><a href="#block-maxima-approach-gev-distribution-1" id="toc-block-maxima-approach-gev-distribution-1" class="nav-link" data-scroll-target="#block-maxima-approach-gev-distribution-1">Block Maxima Approach (GEV Distribution):</a>
+  <ul class="collapse">
+  <li><a href="#parameter-estimates" id="toc-parameter-estimates" class="nav-link" data-scroll-target="#parameter-estimates">Parameter Estimates:</a></li>
+  <li><a href="#gev-return-levels" id="toc-gev-return-levels" class="nav-link" data-scroll-target="#gev-return-levels">GEV Return Levels:</a></li>
+  </ul></li>
+  <li><a href="#peaks-over-threshold-approach-gpd-distribution-1" id="toc-peaks-over-threshold-approach-gpd-distribution-1" class="nav-link" data-scroll-target="#peaks-over-threshold-approach-gpd-distribution-1">Peaks-over-Threshold Approach (GPD Distribution):</a>
+  <ul class="collapse">
+  <li><a href="#threshold-selection" id="toc-threshold-selection" class="nav-link" data-scroll-target="#threshold-selection">Threshold Selection:</a></li>
+  <li><a href="#number-of-exceedances" id="toc-number-of-exceedances" class="nav-link" data-scroll-target="#number-of-exceedances">Number of Exceedances:</a></li>
+  <li><a href="#gpd-return-levels" id="toc-gpd-return-levels" class="nav-link" data-scroll-target="#gpd-return-levels">GPD Return Levels:</a></li>
+  <li><a href="#comparison-of-approaches" id="toc-comparison-of-approaches" class="nav-link" data-scroll-target="#comparison-of-approaches">Comparison of Approaches:</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -116,7 +134,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Pratical 1,2 and 3 for Group 1</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<div class="quarto-title-block"><div><h1 class="title">Pratical 1,2 and 3 for Group 1 (In full)</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -133,7 +151,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">December 7, 2024</p>
+      <p class="date">December 8, 2024</p>
     </div>
   </div>
   
@@ -146,8 +164,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load the required packages and install them if they are not.</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"code"</span>,<span class="st">"setup.R"</span>))</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -159,13 +175,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># scaling factor</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>scaling_factor <span class="ot">&lt;-</span> <span class="dv">100000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
-<section id="part-1-financial-returns-and-normality" class="level1">
-<h1>Part 1: Financial returns and normality</h1>
+<section id="practical-1-financial-returns-and-normality" class="level1">
+<h1>Practical 1: Financial returns and normality</h1>
+<section id="part-1-financial-returns-and-normality" class="level2">
+<h2 class="anchored" data-anchor-id="part-1-financial-returns-and-normality">Part 1: Financial returns and normality</h2>
 <p>The working directory is set to: /Users/lodrik/Documents/GitHub/RA_Praticals</p>
-<section id="a-load-bitcoin-data-and-assess-price-stationarity" class="level2">
-<h2 class="anchored" data-anchor-id="a-load-bitcoin-data-and-assess-price-stationarity">a) Load Bitcoin data and assess price stationarity</h2>
+<section id="a-load-bitcoin-data-and-assess-price-stationarity" class="level3">
+<h3 class="anchored" data-anchor-id="a-load-bitcoin-data-and-assess-price-stationarity">a) Load Bitcoin data and assess price stationarity</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -181,8 +198,6 @@ Question
 </div>
 <p>First, let’s take a look at the Bitcoin Prices on a plot.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Step 1: Extract the Bitcoin prices</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>bitcoin_prices <span class="ot">&lt;-</span> crypto_data<span class="sc">$</span>Bitcoin</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -193,7 +208,6 @@ Question
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">"Bitcoin Prices"</span>,</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Time"</span>,</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">"Price"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -205,11 +219,8 @@ Question
 <p>The graph of the raw Bitcoin prices suggest that the series might not be stationary.</p>
 <p>Let’s perform the Augmented Dickey-Fuller test to check if the raw Bitcoin prices are stationary.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Step 3: test for stationarity</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">adf.test</span>(crypto_data<span class="sc">$</span>Bitcoin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Augmented Dickey-Fuller Test
@@ -221,8 +232,8 @@ alternative hypothesis: stationary</code></pre>
 </div>
 <p>Since the p-value is significantly bigger than 0.05, we can not reject the null hypothesis and therefore, we can conclude that the raw Bitcoin prices are non-stationary.</p>
 </section>
-<section id="b-create-and-plot-bitcoin-negative-log-returns-assess-stationarity" class="level2">
-<h2 class="anchored" data-anchor-id="b-create-and-plot-bitcoin-negative-log-returns-assess-stationarity">b) Create and plot Bitcoin negative log returns, assess stationarity</h2>
+<section id="b-create-and-plot-bitcoin-negative-log-returns-assess-stationarity" class="level3">
+<h3 class="anchored" data-anchor-id="b-create-and-plot-bitcoin-negative-log-returns-assess-stationarity">b) Create and plot Bitcoin negative log returns, assess stationarity</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -238,8 +249,6 @@ Question
 </div>
 <p>Let’s create a function to compute the negative log returns of a given price series. We will then apply this function to the Bitcoin prices to compute the negative log returns.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Step 1: Create a function to compute negative log returns</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>negative_log_returns <span class="ot">&lt;-</span> <span class="cf">function</span>(prices) {</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="sc">-</span><span class="fu">diff</span>(<span class="fu">log</span>(prices)))</span>
@@ -247,12 +256,9 @@ Question
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Step 2: Use the fucntion on Bitcoin prices</span></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>neg_log_returns_bitcoin <span class="ot">&lt;-</span> <span class="fu">negative_log_returns</span>(bitcoin_prices)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>We can now plot the negative log returns series and the raw Bitcoin prices to compare.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Step 3: Plot the negative log returns series</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(neg_log_returns_bitcoin,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">type=</span><span class="st">"l"</span>,</span>
@@ -260,7 +266,6 @@ Question
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">"Negative Log Returns of Bitcoin Prices"</span>, </span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Time"</span>,</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">"Negative Log Returns"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -271,8 +276,6 @@ Question
 </div>
 <p>If we scale bitcoin prices and negative log returns, we can compare both time series on a plot with a common scale.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Top Plot: Plot both time series on the same graph</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>trimmed_bitcoin_prices <span class="ot">&lt;-</span> bitcoin_prices[<span class="sc">-</span><span class="dv">1</span>]  <span class="co"># Make sure lengths match</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(neg_log_returns_bitcoin,</span>
@@ -291,7 +294,6 @@ Question
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Neg Log Returns"</span>, <span class="st">"Bitcoin Prices"</span>),</span>
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"blue"</span>, <span class="st">"red"</span>),</span>
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -299,15 +301,10 @@ Question
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reset the plotting area to default settings (optional, for future plots)</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up the plotting area to have 3 rows and 1 column</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -318,7 +315,6 @@ Question
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Negative Log Returns of Bitcoin Prices"</span>, </span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Time"</span>,</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Negative Log Returns"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -326,8 +322,6 @@ Question
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bottom Right Plot: Plot the Bitcoin prices</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(bitcoin_prices, </span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">type =</span> <span class="st">"l"</span>, </span>
@@ -335,7 +329,6 @@ Question
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Bitcoin Prices"</span>, </span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Time"</span>, </span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Price"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -346,11 +339,8 @@ Question
 </div>
 <p>Visually, the negative log returns series does not appear to indicate a clear trend or seasonality. The variance, although it fluctuates in the middle, seems relatively constant. This observation suggests that the series may be stationary. To confirm this, we will perform the Augmented Dickey-Fuller test to assess the stationarity of the negative log returns.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Step 5: Test the stationarity of the negative log returns with the Augmented Dickey-Fuller test</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">adf.test</span>(neg_log_returns_bitcoin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Augmented Dickey-Fuller Test
@@ -362,8 +352,8 @@ alternative hypothesis: stationary</code></pre>
 </div>
 <p>Since the p-value is significantly smaller than 0.05, we can reject the null hypothesis and conclude that the negative log returns series is stationary.</p>
 </section>
-<section id="c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling" class="level2">
-<h2 class="anchored" data-anchor-id="c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling">c) Check negative log returns normality with histograms, QQ-plots, Anderson-Darling</h2>
+<section id="c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling" class="level3">
+<h3 class="anchored" data-anchor-id="c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling">c) Check negative log returns normality with histograms, QQ-plots, Anderson-Darling</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -379,8 +369,6 @@ Question
 </div>
 <p>Let’s first plot the histogram and QQ-plot of the negative log returns to visually assess the normality.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Step 1: Plot the histogram and QQ-plot of the negative log returns</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -395,7 +383,6 @@ Question
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(neg_log_returns_bitcoin)</span>
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(neg_log_returns_bitcoin,</span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">col=</span><span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -403,18 +390,12 @@ Question
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>The histogram of the negative log returns suggests that the data may follow a normal distribution. However, we need to perform a formal test to confirm this.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Step 2: Perform Anderson-Darling test for normality</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ad.test</span>(neg_log_returns_bitcoin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Anderson-Darling normality test
@@ -425,8 +406,8 @@ A = 26.277, p-value &lt; 2.2e-16</code></pre>
 </div>
 <p>Even though the Histogram suggest that the negative log returns follows a normal distribution, the p-value when performing the Andersen-Darling test is smaller than 5%. It indicates that the data does not follow a normal distribution. The Normal Q-Q plot suggest also that the data does not follow a normal distribution.</p>
 </section>
-<section id="d-fit-t-distribution-compare-with-normal-via-qq-plot-analysis" class="level2">
-<h2 class="anchored" data-anchor-id="d-fit-t-distribution-compare-with-normal-via-qq-plot-analysis">d) Fit t-distribution, compare with Normal via QQ-plot analysis</h2>
+<section id="d-fit-t-distribution-compare-with-normal-via-qq-plot-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="d-fit-t-distribution-compare-with-normal-via-qq-plot-analysis">d) Fit t-distribution, compare with Normal via QQ-plot analysis</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -442,11 +423,8 @@ Question
 </div>
 <p>Let’s fit a t-distribution to the negative log returns and compare it with the normal distribution using a QQ-plot.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Step 1: Fit a t-distribution to the negative log returns</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>fit_t <span class="ot">&lt;-</span> <span class="fu">fitdistr</span>(scaling_factor <span class="sc">*</span> neg_log_returns_bitcoin, <span class="st">"t"</span>) <span class="co"># Multiply by 100000 to avoid numerical issues</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>The t-distribution fit parameters are:</p>
 <ul>
@@ -456,8 +434,6 @@ Question
 </ul>
 <p>We can now compare the QQ-plot of the t-distribution with the QQ-plot of the normal distribution of <a href="#c-check-negative-log-returns-normality-with-histograms-qq-plots-anderson-darling">question c)</a>.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Step 2: Create a QQ-plot for the t-distribution and the normal distribution</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -477,7 +453,6 @@ Question
 <span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">main=</span><span class="st">"QQ-plot for Normal distribution"</span>)</span>
 <span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(neg_log_returns_bitcoin,</span>
 <span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">col=</span><span class="st">"blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -485,15 +460,12 @@ Question
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>As we can see, the QQ-plot for the t-distribution is closer to the 45-degree line than the QQ-plot for the normal distribution. This suggests that the t-distribution is a better fit for the negative log returns than the normal distribution.</p>
 </section>
-<section id="e-compare-t-distribution-and-normal-tails" class="level2">
-<h2 class="anchored" data-anchor-id="e-compare-t-distribution-and-normal-tails">e) Compare t-distribution and normal tails</h2>
+<section id="e-compare-t-distribution-and-normal-tails" class="level3">
+<h3 class="anchored" data-anchor-id="e-compare-t-distribution-and-normal-tails">e) Compare t-distribution and normal tails</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -509,8 +481,6 @@ Question
 </div>
 <p>To compare the tails of the t-distribution and the normal distribution, we will plot the density functions of both distributions and visually assess the differences.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Step 1: Fit the normal distribution to the negative log returns</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>fit_norm <span class="ot">&lt;-</span> <span class="fu">fitdistr</span>(scaling_factor <span class="sc">*</span> neg_log_returns_bitcoin, <span class="st">"normal"</span>)</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -560,7 +530,6 @@ Question
 <span id="cb20-47"><a href="#cb20-47" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"red"</span>),</span>
 <span id="cb20-48"><a href="#cb20-48" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),</span>
 <span id="cb20-49"><a href="#cb20-49" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -572,12 +541,10 @@ Question
 <p>Visually, the tails of the t-distribution are heavier than those of the normal distribution. This means that the t-distribution assigns more probability to extreme events than the normal distribution. Therefore, we can expect more extreme, unexpected events in the t-distribution than in the normal distribution. This observation is consistent with the QQ-plot analysis in <a href="#d-fit-t-distribution-compare-with-normal-via-qq-plot-analysis">question d)</a>, where the t-distribution was a better fit for the negative log returns than the normal distribution.</p>
 </section>
 </section>
-<section id="part-2-financial-time-series-heteroskedasticity-and-the-random-walk-hypothesis" class="level1">
-<h1>Part 2: Financial time series heteroskedasticity and the random walk hypothesis</h1>
+<section id="part-2-financial-time-series-heteroskedasticity-and-the-random-walk-hypothesis" class="level2">
+<h2 class="anchored" data-anchor-id="part-2-financial-time-series-heteroskedasticity-and-the-random-walk-hypothesis">Part 2: Financial time series heteroskedasticity and the random walk hypothesis</h2>
 <p>Another crucial hypothesis in asset pricing is the so-called homoscedasticity, i.e.&nbsp;constant variance of theresiduals. We would also like to check this assumption. We use the same Bitcoin data as in Part 1.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load the required packages and install them if they are not.</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"code"</span>,<span class="st">"setup.R"</span>))</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -597,10 +564,9 @@ Question
 <span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the fucntion on Bitcoin prices</span></span>
 <span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>neg_log_returns_bitcoin <span class="ot">&lt;-</span> <span class="fu">negative_log_returns</span>(bitcoin_prices)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
-<section id="a-acf-negative-log-returns" class="level2">
-<h2 class="anchored" data-anchor-id="a-acf-negative-log-returns">a) ACF &amp; negative log returns</h2>
+<section id="a-acf-negative-log-returns" class="level3">
+<h3 class="anchored" data-anchor-id="a-acf-negative-log-returns">a) ACF &amp; negative log returns</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -615,8 +581,6 @@ Question
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>)) </span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Tracer l'ACF de la série brute des prix du Bitcoin</span></span>
@@ -624,7 +588,6 @@ Question
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Tracer l'ACF des rendements logarithmiques négatifs (bitcoin_log_returns)</span></span>
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(neg_log_returns_bitcoin, <span class="at">main =</span> <span class="st">"ACF of Negative Log Returns"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -639,8 +602,8 @@ Question
 </ol>
 <p>Conclusion: The Negative Log Returns are likely easier to model due to their more stationary nature and lack of significant autocorrelation.</p>
 </section>
-<section id="b-ljung-box-procedure" class="level2">
-<h2 class="anchored" data-anchor-id="b-ljung-box-procedure">b) Ljung-Box procedure</h2>
+<section id="b-ljung-box-procedure" class="level3">
+<h3 class="anchored" data-anchor-id="b-ljung-box-procedure">b) Ljung-Box procedure</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -655,8 +618,6 @@ Question
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply Ljung-Box test on raw Bitcoin prices</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>ljung_box_raw <span class="ot">&lt;-</span> <span class="fu">Box.test</span>(bitcoin_prices, <span class="at">lag =</span> <span class="dv">20</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>)</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -665,7 +626,6 @@ Question
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print results</span></span>
 <span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ljung_box_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Box-Ljung test
@@ -673,10 +633,7 @@ Question
 data:  bitcoin_prices
 X-squared = 26873, df = 20, p-value &lt; 2.2e-16</code></pre>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ljung_box_returns)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Box-Ljung test
@@ -689,8 +646,8 @@ X-squared = 33.356, df = 20, p-value = 0.03082</code></pre>
 <p>For the raw series: Since price data tends to show trends, we often expect serial dependence. For the negative log returns: These are typically expected to be more random (i.e., closer to white noise), so the test might indicate less serial dependence.</p>
 <p>Based on the results of the Ljung-Box tests: For the raw Bitcoin prices: - Raw Bictoin Prices: p-value &lt; 2.2e-16, the p-value is extremely small, which mean that we reject the null hypothesis of no autocorrelation in the raw Bictoin prices. The values are highly dependent on previous values, it confirms that the series is non-stationary. - Negative Log Returns: p-value = 0.03082, the p-value is also small, but higher than the raw prices. It indicates that there is still some autocorrelation in the series, although it is less pronounced compared to the raw Bitcoin prices. Ideally, negative log returns should behave more likke white noise, meaning no serial dependence</p>
 </section>
-<section id="c-arima-models-for-the-negative-log-returns-series" class="level2">
-<h2 class="anchored" data-anchor-id="c-arima-models-for-the-negative-log-returns-series">c) ARIMA models for the negative log returns series</h2>
+<section id="c-arima-models-for-the-negative-log-returns-series" class="level3">
+<h3 class="anchored" data-anchor-id="c-arima-models-for-the-negative-log-returns-series">c) ARIMA models for the negative log returns series</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -705,13 +662,10 @@ Question
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>)) </span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Visualize ACF and PACF for negative log returns</span></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(neg_log_returns_bitcoin, <span class="at">main =</span> <span class="st">"ACF of Negative Log Returns"</span>)</span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">pacf</span>(neg_log_returns_bitcoin, <span class="at">main =</span> <span class="st">"PACF of Negative Log Returns"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -719,12 +673,9 @@ Question
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Use auto.arima() to find the best ARIMA model for negative log returns</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>auto_arima_model <span class="ot">&lt;-</span> <span class="fu">auto.arima</span>(neg_log_returns_bitcoin)</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(auto_arima_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Series: neg_log_returns_bitcoin 
 ARIMA(2,0,2) with non-zero mean 
@@ -743,11 +694,8 @@ Training set -1.965777e-07 0.001421946 0.0009423239 100.013 131.3896 0.7133069
                    ACF1
 Training set 0.00455059</code></pre>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Plot residuals of the ARIMA model to assess the goodness of fit</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">checkresiduals</span>(auto_arima_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -764,11 +712,8 @@ Q* = 4.7774, df = 6, p-value = 0.5727
 
 Model df: 4.   Total lags used: 10</code></pre>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Additional: Ljung-Box test on residuals to check if they are white noise</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Box.test</span>(<span class="fu">residuals</span>(auto_arima_model), <span class="at">type=</span><span class="st">"Ljung-Box"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Box-Ljung test
@@ -783,8 +728,8 @@ X-squared = 0.029861, df = 1, p-value = 0.8628</code></pre>
 <p>The AR1 and AR2 coefficients are -0.0520 and -0.5415, respectively. The MA1 and MA2 coefficients are 0.0853 and 0.4479, respectively. The mean of the series is very close to zero (1e-04). Error metrics:</p>
 <p>RMSE (Root Mean Square Error): 0.00142, which is relatively low, indicating that the model fits the data well. MAE (Mean Absolute Error): 0.000942, which is also quite low. ACF1 of residuals: 0.00455, suggesting that the residuals do not exhibit significant autocorrelation. Ljung-Box Test: The Ljung-Box test on residuals gives a p-value of 0.8628, which is much larger than 0.05. This indicates that there is no significant autocorrelation left in the residuals, implying that the model fits the data well. Conclusion: The ARIMA(2,0,2) model selected by auto.arima() seems to be a good fit for the negative log returns of Bitcoin, as evidenced by the low RMSE and MAE, as well as the results of the Ljung-Box test. The residuals behave like white noise, meaning that the model has successfully captured the patterns in the data. There is no significant temporal dependence left in the residuals, which supports the adequacy of this ARIMA model for the series. Overall, the ARIMA model chosen by auto.arima() fits the data well and leaves no significant autocorrelation in the residuals.</p>
 </section>
-<section id="d-garch-models" class="level2">
-<h2 class="anchored" data-anchor-id="d-garch-models">d) GARCH models</h2>
+<section id="d-garch-models" class="level3">
+<h3 class="anchored" data-anchor-id="d-garch-models">d) GARCH models</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -799,8 +744,6 @@ Question
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit GARCH(1,1) model with normal distribution</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>garch_normal <span class="ot">&lt;-</span> <span class="fu">garchFit</span>(<span class="sc">~</span> <span class="fu">garch</span>(<span class="dv">1</span>, <span class="dv">1</span>), <span class="at">data =</span> neg_log_returns_bitcoin, <span class="at">cond.dist =</span> <span class="st">"norm"</span>)</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -825,32 +768,25 @@ Question
 <span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot residuals for the t-distribution GARCH model</span></span>
 <span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(residuals_t, <span class="at">main =</span> <span class="st">"Residuals of GARCH(1,1) with t-Distribution"</span>, <span class="at">type =</span> <span class="st">"l"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>)) </span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ACF of residuals for the normal GARCH model</span></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(residuals_normal, <span class="at">main =</span> <span class="st">"ACF of Residuals (Normal GARCH Model)"</span>)</span>
 <span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ACF of residuals for the t-distribution GARCH model</span></span>
 <span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(residuals_t, <span class="at">main =</span> <span class="st">"ACF of Residuals (t-Distribution GARCH Model)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ljung-Box test for normal GARCH model residuals</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Box.test</span>(residuals_normal, <span class="at">lag =</span> <span class="dv">20</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>)</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Ljung-Box test for t-distribution GARCH model residuals</span></span>
 <span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="fu">Box.test</span>(residuals_t, <span class="at">lag =</span> <span class="dv">20</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>The results for fitting GARCH(1,1) models with both normal and standardized t-distributions to the negative log returns are as follows:</p>
 <p>GARCH(1,1) with Normal Distribution:</p>
 <p>The log-likelihood value is 7632.108. The coefficients for the GARCH model (omega, alpha1, and beta1) are significant (p-values &lt; 0.05), indicating that the model is well-fitted. The Ljung-Box test for the residuals shows a p-value of 0.3419 for 10 lags, which indicates no significant autocorrelation in the residuals, meaning the model fits well in terms of residual serial dependence. GARCH(1,1) with Standardized t-Distribution:</p>
 <p>The log-likelihood value is 7736.355, which is slightly better than the normal distribution model, indicating a potentially better fit. The coefficients are also significant (p-values &lt; 0.05), with the shape parameter of the t-distribution (shape = 4.28) indicating a heavier tail than the normal distribution. The Ljung-Box test for the residuals shows a p-value of 0.3507 for 10 lags, similar to the normal model, suggesting that there is no significant autocorrelation in the residuals. Conclusion: Both the GARCH(1,1) models (with normal and t-distributions) provide a good fit, with no significant residual autocorrelation based on the Ljung-Box test. However, the GARCH model with the standardized t-distribution has a higher log-likelihood and captures heavier tails (as indicated by the shape parameter), suggesting that it may be a better fit for the data due to the presence of tail risk or more extreme variations in the negative log returns of Bitcoin.</p>
 </section>
-<section id="e-residual-serial-correlation" class="level2">
-<h2 class="anchored" data-anchor-id="e-residual-serial-correlation">e) Residual serial correlation</h2>
+<section id="e-residual-serial-correlation" class="level3">
+<h3 class="anchored" data-anchor-id="e-residual-serial-correlation">e) Residual serial correlation</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -868,8 +804,6 @@ Question
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Fit an ARIMA(p, d, q) model on the negative log returns</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># From part (c), we decided ARIMA(2, 0, 2)</span></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>arima_model <span class="ot">&lt;-</span> <span class="fu">arima</span>(neg_log_returns_bitcoin, <span class="at">order =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">2</span>))</span>
@@ -879,7 +813,6 @@ Question
 <span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Fit a GARCH(1,1) model on the residuals from the ARIMA model</span></span>
 <span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>garch_model_arima_residuals <span class="ot">&lt;-</span> <span class="fu">garchFit</span>(<span class="sc">~</span> <span class="fu">garch</span>(<span class="dv">1</span>, <span class="dv">1</span>), <span class="at">data =</span> arima_residuals, <span class="at">cond.dist =</span> <span class="st">"norm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Series Initialization:
@@ -969,19 +902,16 @@ omega   2.507936e+11 -1.709771e+16 -6.864037e+09 -1.486634e+10
 alpha1  9.975053e+04 -6.864037e+09 -6.383094e+03 -9.576435e+03
 beta1  -2.026553e+04 -1.486634e+10 -9.576435e+03 -1.823892e+04
 attr(,"time")
-Time difference of 0.004321814 secs
+Time difference of 0.006762028 secs
 
 --- END OF TRACE ---
 
 
 Time to Estimate Parameters:
- Time difference of 0.02495003 secs</code></pre>
+ Time difference of 0.02567816 secs</code></pre>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary of the GARCH(1,1) model</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(garch_model_arima_residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Title:
@@ -992,7 +922,7 @@ Call:
 
 Mean and Variance Equation:
  data ~ garch(1, 1)
-&lt;environment: 0x12fcecbe0&gt;
+&lt;environment: 0x111193388&gt;
  [data = arima_residuals]
 
 Conditional Distribution:
@@ -1018,7 +948,7 @@ Log Likelihood:
  7627.039    normalized:  5.300236 
 
 Description:
- Sat Dec  7 17:20:57 2024 by user:  
+ Sun Dec  8 16:45:51 2024 by user:  
 
 
 Standardised Residuals Tests:
@@ -1037,13 +967,10 @@ Information Criterion Statistics:
       AIC       BIC       SIC      HQIC 
 -10.59491 -10.58026 -10.59493 -10.58944 </code></pre>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the residuals from the ARIMA + GARCH model</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>))  <span class="co"># To display multiple plots together</span></span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(arima_residuals, <span class="at">main =</span> <span class="st">"Residuals from ARIMA(2, 0, 2)"</span>, <span class="at">type =</span> <span class="st">"l"</span>)</span>
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">residuals</span>(garch_model_arima_residuals), <span class="at">main =</span> <span class="st">"Residuals from ARIMA(2, 0, 2) + GARCH(1, 1)"</span>, <span class="at">type =</span> <span class="st">"l"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1051,14 +978,11 @@ Information Criterion Statistics:
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))  <span class="co"># Reset plotting</span></span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Assess the quality of the fit using the Ljung-Box test on the GARCH model residuals</span></span>
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>ljung_box_test <span class="ot">&lt;-</span> <span class="fu">Box.test</span>(<span class="fu">residuals</span>(garch_model_arima_residuals), <span class="at">lag =</span> <span class="dv">20</span>, <span class="at">type =</span> <span class="st">"Ljung-Box"</span>)</span>
 <span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ljung_box_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Box-Ljung test
@@ -1066,11 +990,8 @@ Information Criterion Statistics:
 data:  residuals(garch_model_arima_residuals)
 X-squared = 11.355, df = 20, p-value = 0.9365</code></pre>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the ACF of the residuals to visually assess if there's still serial correlation</span></span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(<span class="fu">residuals</span>(garch_model_arima_residuals), <span class="at">main =</span> <span class="st">"ACF of Residuals (ARIMA + GARCH)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1085,8 +1006,8 @@ X-squared = 11.355, df = 20, p-value = 0.9365</code></pre>
 <p>Ljung-Box Test for Serial Correlation: The p-value of the Ljung-Box test (p = 0.9365) for the residuals of the ARIMA + GARCH(1,1) model is very high, indicating no significant serial correlation. This suggests that the model has captured the dependencies in the data well, and the residuals are essentially white noise. Jarque-Bera and Shapiro-Wilk Tests for Normality: Both tests indicate non-normality of the residuals (p-value = 0.000). This is common in financial time series data, as they often exhibit heavy tails and skewness. Ljung-Box Test on Squared Residuals: The p-values for the Ljung-Box test on squared residuals are also high, indicating no remaining conditional heteroscedasticity in the model, suggesting that the GARCH model has effectively modeled the conditional variance. Conclusion:</p>
 <p>The ARIMA + GARCH(1,1) model fits the data well, capturing both the autocorrelation in the returns and the conditional heteroscedasticity (volatility clustering). The residuals show no significant autocorrelation, and the GARCH model appears to have adequately handled the volatility. The model might still exhibit non-normality, but this is expected in financial data due to extreme returns or fat tails.</p>
 </section>
-<section id="f-model-comparison" class="level2">
-<h2 class="anchored" data-anchor-id="f-model-comparison">f) Model Comparison</h2>
+<section id="f-model-comparison" class="level3">
+<h3 class="anchored" data-anchor-id="f-model-comparison">f) Model Comparison</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1110,10 +1031,10 @@ Question
 <p>Conclusion: Most Suitable Model: The ARIMA + GARCH(1,1) model is the most suitable because it addresses both the autocorrelation in the log returns and the heteroscedasticity (changing volatility). It captures both the time-varying nature of volatility and any serial dependence in the data. Homoscedasticity Violation: In all three models, the homoscedasticity assumption is violated since all models incorporate the GARCH(1,1) structure, which models conditional heteroscedasticity (changing volatility over time).</p>
 </section>
 </section>
-<section id="part-3-financial-returns-and-normality" class="level1">
-<h1>Part 3: Financial returns and normality</h1>
-<section id="a-check-bitcoin-eth-dependence-using-correlation" class="level2">
-<h2 class="anchored" data-anchor-id="a-check-bitcoin-eth-dependence-using-correlation">a) Check Bitcoin-ETH dependence using correlation</h2>
+<section id="part-3-financial-returns-and-normality" class="level2">
+<h2 class="anchored" data-anchor-id="part-3-financial-returns-and-normality">Part 3: Financial returns and normality</h2>
+<section id="a-check-bitcoin-eth-dependence-using-correlation" class="level3">
+<h3 class="anchored" data-anchor-id="a-check-bitcoin-eth-dependence-using-correlation">a) Check Bitcoin-ETH dependence using correlation</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1140,8 +1061,8 @@ Question
 <p>The graph could suggest that the negative log returns of Bitcoin and Ethereum are dependent. However, we will perform a correlation test to confirm this.</p>
 <p>The computed correlation between the negative log returns of Bitcoin and Ethereum using the <code>cor.test()</code> function is -0.0031 and is not statistically significant (p-value = 0.905). However, the lack of significance in the correlation test does not necessarily imply independence, as there may be a non-linear relationship or other factors influencing the association between the two variables.</p>
 </section>
-<section id="b-analyze-bitcoin-eth-cross-correlation-function" class="level2">
-<h2 class="anchored" data-anchor-id="b-analyze-bitcoin-eth-cross-correlation-function">b) Analyze Bitcoin-ETH cross-correlation function</h2>
+<section id="b-analyze-bitcoin-eth-cross-correlation-function" class="level3">
+<h3 class="anchored" data-anchor-id="b-analyze-bitcoin-eth-cross-correlation-function">b) Analyze Bitcoin-ETH cross-correlation function</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1166,8 +1087,8 @@ Question
 </div>
 <p>We can clearly observe a significant spike at lag 5 indicates that there is a notable correlation between Bitcoin’s returns and Ethereum’s returns when Ethereum’s returns are shifted by 5 minutes. Ethereum’s returns are correlated with past values of Bitcoin’s returns and thus may predict Etherum’s returns with a 5 minutes delay. The spike indicates the strength of the correlation. In our case, the spike at lag 5 crosses the significance threshold (horizontal dashed lines). We can say with confidence that it is statistically significant and not likely due to random noise. However, it is important to keep in mind that cross-correlation does not imply causation. Other factors or indirect relationships might also explain this pattern.</p>
 </section>
-<section id="c-assess-predictive-power-with-granger-test" class="level2">
-<h2 class="anchored" data-anchor-id="c-assess-predictive-power-with-granger-test">c) Assess predictive power with Granger test</h2>
+<section id="c-assess-predictive-power-with-granger-test" class="level3">
+<h3 class="anchored" data-anchor-id="c-assess-predictive-power-with-granger-test">c) Assess predictive power with Granger test</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1184,8 +1105,8 @@ Question
 <p>We performed here two grander test using the <code>grandertest()</code>function. The first tests if Ethereum’s past values do not Granger-cause Bitcoin’s returns. With a p-value of 0.7132, we cannot reject the null hypothesis. Therefore, there is no evidence to suggest that Ethereum’s past values have predictive power for Bitcoin’s returns.</p>
 <p>The second test examines if Bitcoin’s past values Granger-cause Ethereum’s returns. With a p-value of 0, Bitcoin’s past values significantly Granger-cause Ethereum’s returns, meaning there is strong evidence of predictive power.</p>
 </section>
-<section id="d-predict-mutual-impacts-of-drops" class="level2">
-<h2 class="anchored" data-anchor-id="d-predict-mutual-impacts-of-drops">d) Predict mutual impacts of drops</h2>
+<section id="d-predict-mutual-impacts-of-drops" class="level3">
+<h3 class="anchored" data-anchor-id="d-predict-mutual-impacts-of-drops">d) Predict mutual impacts of drops</h3>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1199,8 +1120,8 @@ Question
 <p>Based on your answer in <a href="#c-assess-predictive-power-with-granger-test">(c)</a>, answer the following questions:</p>
 </div>
 </div>
-<section id="d.1-predict-eth-reaction-to-bitcoin-drop" class="level3">
-<h3 class="anchored" data-anchor-id="d.1-predict-eth-reaction-to-bitcoin-drop">d.1) Predict ETH reaction to Bitcoin drop</h3>
+<section id="d.1-predict-eth-reaction-to-bitcoin-drop" class="level4">
+<h4 class="anchored" data-anchor-id="d.1-predict-eth-reaction-to-bitcoin-drop">d.1) Predict ETH reaction to Bitcoin drop</h4>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1216,8 +1137,8 @@ Question
 </div>
 <p>Given our results in <a href="#c-assess-predictive-power-with-granger-test">question c)</a>, the sudden drop in Bitcoin stocks should have a significant impact on the Etherum stocks price. Given our analysis, the Ethereum stocks should drop 5 minutes (lag of 5 / <a href="#b-analyze-bitcoin-eth-cross-correlation-function">question b)</a>) after the Bitcoin stocks drop with a value close to 80% of the Bitcoin drop.</p>
 </section>
-<section id="d.2-predict-bitcoin-reaction-to-eth-drop" class="level3">
-<h3 class="anchored" data-anchor-id="d.2-predict-bitcoin-reaction-to-eth-drop">d.2) Predict Bitcoin reaction to ETH drop</h3>
+<section id="d.2-predict-bitcoin-reaction-to-eth-drop" class="level4">
+<h4 class="anchored" data-anchor-id="d.2-predict-bitcoin-reaction-to-eth-drop">d.2) Predict Bitcoin reaction to ETH drop</h4>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1232,6 +1153,408 @@ Question
 </div>
 </div>
 <p>Based on the Granger causality test results from <a href="#c-assess-predictive-power-with-granger-test">question c)</a>, Ethereum’s past values do not Granger-cause Bitcoin’s returns, suggesting no significant predictive relationship. If Ethereum experiences an extreme sudden drop, it is less likely that Bitcoin will exhibit a direct or immediate reaction based on historical relationships. However, Bitcoin and Ethereum share common market factors and investor sentiment, so an indirect reaction (e.g., due to market-wide panic) is still possible, though it is not strongly supported by the causality analysis.</p>
+</section>
+</section>
+</section>
+</section>
+<section id="part-4-comparing-gev-and-pot-approaches" class="level1">
+<h1>Part 4: Comparing GEV and POT approaches</h1>
+<p>In this analysis, we investigate whether a Generalized Extreme Value (GEV) distribution can accurately model annual maximum temperatures in Switzerland. Additionally, we compare the results of the block Maxima approach with the Peaks-over-Threshold (POT) approach using declustering for extreme temperatures.</p>
+</section>
+<section id="data-loading-and-preparation" class="level1">
+<h1>Data Loading and Preparation</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load the required packages and install them if they are not.</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"code"</span>,<span class="st">"setup.R"</span>))</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the data</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>data_temp <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"Cleaned_Stations_Data.csv"</span>))</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter data for all cities and remove any rows with NA in TMAX</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Geneva</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>data_geneva <span class="ot">&lt;-</span> data_temp <span class="sc">%&gt;%</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(TMAX)) <span class="sc">%&gt;%</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(NAME <span class="sc">==</span> <span class="st">"Genève"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(DATE, TMAX) <span class="sc">%&gt;%</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DATE =</span> <span class="fu">as.Date</span>(DATE))</span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Santïs</span></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>data_santis <span class="ot">&lt;-</span> data_temp <span class="sc">%&gt;%</span></span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(TMAX)) <span class="sc">%&gt;%</span></span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(NAME <span class="sc">==</span> <span class="st">"Saentis"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(DATE, TMAX) <span class="sc">%&gt;%</span></span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DATE =</span> <span class="fu">as.Date</span>(DATE))</span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Lugano</span></span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>data_lugano <span class="ot">&lt;-</span> data_temp <span class="sc">%&gt;%</span></span>
+<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(TMAX)) <span class="sc">%&gt;%</span></span>
+<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(NAME <span class="sc">==</span> <span class="st">"Lugano"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(DATE, TMAX) <span class="sc">%&gt;%</span></span>
+<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DATE =</span> <span class="fu">as.Date</span>(DATE))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We ensure that we have the necessary data for the analysis by filtering the temperature data for all three cities and removing any rows with missing values. We removed 395 rows.</p>
+</section>
+<section id="block-maxima-approach-gev-distribution" class="level1">
+<h1>Block Maxima Approach (GEV Distribution)</h1>
+<p>We calculate the annual maximum temperatures for Geneva, Santïs and Lugano and fit a GEV distribution to these maxima.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate annual maximum temperatures</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Geneva</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>annual_maxima_geneva <span class="ot">&lt;-</span> data_geneva <span class="sc">%&gt;%</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Year =</span> <span class="fu">year</span>(DATE)) <span class="sc">%&gt;%</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">%&gt;%</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">MaxTemp =</span> <span class="fu">max</span>(TMAX), <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Santïs</span></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>annual_maxima_santis <span class="ot">&lt;-</span> data_santis <span class="sc">%&gt;%</span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Year =</span> <span class="fu">year</span>(DATE)) <span class="sc">%&gt;%</span></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">%&gt;%</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">MaxTemp =</span> <span class="fu">max</span>(TMAX), <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Lugano</span></span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>annual_maxima_Lugano <span class="ot">&lt;-</span> data_lugano <span class="sc">%&gt;%</span></span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Year =</span> <span class="fu">year</span>(DATE)) <span class="sc">%&gt;%</span></span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">%&gt;%</span></span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">MaxTemp =</span> <span class="fu">max</span>(TMAX), <span class="at">.groups =</span> <span class="st">'drop'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a GEV distribution to the annual maxima</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Genève</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>gev_fit_geneva <span class="ot">&lt;-</span> <span class="fu">fevd</span>(annual_maxima_geneva<span class="sc">$</span>MaxTemp, <span class="at">type =</span> <span class="st">"GEV"</span>)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Santïs</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>gev_fit_santis <span class="ot">&lt;-</span> <span class="fu">fevd</span>(annual_maxima_santis<span class="sc">$</span>MaxTemp, <span class="at">type =</span> <span class="st">"GEV"</span>)</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Lugano</span></span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>gev_fit_Lugano <span class="ot">&lt;-</span> <span class="fu">fevd</span>(annual_maxima_Lugano<span class="sc">$</span>MaxTemp, <span class="at">type =</span> <span class="st">"GEV"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnostic plots for the GEV fit</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Geneva</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(gev_fit_geneva)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-55-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Santïs</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(gev_fit_santis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-55-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lugano</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(gev_fit_Lugano)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-55-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We have here the diagnostic plots for the GEV fit, which include the quantile-quantile plot, the return level plot, the probability plot, and the density plot. We see that overal the fit is good.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate return levels for 10, 50, and 100-year return periods</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Genève</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>gev_return_levels_geneva <span class="ot">&lt;-</span> <span class="fu">return.level</span>(gev_fit_geneva, <span class="at">return.period =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">100</span>))</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Santïs</span></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>gev_return_levels_santis <span class="ot">&lt;-</span> <span class="fu">return.level</span>(gev_fit_santis, <span class="at">return.period =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">100</span>))</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Lugano</span></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>gev_return_levels_Lugano <span class="ot">&lt;-</span> <span class="fu">return.level</span>(gev_fit_Lugano, <span class="at">return.period =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="peaks-over-threshold-approach-gpd-distribution" class="level1">
+<h1>Peaks-over-Threshold Approach (GPD Distribution)</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter the data for the summer months (June to September)</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Geneva</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>geneva_summer <span class="ot">&lt;-</span> <span class="fu">subset</span>(data_geneva, <span class="fu">format</span>(DATE, <span class="st">"%m"</span>) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"06"</span>, <span class="st">"07"</span>, <span class="st">"08"</span>, <span class="st">"09"</span>))</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Santis</span></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>santis_summer <span class="ot">&lt;-</span> <span class="fu">subset</span>(data_santis, <span class="fu">format</span>(DATE, <span class="st">"%m"</span>) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"06"</span>, <span class="st">"07"</span>, <span class="st">"08"</span>, <span class="st">"09"</span>))</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Lugano</span></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>lugano_summer <span class="ot">&lt;-</span> <span class="fu">subset</span>(data_lugano, <span class="fu">format</span>(DATE, <span class="st">"%m"</span>) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"06"</span>, <span class="st">"07"</span>, <span class="st">"08"</span>, <span class="st">"09"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a threshold at the 95th percentile</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Geneva</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>threshold_geneva <span class="ot">&lt;-</span> <span class="fu">quantile</span>(geneva_summer<span class="sc">$</span>TMAX, <span class="fl">0.95</span>)</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Santïs</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>threshold_santis <span class="ot">&lt;-</span> <span class="fu">quantile</span>(santis_summer<span class="sc">$</span>TMAX, <span class="fl">0.95</span>)</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Lugano</span></span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>threshold_lugano <span class="ot">&lt;-</span> <span class="fu">quantile</span>(lugano_summer<span class="sc">$</span>TMAX, <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of exceedances over the threshold</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Geneva</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>num_exceedances_geneva <span class="ot">&lt;-</span> <span class="fu">sum</span>(geneva_summer<span class="sc">$</span>TMAX <span class="sc">&gt;</span> threshold_geneva)</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Santïs</span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>num_exceedances_santis <span class="ot">&lt;-</span> <span class="fu">sum</span>(santis_summer<span class="sc">$</span>TMAX <span class="sc">&gt;</span> threshold_santis)</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Lugano</span></span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>num_exceedances_Lugano <span class="ot">&lt;-</span> <span class="fu">sum</span>(lugano_summer<span class="sc">$</span>TMAX <span class="sc">&gt;</span> threshold_lugano)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We now apply the Peaks-over-Threshold (POT) approach using a suitable threshold. With a 95% threshold, we have 413 exceedances over the threshold for Genève, 413 for Santïs, and 406 for Lugano.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Decluster the data using the chosen threshold for each station</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Genava</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>geneva_declustered <span class="ot">&lt;-</span> extRemes<span class="sc">::</span><span class="fu">decluster</span>(geneva_summer<span class="sc">$</span>TMAX, <span class="at">threshold =</span> threshold_geneva, <span class="at">run.length =</span> <span class="dv">1</span>)</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Santïs</span></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>santis_declustered <span class="ot">&lt;-</span> extRemes<span class="sc">::</span><span class="fu">decluster</span>(santis_summer<span class="sc">$</span>TMAX, <span class="at">threshold =</span> threshold_santis, <span class="at">run.length =</span> <span class="dv">1</span>)</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Lugano</span></span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>lugano_declustered <span class="ot">&lt;-</span> extRemes<span class="sc">::</span><span class="fu">decluster</span>(lugano_summer<span class="sc">$</span>TMAX, <span class="at">threshold =</span> threshold_lugano, <span class="at">run.length =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the declustered data to the corresponding datasets</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Geneva</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>geneva_summer<span class="sc">$</span>declustered <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(geneva_summer<span class="sc">$</span>TMAX <span class="sc">&gt;=</span> threshold_geneva, geneva_declustered, <span class="cn">NA</span>)</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Santïs</span></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>santis_summer<span class="sc">$</span>declustered <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(santis_summer<span class="sc">$</span>TMAX <span class="sc">&gt;=</span> threshold_santis, santis_declustered, <span class="cn">NA</span>)</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Lugano</span></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>lugano_summer<span class="sc">$</span>declustered <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(lugano_summer<span class="sc">$</span>TMAX <span class="sc">&gt;=</span> threshold_lugano, lugano_declustered, <span class="cn">NA</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract declustered extreme values</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Geneva</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>extreme_values_geneva <span class="ot">&lt;-</span> geneva_summer[[<span class="st">"declustered"</span>]][<span class="sc">!</span><span class="fu">is.na</span>(geneva_summer[[<span class="st">"declustered"</span>]])]</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Santïs</span></span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>extreme_values_santis <span class="ot">&lt;-</span> santis_summer[[<span class="st">"declustered"</span>]][<span class="sc">!</span><span class="fu">is.na</span>(santis_summer[[<span class="st">"declustered"</span>]])]</span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Lugano</span></span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>extreme_values_lugano <span class="ot">&lt;-</span> lugano_summer[[<span class="st">"declustered"</span>]][<span class="sc">!</span><span class="fu">is.na</span>(lugano_summer[[<span class="st">"declustered"</span>]])]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a GPD to the exceedances</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Genève</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>gpd_fit_geneva <span class="ot">&lt;-</span> <span class="fu">fevd</span>(extreme_values_geneva, <span class="at">threshold =</span> threshold_geneva, <span class="at">type =</span> <span class="st">"GP"</span>)</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Santïs</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>gpd_fit_santis <span class="ot">&lt;-</span> <span class="fu">fevd</span>(extreme_values_santis, <span class="at">threshold =</span> threshold_santis, <span class="at">type =</span> <span class="st">"GP"</span>)</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Lugano</span></span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>gpd_fit_lugano <span class="ot">&lt;-</span> <span class="fu">fevd</span>(extreme_values_lugano, <span class="at">threshold =</span> threshold_lugano, <span class="at">type =</span> <span class="st">"GP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnostic plots for the GPD fit</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Genève</span></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(gpd_fit_geneva)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-64-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Santïs</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(gpd_fit_santis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-64-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lugano</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(gpd_fit_lugano)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-64-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Again, we have the diagnostic plots for the GPD fit, which include the quantile-quantile plot, the return level plot, the probability plot, and the density plot. We see that overal the fit is good.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate return levels for 10, 50, and 100-year return periods</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Geneva</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>gpd_return_levels_geneva <span class="ot">&lt;-</span> <span class="fu">return.level</span>(gpd_fit_geneva, <span class="at">return.period =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">100</span>))</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Santïs</span></span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>gpd_return_levels_santis <span class="ot">&lt;-</span> <span class="fu">return.level</span>(gpd_fit_santis, <span class="at">return.period =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">100</span>))</span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Lugano</span></span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>gpd_return_levels_Lugano <span class="ot">&lt;-</span> <span class="fu">return.level</span>(gpd_fit_lugano, <span class="at">return.period =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="our-results" class="level1">
+<h1>Our results</h1>
+<section id="block-maxima-approach-gev-distribution-1" class="level2">
+<h2 class="anchored" data-anchor-id="block-maxima-approach-gev-distribution-1">Block Maxima Approach (GEV Distribution):</h2>
+<section id="parameter-estimates" class="level3">
+<h3 class="anchored" data-anchor-id="parameter-estimates">Parameter Estimates:</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 15%">
+<col style="width: 23%">
+<col style="width: 23%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Station</th>
+<th style="text-align: center;">Elevation</th>
+<th style="text-align: center;">location parameter</th>
+<th style="text-align: center;">scale parameter</th>
+<th style="text-align: center;">shape parameter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Geneva</td>
+<td style="text-align: center;">375m</td>
+<td style="text-align: center;">32.69</td>
+<td style="text-align: center;">1.97</td>
+<td style="text-align: center;">-0.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Santïs</td>
+<td style="text-align: center;">2500m</td>
+<td style="text-align: center;">16.84</td>
+<td style="text-align: center;">1.5</td>
+<td style="text-align: center;">-0.23</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Lugano</td>
+<td style="text-align: center;">275m</td>
+<td style="text-align: center;">31.51</td>
+<td style="text-align: center;">1.65</td>
+<td style="text-align: center;">-0.17</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="gev-return-levels" class="level3">
+<h3 class="anchored" data-anchor-id="gev-return-levels">GEV Return Levels:</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 15%">
+<col style="width: 23%">
+<col style="width: 23%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Station</th>
+<th style="text-align: center;">Elevation</th>
+<th style="text-align: center;">10-year RL (°C)</th>
+<th style="text-align: center;">50-year RL (°C)</th>
+<th style="text-align: center;">100-year RL (°C)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Geneva</td>
+<td style="text-align: center;">375m</td>
+<td style="text-align: center;">36.45</td>
+<td style="text-align: center;">38.51</td>
+<td style="text-align: center;">39.23</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Santïs</td>
+<td style="text-align: center;">2500m</td>
+<td style="text-align: center;">19.47</td>
+<td style="text-align: center;">20.69</td>
+<td style="text-align: center;">21.08</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Lugano</td>
+<td style="text-align: center;">275m</td>
+<td style="text-align: center;">34.61</td>
+<td style="text-align: center;">36.24</td>
+<td style="text-align: center;">36.81</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="peaks-over-threshold-approach-gpd-distribution-1" class="level2">
+<h2 class="anchored" data-anchor-id="peaks-over-threshold-approach-gpd-distribution-1">Peaks-over-Threshold Approach (GPD Distribution):</h2>
+<section id="threshold-selection" class="level3">
+<h3 class="anchored" data-anchor-id="threshold-selection">Threshold Selection:</h3>
+<p>The threshold was set at the 95th percentile, which is 31.8 degrees Celsius for Geneva</p>
+<p>The threshold was set at the 95th percentile, which is 15 degrees Celsius for Santïs.</p>
+<p>The threshold was set at the 95th percentile, which is 30.8 degrees Celsius for Lugano.</p>
+</section>
+<section id="number-of-exceedances" class="level3">
+<h3 class="anchored" data-anchor-id="number-of-exceedances">Number of Exceedances:</h3>
+<p>There are 413 exceedances over the threshold for Geneva.</p>
+<p>There are 413 exceedances over the threshold for Santïs.</p>
+<p>There are 406 exceedances over the threshold for Lugano.</p>
+</section>
+<section id="gpd-return-levels" class="level3">
+<h3 class="anchored" data-anchor-id="gpd-return-levels">GPD Return Levels:</h3>
+<p>The return levels are:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 15%">
+<col style="width: 23%">
+<col style="width: 23%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Station</th>
+<th style="text-align: center;">Elevation</th>
+<th style="text-align: center;">10-year RL (°C)</th>
+<th style="text-align: center;">50-year RL (°C)</th>
+<th style="text-align: center;">100-year RL (°C)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Geneva</td>
+<td style="text-align: center;">375m</td>
+<td style="text-align: center;">40.72</td>
+<td style="text-align: center;">41.63</td>
+<td style="text-align: center;">41.96</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Santïs</td>
+<td style="text-align: center;">2500m</td>
+<td style="text-align: center;">21.52</td>
+<td style="text-align: center;">21.84</td>
+<td style="text-align: center;">21.94</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Lugano</td>
+<td style="text-align: center;">275m</td>
+<td style="text-align: center;">39.88</td>
+<td style="text-align: center;">42.01</td>
+<td style="text-align: center;">42.95</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="comparison-of-approaches" class="level3">
+<h3 class="anchored" data-anchor-id="comparison-of-approaches">Comparison of Approaches:</h3>
+<p>In comparing the block maxima approach (GEV) to the Peaks-over-Threshold approach (GPD) for modeling temperature extremes, we find that the POT method often provides more nuanced information about the tail behavior of the distribution. While the GEV model uses only the annual maximum values, which can lead to relatively large uncertainty due to a limited amount of extreme data, the POT approach utilizes all temperature values above a chosen high threshold. This generally results in more data points to characterize the tail, potentially yielding more stable and reliable estimates of parameters and return levels. However, the POT approach depends on careful threshold selection and declustering, which introduces additional steps not required by the simpler block maxima method. In practice, the POT approach can lead to different (often more precise) return level estimates, giving a potentially more accurate picture of the frequency and magnitude of extreme temperature events.</p>
 <!-- -->
 
 </section>
@@ -1711,23 +2034,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb45" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Pratical 1,2 and 3 for Group 1</span></span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="an">date-format:</span><span class="co"> long</span></span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> Lodrik Adam, Sophie Daya, Jeff Macaraeg, Julien Perini, Alexandra Maria Santana Boado</span></span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
-<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
-<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true</span></span>
-<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-border-left: "#0d6efd"</span></span>
-<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-bg: true</span></span>
-<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="co">    highlight-style: github</span></span>
-<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
-<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a><span class="in">```{r child = c("practical_11_final.qmd", "practical_12_final.qmd", "practical_13_final.qmd")}</span></span>
-<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb63" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Pratical 1,2 and 3 for Group 1 (In full)</span></span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a><span class="an">date-format:</span><span class="co"> long</span></span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> Lodrik Adam, Sophie Daya, Jeff Macaraeg, Julien Perini, Alexandra Maria Santana Boado</span></span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: false</span></span>
+<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-border-left: "#0d6efd"</span></span>
+<span id="cb63-11"><a href="#cb63-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-bg: true</span></span>
+<span id="cb63-12"><a href="#cb63-12" aria-hidden="true" tabindex="-1"></a><span class="co">    highlight-style: github</span></span>
+<span id="cb63-13"><a href="#cb63-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb63-14"><a href="#cb63-14" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb63-15"><a href="#cb63-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-16"><a href="#cb63-16" aria-hidden="true" tabindex="-1"></a><span class="in">```{r child = c("practical_11_final.qmd", "practical_12_final.qmd", "practical_13_final.qmd", "practical_34_final.qmd")}</span></span>
+<span id="cb63-17"><a href="#cb63-17" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

@@ -9,9 +9,9 @@ crypto_data <- read.csv(here("data", "crypto_data.csv"))
 rounding_digits <- 4
 ```
 
-# Part 3: Financial returns and normality
+## Part 3: Financial returns and normality
 
-## a) Check Bitcoin-ETH dependence using correlation
+### a) Check Bitcoin-ETH dependence using correlation
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -69,7 +69,7 @@ cor_test_result <- cor.test(nlr_df$Ethereum, nlr_df$Bitcoin)
 
 The computed correlation between the negative log returns of Bitcoin and Ethereum using the `cor.test()` function is `r round(cor_test_result$estimate, rounding_digits)` and is not statistically significant (p-value = `r round(cor_test_result$p.value, rounding_digits)`). However, the lack of significance in the correlation test does not necessarily imply independence, as there may be a non-linear relationship or other factors influencing the association between the two variables.
 
-## b) Analyze Bitcoin-ETH cross-correlation function
+### b) Analyze Bitcoin-ETH cross-correlation function
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -86,7 +86,7 @@ ccf(nlr_df$Ethereum, nlr_df$Bitcoin, main = "Cross-Correlation Function: Ethereu
 We can clearly observe a significant spike at lag 5 indicates that there is a notable correlation between Bitcoin’s returns and Ethereum’s returns when Ethereum’s returns are shifted by 5 minutes. Ethereum’s returns are correlated with past values of Bitcoin’s returns and thus may predict Etherum's returns with a 5 minutes delay. The spike indicates the strength of the correlation. In our case, the spike at lag 5 crosses the significance threshold (horizontal dashed lines). We can say with confidence that it is statistically significant and not likely due to random noise.
 However, it is important to keep in mind that cross-correlation does not imply causation. Other factors or indirect relationships might also explain this pattern.
 
-## c) Assess predictive power with Granger test
+### c) Assess predictive power with Granger test
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -108,7 +108,7 @@ We performed here two grander test using the `grandertest()`function. The first 
 
 The second test examines if Bitcoin’s past values Granger-cause Ethereum’s returns. With a p-value of `r round(granger_test_btc_to_eth$"Pr(>F)"[2], rounding_digits)`, Bitcoin’s past values significantly Granger-cause Ethereum’s returns, meaning there is strong evidence of predictive power.
 
-## d) Predict mutual impacts of drops
+### d) Predict mutual impacts of drops
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -116,7 +116,7 @@ The second test examines if Bitcoin’s past values Granger-cause Ethereum’s r
 Based on your answer in [(c)](#c-assess-predictive-power-with-granger-test), answer the following questions:
 :::
 
-### d.1) Predict ETH reaction to Bitcoin drop
+#### d.1) Predict ETH reaction to Bitcoin drop
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -127,7 +127,7 @@ with ETH stocks?
 
 Given our results in [question c)](#c-assess-predictive-power-with-granger-test), the sudden drop in Bitcoin stocks should have a significant impact on the Etherum stocks price. Given our analysis, the Ethereum stocks should drop 5 minutes (lag of 5 / [question b)](#b-analyze-bitcoin-eth-cross-correlation-function)) after the Bitcoin stocks drop with a value close to 80% of the Bitcoin drop.
 
-### d.2) Predict Bitcoin reaction to ETH drop
+#### d.2) Predict Bitcoin reaction to ETH drop
 
 ::: {.callout-note icon="false"}
 ## Question

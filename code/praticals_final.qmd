@@ -1,17 +1,17 @@
 ---
-title: Pratical 1,2 and 3 for Group 1
+title: Pratical 1,2 and 3 for Group 1 (In full)
 date: today
 date-format: long
 author: Lodrik Adam, Sophie Daya, Jeff Macaraeg, Julien Perini, Alexandra Maria Santana Boado
 toc: true
 format:
   html:
-    code-fold: true
+    code-fold: false
     code-block-border-left: "#0d6efd"
     code-block-bg: true
     highlight-style: github
     code-tools: true
 ---
 
-```{r child = c("practical_11_final.qmd", "practical_12_final.qmd", "practical_13_final.qmd", "practical_34_final.qmd)}
+```{r child = c("practical_11_final.qmd", "practical_12_final.qmd", "practical_13_final.qmd", "practical_34_final.qmd")}
 ```
