@@ -1,14 +1,285 @@
+# Part 3: Return Period & Probabilities of New Record High Temperatures
+
 # Introduction
 
-In this part, we will discuss the return periods & probability analysis of having a new record of heatwaves in the cities of Geneva, Saentis and Lugano. We will be using both approaches (Block Maxima & Peaks-over-Threshold) to assess which approach is better and provides the most relevant results.
+In this part, we will discuss the return periods & probability analysis of having a new record of heatwaves in the cities of Geneva, Säntis and Lugano. We will be using both approaches (Block Maxima & Peaks-over-Threshold) to assess which approach is better and provides the most relevant results.
 
-```{r echo = FALSE, message = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = F}
 # load the required packages and install them if they are not.
 source(here::here("code","setup.R"))
 
 # Load the data
-data <- read.csv(here("data", "Cleaned_Stations_Data.csv"))
+data_temp <- read.csv(here("data", "Cleaned_Stations_Data.csv"))
 ```
+
+``` {r, echo = FALSE, message = FALSE, warning = F }
+# Filter data for all cities and remove any rows with NA in TMAX
+# Geneva
+data_geneva <- data_temp %>%
+  filter(!is.na(TMAX)) %>%
+  filter(NAME == "Genève") %>%
+  dplyr::select(DATE, TMAX) %>%
+  mutate(DATE = as.Date(DATE))
+
+# Santïs
+data_santis <- data_temp %>%
+  filter(!is.na(TMAX)) %>%
+  filter(NAME == "Saentis") %>%
+  dplyr::select(DATE, TMAX) %>%
+  mutate(DATE = as.Date(DATE))
+
+# Lugano
+data_lugano <- data_temp %>%
+  filter(!is.na(TMAX)) %>%
+  filter(NAME == "Lugano") %>%
+  dplyr::select(DATE, TMAX) %>%
+  mutate(DATE = as.Date(DATE))
+```
+
+## Block Maxima Approach (GEV Distribution)
+
+```{r, echo = FALSE, message = FALSE, warning = F}
+# Calculate annual maximum temperatures
+# Geneva
+annual_maxima_geneva <- data_geneva %>%
+  mutate(Year = year(DATE)) %>%
+  group_by(Year) %>%
+  summarize(MaxTemp = max(TMAX), .groups = 'drop')
+
+# Santïs
+annual_maxima_santis <- data_santis %>%
+  mutate(Year = year(DATE)) %>%
+  group_by(Year) %>%
+  summarize(MaxTemp = max(TMAX), .groups = 'drop')
+
+# Lugano
+annual_maxima_Lugano <- data_lugano %>%
+  mutate(Year = year(DATE)) %>%
+  group_by(Year) %>%
+  summarize(MaxTemp = max(TMAX), .groups = 'drop')
+```
+
+```{r, echo = FALSE, message = FALSE, warning = F}
+# Fit a GEV distribution to the annual maxima
+# Genève
+gev_fit_geneva <- fevd(annual_maxima_geneva$MaxTemp, type = "GEV")
+
+# Santïs
+gev_fit_santis <- fevd(annual_maxima_santis$MaxTemp, type = "GEV")
+
+# Lugano
+gev_fit_Lugano <- fevd(annual_maxima_Lugano$MaxTemp, type = "GEV")
+```
+
+```{r, echo = FALSE, message = FALSE, warning = F}
+# Diagnostic plots for the GEV fit
+# Geneva
+par(mfrow = c(2, 2))
+plot(gev_fit_geneva)
+
+# Santïs
+par(mfrow = c(2, 2))
+plot(gev_fit_santis)
+
+# Lugano
+par(mfrow = c(2, 2))
+plot(gev_fit_Lugano)
+```
+
+```{r, echo = FALSE, message = FALSE, warning = F}
+# Calculate return levels for 10, 50, and 100-year return periods
+# Genève
+gev_return_levels_geneva <- return.level(gev_fit_geneva, return.period = c(10, 50, 100))
+
+# Santïs
+gev_return_levels_santis <- return.level(gev_fit_santis, return.period = c(10, 50, 100))
+
+# Lugano
+gev_return_levels_Lugano <- return.level(gev_fit_Lugano, return.period = c(10, 50, 100))
+```
+
+## Peaks-over-Threshold Approach (GPD Distribution)
+
+```{r, echo = FALSE, message = FALSE, warning = F}
+# Filter the data for the summer months (June to September)
+# Geneva
+geneva_summer <- subset(data_geneva, format(DATE, "%m") %in% c("06", "07", "08", "09"))
+
+# Santis
+santis_summer <- subset(data_santis, format(DATE, "%m") %in% c("06", "07", "08", "09"))
+
+# Lugano
+lugano_summer <- subset(data_lugano, format(DATE, "%m") %in% c("06", "07", "08", "09"))
+```
+
+```{r, echo = FALSE, message = FALSE, warning = F}
+# Define a threshold at the 95th percentile
+# Geneva
+threshold_geneva <- quantile(geneva_summer$TMAX, 0.95)
+
+# Santïs
+threshold_santis <- quantile(santis_summer$TMAX, 0.95)
+
+# Lugano
+threshold_lugano <- quantile(lugano_summer$TMAX, 0.95)
+```
+
+```{r, echo = FALSE, message = FALSE, warning = F}
+# Number of exceedances over the threshold
+# Geneva
+num_exceedances_geneva <- sum(geneva_summer$TMAX > threshold_geneva)
+
+# Santïs
+num_exceedances_santis <- sum(santis_summer$TMAX > threshold_santis)
+
+# Lugano
+num_exceedances_Lugano <- sum(lugano_summer$TMAX > threshold_lugano)
+```
+
+```{r, echo = FALSE, message = FALSE, warning = F}
+# Decluster the data using the chosen threshold for each station
+# Genava
+geneva_declustered <- extRemes::decluster(geneva_summer$TMAX, threshold = threshold_geneva, run.length = 1)
+
+# Santïs
+santis_declustered <- extRemes::decluster(santis_summer$TMAX, threshold = threshold_santis, run.length = 1)
+
+# Lugano
+lugano_declustered <- extRemes::decluster(lugano_summer$TMAX, threshold = threshold_lugano, run.length = 1)
+```
+
+```{r, echo = FALSE, message = FALSE, warning = F}
+# Add the declustered data to the corresponding datasets
+# Geneva
+geneva_summer$declustered <- ifelse(geneva_summer$TMAX >= threshold_geneva, geneva_declustered, NA)
+
+# Santïs
+santis_summer$declustered <- ifelse(santis_summer$TMAX >= threshold_santis, santis_declustered, NA)
+
+# Lugano
+lugano_summer$declustered <- ifelse(lugano_summer$TMAX >= threshold_lugano, lugano_declustered, NA)
+```
+
+```{r, echo = FALSE, message = FALSE, warning = F}
+# Extract declustered extreme values
+# Geneva
+extreme_values_geneva <- geneva_summer[["declustered"]][!is.na(geneva_summer[["declustered"]])]
+
+# Santïs
+extreme_values_santis <- santis_summer[["declustered"]][!is.na(santis_summer[["declustered"]])]
+
+# Lugano
+extreme_values_lugano <- lugano_summer[["declustered"]][!is.na(lugano_summer[["declustered"]])]
+```
+
+```{r, echo = FALSE, message = FALSE, warning = F}
+# Fit a GPD to the exceedances
+# Genève
+gpd_fit_geneva <- fevd(extreme_values_geneva, threshold = threshold_geneva, type = "GP")
+
+# Santïs
+gpd_fit_santis <- fevd(extreme_values_santis, threshold = threshold_santis, type = "GP")
+
+# Lugano
+gpd_fit_lugano <- fevd(extreme_values_lugano, threshold = threshold_lugano, type = "GP")
+```
+
+```{r, echo = FALSE, message = FALSE, warning = F}
+# Diagnostic plots for the GPD fit
+# Genève
+par(mfrow = c(2, 2))
+plot(gpd_fit_geneva)
+
+# Santïs
+par(mfrow = c(2, 2))
+plot(gpd_fit_santis)
+
+# Lugano
+par(mfrow = c(2, 2))
+plot(gpd_fit_lugano)
+```
+
+```{r, echo = FALSE, message = FALSE, warning = F}
+# Calculate return levels for 10, 50, and 100-year return periods
+# Geneva
+gpd_return_levels_geneva <- return.level(gpd_fit_geneva, return.period = c(10, 50, 100))
+
+# Santïs
+gpd_return_levels_santis <- return.level(gpd_fit_santis, return.period = c(10, 50, 100))
+
+# Lugano
+gpd_return_levels_Lugano <- return.level(gpd_fit_lugano, return.period = c(10, 50, 100))
+```
+
+# Return Period
+
+## Block Maxima
+
+```{r}
+
+```
+
+## Peaks-over-Threshold
+```{r}
+
+```
+
+# Probability of New Record High Temperature
+
+## Block Maxima
+
+### 1 year
+
+```{r}
+
+```
+
+### 3 years
+
+```{r}
+
+```
+
+### 10 years
+
+```{r}
+
+```
+
+## Peaks-over-Threshold
+
+### 1 year
+
+```{r}
+
+```
+
+### 3 years
+
+```{r}
+
+```
+
+### 10 years
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Geneva
 
