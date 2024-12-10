@@ -1,0 +1,63 @@
+# Fit a Generalized Pareto Distribution (GPD) to the declustered extreme temperatures and estimate probabilities and return levels
+
+```{r}
+# Define a function to fit the GPD model and calculate return levels
+fit_gpd <- function(data, declustered_column, threshold, return_period) {
+  # Extract declustered extreme values
+  extreme_values <- data[[declustered_column]][!is.na(data[[declustered_column]])]
+
+  # Fit the Generalized Pareto Distribution (GPD)
+  gpd_fit <- fevd(extreme_values, type = "GP", threshold = threshold)
+
+  # Calculate the return level for the specified return period
+  return_level <- return.level(gpd_fit, return.period = return_period)
+
+  # Return the GPD fit and return level
+  list(fit = gpd_fit, return_level = return_level)
+}
+
+# Fit GPD for Lugano
+gpd_lugano <- fit_gpd(lugano_summer, "Declustered", threshold_lugano, return_period = 10)
+
+# Fit GPD for Genève
+gpd_genève <- fit_gpd(genève_summer, "Declustered", threshold_genève, return_period = 10)
+
+# Fit GPD for Säntis
+gpd_saentis <- fit_gpd(saentis_summer, "Declustered", threshold_saentis, return_period = 10)
+```
+
+
+```{r}
+# Print summaries and return levels
+cat("Lugano - 10-Year Return Level:", gpd_lugano$return_level, "\n")
+cat("Genève - 10-Year Return Level:", gpd_genève$return_level, "\n")
+cat("Säntis - 10-Year Return Level:", gpd_saentis$return_level, "\n")
+
+# Plot the GPD model fit for each station
+par(mfrow = c(1, 3))  # Arrange plots in a single row
+plot(gpd_lugano$fit, main = "GPD Fit - Lugano")
+plot(gpd_genève$fit, main = "GPD Fit - Genève")
+plot(gpd_saentis$fit, main = "GPD Fit - Säntis")
+```
+
+```{r}
+# Compute the probability of consecutive extreme days for each station
+compute_extreme_following_prob <- function(extremal_index) {
+  return(1 - extremal_index) # Probability of consecutive extremes
+}
+
+# For Lugano
+extremal_index_lugano <- extremalindex(lugano_summer$TMAX, threshold = threshold_lugano)
+prob_consecutive_extremes_lugano <- compute_extreme_following_prob(extremal_index_lugano[1])
+cat("Probability of consecutive extremes for Lugano:", prob_consecutive_extremes_lugano, "\n")
+
+# For Genève
+extremal_index_genève <- extremalindex(genève_summer$TMAX, threshold = threshold_genève)
+prob_consecutive_extremes_genève <- compute_extreme_following_prob(extremal_index_genève[1])
+cat("Probability of consecutive extremes for Genève:", prob_consecutive_extremes_genève, "\n")
+
+# For Saentis
+extremal_index_saentis <- extremalindex(saentis_summer$TMAX, threshold = threshold_saentis)
+prob_consecutive_extremes_saentis <- compute_extreme_following_prob(extremal_index_saentis[1])
+cat("Probability of consecutive extremes for Saentis:", prob_consecutive_extremes_saentis, "\n")
+```
