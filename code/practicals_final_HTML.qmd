@@ -1,0 +1,27 @@
+---
+title: Pratical 1,2 and 3 for Group 1 (In full)
+date: today
+date-format: long
+author: Lodrik Adam, Sophie Daya, Jeff Macaraeg, Julien Perini, Alexandra Maria Santana Boado
+toc: true
+format:
+  html:
+    code-fold: false
+    toc: true
+    code-block-border-left: "#0d6efd"
+    code-block-bg: true
+    highlight-style: github
+    code-tools: true
+    embed-resources: true
+---
+
+# Introduction
+
+This documents is the annex to our final report for group 1. It contains the full code for the practicals 1, 2 and 3 with the results and some discussions. This allows anyone to reproduce our results and to understand the code we used.
+
+**Note:**
+
+Some code have been hidden for the generated PDF and HTML documents of this annex. Code to load the data and to install the required packages have been hidden. The code for the plots have also been hidden to make the document more readable. The full code can be found in the qmd files located in the "code" folder of our [GitHub repository](https://github.com/kirdol/RA_Praticals).
+
+```{r child = c("practical_11_final.qmd", "practical_12_final.qmd", "practical_13_final.qmd", "practical_21_final.qmd", "practical_22_final.qmd", "practical_23_final.qmd", "practical_31_final.qmd", "practical_33_final.qmd", "practical_34_final.qmd")}
+```

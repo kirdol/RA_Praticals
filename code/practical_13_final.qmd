@@ -9,6 +9,8 @@ crypto_data <- read.csv(here("data", "crypto_data.csv"))
 rounding_digits <- 4
 ```
 
+{{< pagebreak >}}
+
 ## Part 3: Financial returns and normality
 
 ### a) Check Bitcoin-ETH dependence using correlation
@@ -132,8 +134,7 @@ Given our results in [question c)](#c-assess-predictive-power-with-granger-test)
 ::: {.callout-note icon="false"}
 ## Question
 
-We observe an extreme sudden drop in ETH stocks. What should we expect that will happen
-with Bitcoin stocks?
+We observe an extreme sudden drop in ETH stocks. What should we expect that will happen with Bitcoin stocks?
 :::
 
 Based on the Granger causality test results from [question c)](#c-assess-predictive-power-with-granger-test), Ethereum’s past values do not Granger-cause Bitcoin’s returns, suggesting no significant predictive relationship. If Ethereum experiences an extreme sudden drop, it is less likely that Bitcoin will exhibit a direct or immediate reaction based on historical relationships. However, Bitcoin and Ethereum share common market factors and investor sentiment, so an indirect reaction (e.g., due to market-wide panic) is still possible, though it is not strongly supported by the causality analysis.

@@ -6,6 +6,8 @@ editor_options:
   chunk_output_type: console
 ---
 
+{{< pagebreak >}}
+
 ## Part 2: Financial time series heteroskedasticity and the random walk hypothesis
 
 Another crucial hypothesis in asset pricing is the so-called homoscedasticity, i.e. constant variance of theresiduals. We would also like to check this assumption. We use the same Bitcoin data as in Part 1.

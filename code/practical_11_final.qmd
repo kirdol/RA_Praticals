@@ -1,4 +1,4 @@
-```{r message = FALSE}
+```{r echo = FALSE, message = FALSE}
 # load the required packages and install them if they are not.
 source(here::here("code","setup.R"))
 
@@ -11,6 +11,8 @@ crypto_data <- read.csv(here("data", "crypto_data.csv"))
 # scaling factor
 scaling_factor <- 100000
 ```
+
+{{< pagebreak >}}
 
 # Practical 1: Financial returns and normality
 

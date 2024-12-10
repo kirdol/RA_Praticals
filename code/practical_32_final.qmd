@@ -1,3 +1,6 @@
+
+{{< pagebreak >}}
+
 ## Part 2: Seasonal and Clustering Analysis
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}

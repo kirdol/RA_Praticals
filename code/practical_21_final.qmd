@@ -9,6 +9,8 @@ crypto_data <- read.csv(here("data", "crypto_data.csv"))
 rounding_digits <- 4
 ```
 
+{{< pagebreak >}}
+
 # Practical 2: Weather
 
 ## Part 1: Block maxima approach

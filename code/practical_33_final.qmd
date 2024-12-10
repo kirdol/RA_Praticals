@@ -1,7 +1,9 @@
 
-# Part 3: Comparing GEV and POT approaches
+{{< pagebreak >}}
 
-### Data Loading and Preparation
+## Part 3: Comparing GEV and POT approaches
+
+#### Data Loading and Preparation
 
 ```{r message = FALSE}
 # load the required packages and install them if they are not.
@@ -35,7 +37,7 @@ data_lugano <- data_temp %>%
 
 We ensure that we have the necessary data for the analysis by filtering the temperature data for all three cities and removing any rows with missing values. We removed `r sum(is.na(data_temp$TMAX))` rows.
 
-## Block Maxima Approach (GEV Distribution)
+### Block Maxima Approach (GEV Distribution)
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -109,7 +111,7 @@ gev_return_levels_santis <- return.level(gev_fit_santis, return.period = c(10, 5
 gev_return_levels_Lugano <- return.level(gev_fit_Lugano, return.period = c(10, 50, 100))
 ```
 
-# Comparison with Peaks-over-Threshold Approach (GPD Distribution)
+### Comparison with Peaks-over-Threshold Approach (GPD Distribution)
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -117,7 +119,7 @@ gev_return_levels_Lugano <- return.level(gev_fit_Lugano, return.period = c(10, 5
 How do the results of the block maxima approach compare with the Peaks-over-Threshold (POT) approach for temperature extremes?
 :::
 
-## Peaks-over-Threshold Approach
+### Peaks-over-Threshold Approach
 
 ```{r}
 # Filter the data for the summer months (June to September)
@@ -236,11 +238,11 @@ gpd_return_levels_santis <- return.level(gpd_fit_santis, return.period = c(10, 5
 gpd_return_levels_Lugano <- return.level(gpd_fit_lugano, return.period = c(10, 50, 100))
 ```
 
-## Our results
+### Our results
 
-### Block Maxima Approach (GEV Distribution):
+#### Block Maxima Approach (GEV Distribution):
 
-#### Parameter Estimates:
+##### Parameter Estimates:
 
 | Station | Elevation | location parameter | scale parameter | shape parameter |
 |:-------:|:---------:|:---------------:|:---------------:|:----------------:|
@@ -248,7 +250,7 @@ gpd_return_levels_Lugano <- return.level(gpd_fit_lugano, return.period = c(10, 5
 | Santïs  | 2500m      | `r round(gev_fit_santis$results$par['location'], 2)` | `r round(gev_fit_santis$results$par['scale'], 2)` | `r round(gev_fit_santis$results$par['shape'], 2)` |
 | Lugano  | 275m       | `r round(gev_fit_Lugano$results$par['location'], 2)` | `r round(gev_fit_Lugano$results$par['scale'], 2)` | `r round(gev_fit_Lugano$results$par['shape'], 2)` |
 
-#### GEV Return Levels:
+##### GEV Return Levels:
 
 | Station | Elevation | 10-year RL (°C) | 50-year RL (°C) | 100-year RL (°C) |
 |:-------:|:---------:|:---------------:|:---------------:|:----------------:|
@@ -256,9 +258,9 @@ gpd_return_levels_Lugano <- return.level(gpd_fit_lugano, return.period = c(10, 5
 | Santïs  | 2500m      | `r round(gev_return_levels_santis[1], 2)` | `r round(gev_return_levels_santis[2], 2)` | `r round(gev_return_levels_santis[3], 2)` |
 | Lugano  | 275m       | `r round(gev_return_levels_Lugano[1], 2)` | `r round(gev_return_levels_Lugano[2], 2)` | `r round(gev_return_levels_Lugano[3], 2)` |
 
-### Peaks-over-Threshold Approach (GPD Distribution):
+#### Peaks-over-Threshold Approach (GPD Distribution):
 
-#### Threshold Selection:
+##### Threshold Selection:
 
 The threshold was set at the 95th percentile, which is `r round(threshold_geneva, 2)` degrees Celsius for Geneva
 
@@ -266,7 +268,7 @@ The threshold was set at the 95th percentile, which is `r round(threshold_santis
 
 The threshold was set at the 95th percentile, which is `r round(threshold_lugano, 2)` degrees Celsius for Lugano.
 
-####  Number of Exceedances:
+#####  Number of Exceedances:
 
 There are `r num_exceedances_geneva` exceedances over the threshold for Geneva.
 
@@ -274,7 +276,7 @@ There are `r num_exceedances_santis` exceedances over the threshold for Santïs.
 
 There are `r num_exceedances_Lugano` exceedances over the threshold for Lugano.
 
-#### GPD Return Levels:
+##### GPD Return Levels:
 
 The return levels are:
 
@@ -284,6 +286,6 @@ The return levels are:
 | Santïs  | 2500m      | `r round(gpd_return_levels_santis[1], 2)` | `r round(gpd_return_levels_santis[2], 2)` | `r round(gpd_return_levels_santis[3], 2)` |
 | Lugano  | 275m       | `r round(gpd_return_levels_Lugano[1], 2)` | `r round(gpd_return_levels_Lugano[2], 2)` | `r round(gpd_return_levels_Lugano[3], 2)` |
 
-## Comparison of Approaches:
+### Comparison of Approaches:
 
 In comparing the block maxima approach (GEV) to the Peaks-over-Threshold approach (GPD) for modeling temperature extremes, we find that the POT method often provides more nuanced information about the tail behavior of the distribution. While the GEV model uses only the annual maximum values, which can lead to relatively large uncertainty due to a limited amount of extreme data, the POT approach utilizes all temperature values above a chosen high threshold. This generally results in more data points to characterize the tail, potentially yielding more stable and reliable estimates of parameters and return levels. However, the POT approach depends on careful threshold selection and declustering, which introduces additional steps not required by the simpler block maxima method. In practice, the POT approach can lead to different (often more precise) return level estimates, giving a potentially more accurate picture of the frequency and magnitude of extreme temperature events.
