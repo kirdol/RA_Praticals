@@ -1,5 +1,5 @@
 
-# Part 4: Comparing GEV and POT approaches
+# Part 3: Comparing GEV and POT approaches
 
 ### Data Loading and Preparation
 
