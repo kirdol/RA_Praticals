@@ -1,0 +1,181 @@
+```{r  echo = FALSE, message = FALSE}
+# load the required packages and install them if they are not.
+source(here::here("code","setup.R"))
+
+# Loading the data
+crypto_data <- read.csv(here("data", "crypto_data.csv"))
+
+# Parameters
+rounding_digits <- 4
+```
+
+# Practical 2: Weather
+
+## Part 1: Block maxima approach
+
+### a) Best fit distribution
+
+::: {.callout-note icon="false"}
+## Question
+
+Read in the data. Draw an histogram of the daily precipitation values. Which distribution
+would best fit the data ?
+:::
+
+
+### b) Best fit distribution on yearly maxima
+
+::: {.callout-note icon="false"}
+## Question
+
+Extract the yearly maximum values. Draw their histogram. Which distribution would best
+fit the data ?
+:::
+
+
+### c) Linear model approach
+
+::: {.callout-note icon="false"}
+## Question
+
+Fit a linear model to the yearly maximum precipitation values and predict the values for the
+next 10 years. Provide confidence intervals for your predictions and plot it. Do you think
+that this a reasonable approach?
+:::
+
+
+### d) GEV distribution
+
+::: {.callout-note icon="false"}
+## Question
+
+Fit a GEV with constant parameters to the historical yearly max values. We recommend
+using fevd function in `extRemes` library or `gev.fit` function in `ismev` library. Fit a second
+GEV model with time varying location parameter. Compare the two models using AIC or
+BIC. Which one do you recommend using?
+:::
+
+
+### e) Diagnostic plots
+
+::: {.callout-note icon="false"}
+## Question
+
+Draw diagnostic plots of your GEV fit (for example, using `gev.diag` function). Is it a good
+fit?
+:::
+
+
+### f) Return levels prediction
+
+::: {.callout-note icon="false"}
+## Question
+
+Using the model chosen in the previous parts, predict the 10-year return level. Draw your
+predictions of the 10-year return levels together with your data.
+:::
+
+
+### g) Interpretation
+
+::: {.callout-note icon="false"}
+## Question
+
+Broadly speaking, each year, there is a chance of 1/10 that the observed value is above the
+10-year return level. Comment on the results for both the linear model prediction (from [(c)](#c-linear-model-approach))
+and the GEV approach (from [(f)](#f-return-levels-prediction)). How many historical values were above this 10-year return
+level? Answer the same question with 20, 50 and 85-year return level.
+:::
+
+
+### h) Return period 100 mm precipitation
+
+::: {.callout-note icon="false"}
+## Question
+
+Using the fitted model, compute the return period of 100 mm of precipitation.
+:::
+
+
+### i) Probability of exceeding 150 mm
+
+::: {.callout-note icon="false"}
+## Question
+
+Using the fitted model, compute the probability that there will be a day in the next year
+when the precipitation exceeds 150 mm.
+:::
+
+
+## Part 2: Peaks-over-threshold approach
+
+### a) Time series plot
+
+::: {.callout-note icon="false"}
+## Question
+
+Display a time series plot of the daily precipitation across the data range.
+:::
+
+
+### b) Mean Residual Life Plot
+
+::: {.callout-note icon="false"}
+## Question
+
+We want to model the high precipitation levels using the POT approach. First step is choosing
+a threshold. Draw Mean Residual Life Plot (for example using `mrlplot` in `POT` library) for
+the full range of your data. Choose a reasonable threshold. In the plot from part [(a)](#a-time-series-plot)) highlight the data that exceeds this threshold.
+:::
+
+
+### c) Fit a GPD
+
+::: {.callout-note icon="false"}
+## Question
+
+Fit a GPD for the data exceeding the threshold and draw a diagnostic plot. Is it a reasonable
+fit? (Hint: if not, you may reconsider the choice of the threshold)
+:::
+
+
+### d) Return levels prediction
+
+::: {.callout-note icon="false"}
+## Question
+
+Using the fitted model, compute the 10-year, 20-year, 50-year and 85-year return levels.
+:::
+
+
+### e) Return period 100 mm precipitation
+
+::: {.callout-note icon="false"}
+## Question
+
+Using the fitted model, compute the return period of 100 mm of precipitation.
+:::
+
+
+### f) Probability of exceeding 150 mm
+
+::: {.callout-note icon="false"}
+## Question
+
+Using the fitted model, compute the probability that there will be a day in the next year
+when the precipitation exceeds 150 mm.
+:::
+
+
+### g) Comparison with block maxima
+
+::: {.callout-note icon="false"}
+## Question
+
+Compare the results with the block maxima method. Explain the drawbacks and advantages
+of using the POT approach compared to the block maxima method. Which method do you
+prefer?
+:::
+
+
+
