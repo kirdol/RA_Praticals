@@ -81,7 +81,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#practical-1-financial-returns-and-normality" id="toc-practical-1-financial-returns-and-normality" class="nav-link active" data-scroll-target="#practical-1-financial-returns-and-normality">Practical 1: Financial returns and normality</a>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#practical-1-financial-returns-and-normality" id="toc-practical-1-financial-returns-and-normality" class="nav-link" data-scroll-target="#practical-1-financial-returns-and-normality">Practical 1: Financial returns and normality</a>
   <ul class="collapse">
   <li><a href="#part-1-financial-returns-and-normality" id="toc-part-1-financial-returns-and-normality" class="nav-link" data-scroll-target="#part-1-financial-returns-and-normality">Part 1: Financial returns and normality</a>
   <ul class="collapse">
@@ -108,25 +109,55 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#d-predict-mutual-impacts-of-drops" id="toc-d-predict-mutual-impacts-of-drops" class="nav-link" data-scroll-target="#d-predict-mutual-impacts-of-drops">d) Predict mutual impacts of drops</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#part-4-comparing-gev-and-pot-approaches" id="toc-part-4-comparing-gev-and-pot-approaches" class="nav-link" data-scroll-target="#part-4-comparing-gev-and-pot-approaches">Part 4: Comparing GEV and POT approaches</a></li>
+  <li><a href="#practical-2-weather" id="toc-practical-2-weather" class="nav-link" data-scroll-target="#practical-2-weather">Practical 2: Weather</a>
+  <ul class="collapse">
+  <li><a href="#part-1-block-maxima-approach" id="toc-part-1-block-maxima-approach" class="nav-link" data-scroll-target="#part-1-block-maxima-approach">Part 1: Block maxima approach</a>
+  <ul class="collapse">
+  <li><a href="#a-best-fit-distribution" id="toc-a-best-fit-distribution" class="nav-link" data-scroll-target="#a-best-fit-distribution">a) Best fit distribution</a></li>
+  <li><a href="#b-best-fit-distribution-on-yearly-maxima" id="toc-b-best-fit-distribution-on-yearly-maxima" class="nav-link" data-scroll-target="#b-best-fit-distribution-on-yearly-maxima">b) Best fit distribution on yearly maxima</a></li>
+  <li><a href="#c-linear-model-approach" id="toc-c-linear-model-approach" class="nav-link" data-scroll-target="#c-linear-model-approach">c) Linear model approach</a></li>
+  <li><a href="#d-gev-distribution" id="toc-d-gev-distribution" class="nav-link" data-scroll-target="#d-gev-distribution">d) GEV distribution</a></li>
+  <li><a href="#e-diagnostic-plots" id="toc-e-diagnostic-plots" class="nav-link" data-scroll-target="#e-diagnostic-plots">e) Diagnostic plots</a></li>
+  <li><a href="#f-return-levels-prediction" id="toc-f-return-levels-prediction" class="nav-link" data-scroll-target="#f-return-levels-prediction">f) Return levels prediction</a></li>
+  <li><a href="#g-interpretation" id="toc-g-interpretation" class="nav-link" data-scroll-target="#g-interpretation">g) Interpretation</a></li>
+  <li><a href="#h-return-period-100-mm-precipitation" id="toc-h-return-period-100-mm-precipitation" class="nav-link" data-scroll-target="#h-return-period-100-mm-precipitation">h) Return period 100 mm precipitation</a></li>
+  <li><a href="#i-probability-of-exceeding-150-mm" id="toc-i-probability-of-exceeding-150-mm" class="nav-link" data-scroll-target="#i-probability-of-exceeding-150-mm">i) Probability of exceeding 150 mm</a></li>
+  </ul></li>
+  <li><a href="#part-2-peaks-over-threshold-approach" id="toc-part-2-peaks-over-threshold-approach" class="nav-link" data-scroll-target="#part-2-peaks-over-threshold-approach">Part 2: Peaks-over-threshold approach</a>
+  <ul class="collapse">
+  <li><a href="#a-time-series-plot" id="toc-a-time-series-plot" class="nav-link" data-scroll-target="#a-time-series-plot">a) Time series plot</a></li>
+  <li><a href="#b-mean-residual-life-plot" id="toc-b-mean-residual-life-plot" class="nav-link" data-scroll-target="#b-mean-residual-life-plot">b) Mean Residual Life Plot</a></li>
+  <li><a href="#c-fit-a-gpd" id="toc-c-fit-a-gpd" class="nav-link" data-scroll-target="#c-fit-a-gpd">c) Fit a GPD</a></li>
+  <li><a href="#d-return-levels-prediction" id="toc-d-return-levels-prediction" class="nav-link" data-scroll-target="#d-return-levels-prediction">d) Return levels prediction</a></li>
+  <li><a href="#e-return-period-100-mm-precipitation" id="toc-e-return-period-100-mm-precipitation" class="nav-link" data-scroll-target="#e-return-period-100-mm-precipitation">e) Return period 100 mm precipitation</a></li>
+  <li><a href="#f-probability-of-exceeding-150-mm" id="toc-f-probability-of-exceeding-150-mm" class="nav-link" data-scroll-target="#f-probability-of-exceeding-150-mm">f) Probability of exceeding 150 mm</a></li>
+  <li><a href="#g-comparison-with-block-maxima" id="toc-g-comparison-with-block-maxima" class="nav-link" data-scroll-target="#g-comparison-with-block-maxima">g) Comparison with block maxima</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#practical-3-heat-wave-in-switzerland" id="toc-practical-3-heat-wave-in-switzerland" class="nav-link" data-scroll-target="#practical-3-heat-wave-in-switzerland">Practical 3: Heat wave in Switzerland</a></li>
+  <li><a href="#part-3-comparing-gev-and-pot-approaches" id="toc-part-3-comparing-gev-and-pot-approaches" class="nav-link" data-scroll-target="#part-3-comparing-gev-and-pot-approaches">Part 3: Comparing GEV and POT approaches</a>
+  <ul class="collapse">
   <li><a href="#data-loading-and-preparation" id="toc-data-loading-and-preparation" class="nav-link" data-scroll-target="#data-loading-and-preparation">Data Loading and Preparation</a></li>
   <li><a href="#block-maxima-approach-gev-distribution" id="toc-block-maxima-approach-gev-distribution" class="nav-link" data-scroll-target="#block-maxima-approach-gev-distribution">Block Maxima Approach (GEV Distribution)</a></li>
-  <li><a href="#peaks-over-threshold-approach-gpd-distribution" id="toc-peaks-over-threshold-approach-gpd-distribution" class="nav-link" data-scroll-target="#peaks-over-threshold-approach-gpd-distribution">Peaks-over-Threshold Approach (GPD Distribution)</a></li>
+  </ul></li>
+  <li><a href="#comparison-with-peaks-over-threshold-approach-gpd-distribution" id="toc-comparison-with-peaks-over-threshold-approach-gpd-distribution" class="nav-link" data-scroll-target="#comparison-with-peaks-over-threshold-approach-gpd-distribution">Comparison with Peaks-over-Threshold Approach (GPD Distribution)</a>
+  <ul class="collapse">
+  <li><a href="#peaks-over-threshold-approach" id="toc-peaks-over-threshold-approach" class="nav-link" data-scroll-target="#peaks-over-threshold-approach">Peaks-over-Threshold Approach</a></li>
   <li><a href="#our-results" id="toc-our-results" class="nav-link" data-scroll-target="#our-results">Our results</a>
   <ul class="collapse">
-  <li><a href="#block-maxima-approach-gev-distribution-1" id="toc-block-maxima-approach-gev-distribution-1" class="nav-link" data-scroll-target="#block-maxima-approach-gev-distribution-1">Block Maxima Approach (GEV Distribution):</a>
-  <ul class="collapse">
-  <li><a href="#parameter-estimates" id="toc-parameter-estimates" class="nav-link" data-scroll-target="#parameter-estimates">Parameter Estimates:</a></li>
-  <li><a href="#gev-return-levels" id="toc-gev-return-levels" class="nav-link" data-scroll-target="#gev-return-levels">GEV Return Levels:</a></li>
+  <li><a href="#block-maxima-approach-gev-distribution-1" id="toc-block-maxima-approach-gev-distribution-1" class="nav-link" data-scroll-target="#block-maxima-approach-gev-distribution-1">Block Maxima Approach (GEV Distribution):</a></li>
+  <li><a href="#peaks-over-threshold-approach-gpd-distribution" id="toc-peaks-over-threshold-approach-gpd-distribution" class="nav-link" data-scroll-target="#peaks-over-threshold-approach-gpd-distribution">Peaks-over-Threshold Approach (GPD Distribution):</a></li>
   </ul></li>
-  <li><a href="#peaks-over-threshold-approach-gpd-distribution-1" id="toc-peaks-over-threshold-approach-gpd-distribution-1" class="nav-link" data-scroll-target="#peaks-over-threshold-approach-gpd-distribution-1">Peaks-over-Threshold Approach (GPD Distribution):</a>
-  <ul class="collapse">
-  <li><a href="#threshold-selection" id="toc-threshold-selection" class="nav-link" data-scroll-target="#threshold-selection">Threshold Selection:</a></li>
-  <li><a href="#number-of-exceedances" id="toc-number-of-exceedances" class="nav-link" data-scroll-target="#number-of-exceedances">Number of Exceedances:</a></li>
-  <li><a href="#gpd-return-levels" id="toc-gpd-return-levels" class="nav-link" data-scroll-target="#gpd-return-levels">GPD Return Levels:</a></li>
   <li><a href="#comparison-of-approaches" id="toc-comparison-of-approaches" class="nav-link" data-scroll-target="#comparison-of-approaches">Comparison of Approaches:</a></li>
   </ul></li>
+  <li><a href="#part-4-return-period-probabilities-of-new-record-high-temperatures" id="toc-part-4-return-period-probabilities-of-new-record-high-temperatures" class="nav-link" data-scroll-target="#part-4-return-period-probabilities-of-new-record-high-temperatures">Part 4: Return Period &amp; Probabilities of New Record High Temperatures</a>
+  <ul class="collapse">
+  <li><a href="#block-maxima-approach-gev-distribution-2" id="toc-block-maxima-approach-gev-distribution-2" class="nav-link" data-scroll-target="#block-maxima-approach-gev-distribution-2">Block Maxima Approach (GEV Distribution)</a></li>
+  <li><a href="#peaks-over-threshold-approach-gpd-distribution-1" id="toc-peaks-over-threshold-approach-gpd-distribution-1" class="nav-link" data-scroll-target="#peaks-over-threshold-approach-gpd-distribution-1">Peaks-over-Threshold Approach (GPD Distribution)</a></li>
   </ul></li>
+  <li><a href="#return-period" id="toc-return-period" class="nav-link" data-scroll-target="#return-period">Return Period</a></li>
+  <li><a href="#probability-of-new-record-high-temperature" id="toc-probability-of-new-record-high-temperature" class="nav-link" data-scroll-target="#probability-of-new-record-high-temperature">Probability of New Record High Temperature</a></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
   </ul>
 </nav>
 </div>
@@ -163,6 +194,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>This documents is the annex to our final report for group 1. It contains the full code for the practicals 1, 2 and 3 with the results and some discussions. This allows anyone to reproduce our results and to understand the code we used.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load the required packages and install them if they are not.</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"code"</span>,<span class="st">"setup.R"</span>))</span>
@@ -176,6 +210,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># scaling factor</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>scaling_factor <span class="ot">&lt;-</span> <span class="dv">100000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
 <section id="practical-1-financial-returns-and-normality" class="level1">
 <h1>Practical 1: Financial returns and normality</h1>
 <section id="part-1-financial-returns-and-normality" class="level2">
@@ -902,13 +937,13 @@ omega   2.507936e+11 -1.709771e+16 -6.864037e+09 -1.486634e+10
 alpha1  9.975053e+04 -6.864037e+09 -6.383094e+03 -9.576435e+03
 beta1  -2.026553e+04 -1.486634e+10 -9.576435e+03 -1.823892e+04
 attr(,"time")
-Time difference of 0.006557941 secs
+Time difference of 0.007672787 secs
 
 --- END OF TRACE ---
 
 
 Time to Estimate Parameters:
- Time difference of 0.02508593 secs</code></pre>
+ Time difference of 0.03014803 secs</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary of the GARCH(1,1) model</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(garch_model_arima_residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -922,7 +957,7 @@ Call:
 
 Mean and Variance Equation:
  data ~ garch(1, 1)
-&lt;environment: 0x11e6b9c10&gt;
+&lt;environment: 0x12f7da498&gt;
  [data = arima_residuals]
 
 Conditional Distribution:
@@ -948,7 +983,7 @@ Log Likelihood:
  7627.039    normalized:  5.300236 
 
 Description:
- Tue Dec 10 15:09:32 2024 by user:  
+ Tue Dec 10 18:03:45 2024 by user:  
 
 
 Standardised Residuals Tests:
@@ -1157,12 +1192,278 @@ Question
 </section>
 </section>
 </section>
-<section id="part-4-comparing-gev-and-pot-approaches" class="level1">
-<h1>Part 4: Comparing GEV and POT approaches</h1>
-<p>In this analysis, we investigate whether a Generalized Extreme Value (GEV) distribution can accurately model annual maximum temperatures in Switzerland. Additionally, we compare the results of the block Maxima approach with the Peaks-over-Threshold (POT) approach using declustering for extreme temperatures.</p>
+<section id="practical-2-weather" class="level1">
+<h1>Practical 2: Weather</h1>
+<section id="part-1-block-maxima-approach" class="level2">
+<h2 class="anchored" data-anchor-id="part-1-block-maxima-approach">Part 1: Block maxima approach</h2>
+<section id="a-best-fit-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="a-best-fit-distribution">a) Best fit distribution</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Read in the data. Draw an histogram of the daily precipitation values. Which distribution would best fit the data ?</p>
+</div>
+</div>
 </section>
-<section id="data-loading-and-preparation" class="level1">
-<h1>Data Loading and Preparation</h1>
+<section id="b-best-fit-distribution-on-yearly-maxima" class="level3">
+<h3 class="anchored" data-anchor-id="b-best-fit-distribution-on-yearly-maxima">b) Best fit distribution on yearly maxima</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Extract the yearly maximum values. Draw their histogram. Which distribution would best fit the data ?</p>
+</div>
+</div>
+</section>
+<section id="c-linear-model-approach" class="level3">
+<h3 class="anchored" data-anchor-id="c-linear-model-approach">c) Linear model approach</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Fit a linear model to the yearly maximum precipitation values and predict the values for the next 10 years. Provide confidence intervals for your predictions and plot it. Do you think that this a reasonable approach?</p>
+</div>
+</div>
+</section>
+<section id="d-gev-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="d-gev-distribution">d) GEV distribution</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Fit a GEV with constant parameters to the historical yearly max values. We recommend using fevd function in <code>extRemes</code> library or <code>gev.fit</code> function in <code>ismev</code> library. Fit a second GEV model with time varying location parameter. Compare the two models using AIC or BIC. Which one do you recommend using?</p>
+</div>
+</div>
+</section>
+<section id="e-diagnostic-plots" class="level3">
+<h3 class="anchored" data-anchor-id="e-diagnostic-plots">e) Diagnostic plots</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Draw diagnostic plots of your GEV fit (for example, using <code>gev.diag</code> function). Is it a good fit?</p>
+</div>
+</div>
+</section>
+<section id="f-return-levels-prediction" class="level3">
+<h3 class="anchored" data-anchor-id="f-return-levels-prediction">f) Return levels prediction</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Using the model chosen in the previous parts, predict the 10-year return level. Draw your predictions of the 10-year return levels together with your data.</p>
+</div>
+</div>
+</section>
+<section id="g-interpretation" class="level3">
+<h3 class="anchored" data-anchor-id="g-interpretation">g) Interpretation</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Broadly speaking, each year, there is a chance of 1/10 that the observed value is above the 10-year return level. Comment on the results for both the linear model prediction (from <a href="#c-linear-model-approach">(c)</a>) and the GEV approach (from <a href="#f-return-levels-prediction">(f)</a>). How many historical values were above this 10-year return level? Answer the same question with 20, 50 and 85-year return level.</p>
+</div>
+</div>
+</section>
+<section id="h-return-period-100-mm-precipitation" class="level3">
+<h3 class="anchored" data-anchor-id="h-return-period-100-mm-precipitation">h) Return period 100 mm precipitation</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Using the fitted model, compute the return period of 100 mm of precipitation.</p>
+</div>
+</div>
+</section>
+<section id="i-probability-of-exceeding-150-mm" class="level3">
+<h3 class="anchored" data-anchor-id="i-probability-of-exceeding-150-mm">i) Probability of exceeding 150 mm</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Using the fitted model, compute the probability that there will be a day in the next year when the precipitation exceeds 150 mm.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="part-2-peaks-over-threshold-approach" class="level2">
+<h2 class="anchored" data-anchor-id="part-2-peaks-over-threshold-approach">Part 2: Peaks-over-threshold approach</h2>
+<section id="a-time-series-plot" class="level3">
+<h3 class="anchored" data-anchor-id="a-time-series-plot">a) Time series plot</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Display a time series plot of the daily precipitation across the data range.</p>
+</div>
+</div>
+</section>
+<section id="b-mean-residual-life-plot" class="level3">
+<h3 class="anchored" data-anchor-id="b-mean-residual-life-plot">b) Mean Residual Life Plot</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We want to model the high precipitation levels using the POT approach. First step is choosing a threshold. Draw Mean Residual Life Plot (for example using <code>mrlplot</code> in <code>POT</code> library) for the full range of your data. Choose a reasonable threshold. In the plot from part <a href="#a-time-series-plot">(a)</a>) highlight the data that exceeds this threshold.</p>
+</div>
+</div>
+</section>
+<section id="c-fit-a-gpd" class="level3">
+<h3 class="anchored" data-anchor-id="c-fit-a-gpd">c) Fit a GPD</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Fit a GPD for the data exceeding the threshold and draw a diagnostic plot. Is it a reasonable fit? (Hint: if not, you may reconsider the choice of the threshold)</p>
+</div>
+</div>
+</section>
+<section id="d-return-levels-prediction" class="level3">
+<h3 class="anchored" data-anchor-id="d-return-levels-prediction">d) Return levels prediction</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Using the fitted model, compute the 10-year, 20-year, 50-year and 85-year return levels.</p>
+</div>
+</div>
+</section>
+<section id="e-return-period-100-mm-precipitation" class="level3">
+<h3 class="anchored" data-anchor-id="e-return-period-100-mm-precipitation">e) Return period 100 mm precipitation</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Using the fitted model, compute the return period of 100 mm of precipitation.</p>
+</div>
+</div>
+</section>
+<section id="f-probability-of-exceeding-150-mm" class="level3">
+<h3 class="anchored" data-anchor-id="f-probability-of-exceeding-150-mm">f) Probability of exceeding 150 mm</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Using the fitted model, compute the probability that there will be a day in the next year when the precipitation exceeds 150 mm.</p>
+</div>
+</div>
+</section>
+<section id="g-comparison-with-block-maxima" class="level3">
+<h3 class="anchored" data-anchor-id="g-comparison-with-block-maxima">g) Comparison with block maxima</h3>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Compare the results with the block maxima method. Explain the drawbacks and advantages of using the POT approach compared to the block maxima method. Which method do you prefer?</p>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="practical-3-heat-wave-in-switzerland" class="level1">
+<h1>Practical 3: Heat wave in Switzerland</h1>
+</section>
+<section id="part-3-comparing-gev-and-pot-approaches" class="level1">
+<h1>Part 3: Comparing GEV and POT approaches</h1>
+<section id="data-loading-and-preparation" class="level3">
+<h3 class="anchored" data-anchor-id="data-loading-and-preparation">Data Loading and Preparation</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load the required packages and install them if they are not.</span></span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"code"</span>,<span class="st">"setup.R"</span>))</span>
@@ -1194,8 +1495,22 @@ Question
 </div>
 <p>We ensure that we have the necessary data for the analysis by filtering the temperature data for all three cities and removing any rows with missing values. We removed 395 rows.</p>
 </section>
-<section id="block-maxima-approach-gev-distribution" class="level1">
-<h1>Block Maxima Approach (GEV Distribution)</h1>
+<section id="block-maxima-approach-gev-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="block-maxima-approach-gev-distribution">Block Maxima Approach (GEV Distribution)</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Can a Generalized Extreme Value (GEV) distribution accurately model annual maximum temperatures in Switzerland?</p>
+</div>
+</div>
+<p>In this analysis, we investigate whether a Generalized Extreme Value (GEV) distribution can accurately model annual maximum temperatures in Switzerland. Additionally, we compare the results of the block Maxima approach with the Peaks-over-Threshold (POT) approach using declustering for extreme temperatures.</p>
 <p>We calculate the annual maximum temperatures for Geneva, Santïs and Lugano and fit a GEV distribution to these maxima.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate annual maximum temperatures</span></span>
@@ -1236,7 +1551,7 @@ Question
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="praticals_final_files/figure-html/unnamed-chunk-55-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-58-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1246,7 +1561,7 @@ Question
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="praticals_final_files/figure-html/unnamed-chunk-55-2.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-58-2.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1256,7 +1571,7 @@ Question
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="praticals_final_files/figure-html/unnamed-chunk-55-3.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-58-3.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1274,8 +1589,24 @@ Question
 <span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>gev_return_levels_Lugano <span class="ot">&lt;-</span> <span class="fu">return.level</span>(gev_fit_Lugano, <span class="at">return.period =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="peaks-over-threshold-approach-gpd-distribution" class="level1">
-<h1>Peaks-over-Threshold Approach (GPD Distribution)</h1>
+</section>
+<section id="comparison-with-peaks-over-threshold-approach-gpd-distribution" class="level1">
+<h1>Comparison with Peaks-over-Threshold Approach (GPD Distribution)</h1>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>How do the results of the block maxima approach compare with the Peaks-over-Threshold (POT) approach for temperature extremes?</p>
+</div>
+</div>
+<section id="peaks-over-threshold-approach" class="level2">
+<h2 class="anchored" data-anchor-id="peaks-over-threshold-approach">Peaks-over-Threshold Approach</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter the data for the summer months (June to September)</span></span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Geneva</span></span>
@@ -1362,7 +1693,7 @@ Question
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="praticals_final_files/figure-html/unnamed-chunk-64-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-67-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1372,7 +1703,7 @@ Question
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="praticals_final_files/figure-html/unnamed-chunk-64-2.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-67-2.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1382,7 +1713,7 @@ Question
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="praticals_final_files/figure-html/unnamed-chunk-64-3.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="praticals_final_files/figure-html/unnamed-chunk-67-3.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1400,12 +1731,12 @@ Question
 <span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>gpd_return_levels_Lugano <span class="ot">&lt;-</span> <span class="fu">return.level</span>(gpd_fit_lugano, <span class="at">return.period =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="our-results" class="level1">
-<h1>Our results</h1>
-<section id="block-maxima-approach-gev-distribution-1" class="level2">
-<h2 class="anchored" data-anchor-id="block-maxima-approach-gev-distribution-1">Block Maxima Approach (GEV Distribution):</h2>
-<section id="parameter-estimates" class="level3">
-<h3 class="anchored" data-anchor-id="parameter-estimates">Parameter Estimates:</h3>
+<section id="our-results" class="level2">
+<h2 class="anchored" data-anchor-id="our-results">Our results</h2>
+<section id="block-maxima-approach-gev-distribution-1" class="level3">
+<h3 class="anchored" data-anchor-id="block-maxima-approach-gev-distribution-1">Block Maxima Approach (GEV Distribution):</h3>
+<section id="parameter-estimates" class="level4">
+<h4 class="anchored" data-anchor-id="parameter-estimates">Parameter Estimates:</h4>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -1448,8 +1779,8 @@ Question
 </tbody>
 </table>
 </section>
-<section id="gev-return-levels" class="level3">
-<h3 class="anchored" data-anchor-id="gev-return-levels">GEV Return Levels:</h3>
+<section id="gev-return-levels" class="level4">
+<h4 class="anchored" data-anchor-id="gev-return-levels">GEV Return Levels:</h4>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -1493,22 +1824,22 @@ Question
 </table>
 </section>
 </section>
-<section id="peaks-over-threshold-approach-gpd-distribution-1" class="level2">
-<h2 class="anchored" data-anchor-id="peaks-over-threshold-approach-gpd-distribution-1">Peaks-over-Threshold Approach (GPD Distribution):</h2>
-<section id="threshold-selection" class="level3">
-<h3 class="anchored" data-anchor-id="threshold-selection">Threshold Selection:</h3>
+<section id="peaks-over-threshold-approach-gpd-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="peaks-over-threshold-approach-gpd-distribution">Peaks-over-Threshold Approach (GPD Distribution):</h3>
+<section id="threshold-selection" class="level4">
+<h4 class="anchored" data-anchor-id="threshold-selection">Threshold Selection:</h4>
 <p>The threshold was set at the 95th percentile, which is 31.8 degrees Celsius for Geneva</p>
 <p>The threshold was set at the 95th percentile, which is 15 degrees Celsius for Santïs.</p>
 <p>The threshold was set at the 95th percentile, which is 30.8 degrees Celsius for Lugano.</p>
 </section>
-<section id="number-of-exceedances" class="level3">
-<h3 class="anchored" data-anchor-id="number-of-exceedances">Number of Exceedances:</h3>
+<section id="number-of-exceedances" class="level4">
+<h4 class="anchored" data-anchor-id="number-of-exceedances">Number of Exceedances:</h4>
 <p>There are 413 exceedances over the threshold for Geneva.</p>
 <p>There are 413 exceedances over the threshold for Santïs.</p>
 <p>There are 406 exceedances over the threshold for Lugano.</p>
 </section>
-<section id="gpd-return-levels" class="level3">
-<h3 class="anchored" data-anchor-id="gpd-return-levels">GPD Return Levels:</h3>
+<section id="gpd-return-levels" class="level4">
+<h4 class="anchored" data-anchor-id="gpd-return-levels">GPD Return Levels:</h4>
 <p>The return levels are:</p>
 <table class="caption-top table">
 <colgroup>
@@ -1552,13 +1883,163 @@ Question
 </tbody>
 </table>
 </section>
-<section id="comparison-of-approaches" class="level3">
-<h3 class="anchored" data-anchor-id="comparison-of-approaches">Comparison of Approaches:</h3>
+</section>
+</section>
+<section id="comparison-of-approaches" class="level2">
+<h2 class="anchored" data-anchor-id="comparison-of-approaches">Comparison of Approaches:</h2>
 <p>In comparing the block maxima approach (GEV) to the Peaks-over-Threshold approach (GPD) for modeling temperature extremes, we find that the POT method often provides more nuanced information about the tail behavior of the distribution. While the GEV model uses only the annual maximum values, which can lead to relatively large uncertainty due to a limited amount of extreme data, the POT approach utilizes all temperature values above a chosen high threshold. This generally results in more data points to characterize the tail, potentially yielding more stable and reliable estimates of parameters and return levels. However, the POT approach depends on careful threshold selection and declustering, which introduces additional steps not required by the simpler block maxima method. In practice, the POT approach can lead to different (often more precise) return level estimates, giving a potentially more accurate picture of the frequency and magnitude of extreme temperature events.</p>
+</section>
+</section>
+<section id="part-4-return-period-probabilities-of-new-record-high-temperatures" class="level1">
+<h1>Part 4: Return Period &amp; Probabilities of New Record High Temperatures</h1>
+<p>In this part, we will discuss the return periods &amp; probability analysis of having a new record of heatwaves in the cities of Geneva, Säntis and Lugano. As seen when comparing the Block Maxima and the Peaks-over-Threshol approaches, the Block Maxima one seems to be more accurate to use. Thus, we will only use this approach when calculating the return period and the probabilities of obtaining a new record of temperature for 1, 3 and 10 years. To begin with, we will take the code from part 3 to obtain the GEV distribution for all cities.</p>
+<section id="block-maxima-approach-gev-distribution-2" class="level2">
+<h2 class="anchored" data-anchor-id="block-maxima-approach-gev-distribution-2">Block Maxima Approach (GEV Distribution)</h2>
+<p>See part 3 for the code.</p>
+</section>
+<section id="peaks-over-threshold-approach-gpd-distribution-1" class="level2">
+<h2 class="anchored" data-anchor-id="peaks-over-threshold-approach-gpd-distribution-1">Peaks-over-Threshold Approach (GPD Distribution)</h2>
+<p>See part 3 for the code.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Can a Generalized Extreme Value (GEV) distribution accurately model annual maximum temperatures in Switzerland?</p>
+</div>
+</div>
+</section>
+</section>
+<section id="return-period" class="level1">
+<h1>Return Period</h1>
+<p>Now, we will analyse the return period for each city. The return period is the expected time (here, in years) between occurrences of an extreme event to be at least as extreme as a given value.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load required library</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(extRemes)</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract GEV parameters for Geneva</span></span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>location_geneva <span class="ot">&lt;-</span> gev_fit_geneva<span class="sc">$</span>results<span class="sc">$</span>par[<span class="st">"location"</span>]</span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>scale_geneva <span class="ot">&lt;-</span> gev_fit_geneva<span class="sc">$</span>results<span class="sc">$</span>par[<span class="st">"scale"</span>]</span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>shape_geneva <span class="ot">&lt;-</span> gev_fit_geneva<span class="sc">$</span>results<span class="sc">$</span>par[<span class="st">"shape"</span>]</span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract GEV parameters for Säntis</span></span>
+<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a>location_santis <span class="ot">&lt;-</span> gev_fit_santis<span class="sc">$</span>results<span class="sc">$</span>par[<span class="st">"location"</span>]</span>
+<span id="cb63-11"><a href="#cb63-11" aria-hidden="true" tabindex="-1"></a>scale_santis <span class="ot">&lt;-</span> gev_fit_santis<span class="sc">$</span>results<span class="sc">$</span>par[<span class="st">"scale"</span>]</span>
+<span id="cb63-12"><a href="#cb63-12" aria-hidden="true" tabindex="-1"></a>shape_santis <span class="ot">&lt;-</span> gev_fit_santis<span class="sc">$</span>results<span class="sc">$</span>par[<span class="st">"shape"</span>]</span>
+<span id="cb63-13"><a href="#cb63-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-14"><a href="#cb63-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract GEV parameters for Lugano</span></span>
+<span id="cb63-15"><a href="#cb63-15" aria-hidden="true" tabindex="-1"></a>location_lugano <span class="ot">&lt;-</span> gev_fit_Lugano<span class="sc">$</span>results<span class="sc">$</span>par[<span class="st">"location"</span>]</span>
+<span id="cb63-16"><a href="#cb63-16" aria-hidden="true" tabindex="-1"></a>scale_lugano <span class="ot">&lt;-</span> gev_fit_Lugano<span class="sc">$</span>results<span class="sc">$</span>par[<span class="st">"scale"</span>]</span>
+<span id="cb63-17"><a href="#cb63-17" aria-hidden="true" tabindex="-1"></a>shape_lugano <span class="ot">&lt;-</span> gev_fit_Lugano<span class="sc">$</span>results<span class="sc">$</span>par[<span class="st">"shape"</span>]</span>
+<span id="cb63-18"><a href="#cb63-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-19"><a href="#cb63-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the temperature threshold</span></span>
+<span id="cb63-20"><a href="#cb63-20" aria-hidden="true" tabindex="-1"></a>temp_threshold <span class="ot">&lt;-</span> <span class="dv">35</span></span>
+<span id="cb63-21"><a href="#cb63-21" aria-hidden="true" tabindex="-1"></a>temp_threshold_santis <span class="ot">&lt;-</span> <span class="dv">19</span></span>
+<span id="cb63-22"><a href="#cb63-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-23"><a href="#cb63-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to calculate return period</span></span>
+<span id="cb63-24"><a href="#cb63-24" aria-hidden="true" tabindex="-1"></a>calculate_return_period <span class="ot">&lt;-</span> <span class="cf">function</span>(location, scale, shape, temp_threshold) {</span>
+<span id="cb63-25"><a href="#cb63-25" aria-hidden="true" tabindex="-1"></a>  cdf_value <span class="ot">&lt;-</span> <span class="fu">pevd</span>(temp_threshold, <span class="at">loc =</span> location, <span class="at">scale =</span> scale, <span class="at">shape =</span> shape, <span class="at">type =</span> <span class="st">"GEV"</span>)</span>
+<span id="cb63-26"><a href="#cb63-26" aria-hidden="true" tabindex="-1"></a>  return_period <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> cdf_value)</span>
+<span id="cb63-27"><a href="#cb63-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(return_period)</span>
+<span id="cb63-28"><a href="#cb63-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb63-29"><a href="#cb63-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-30"><a href="#cb63-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate return periods</span></span>
+<span id="cb63-31"><a href="#cb63-31" aria-hidden="true" tabindex="-1"></a>return_period_geneva <span class="ot">&lt;-</span> <span class="fu">calculate_return_period</span>(location_geneva, scale_geneva, shape_geneva, temp_threshold)</span>
+<span id="cb63-32"><a href="#cb63-32" aria-hidden="true" tabindex="-1"></a>return_period_santis <span class="ot">&lt;-</span> <span class="fu">calculate_return_period</span>(location_santis, scale_santis, shape_santis, temp_threshold_santis)</span>
+<span id="cb63-33"><a href="#cb63-33" aria-hidden="true" tabindex="-1"></a>return_period_lugano <span class="ot">&lt;-</span> <span class="fu">calculate_return_period</span>(location_lugano, scale_lugano, shape_lugano, temp_threshold)</span>
+<span id="cb63-34"><a href="#cb63-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-35"><a href="#cb63-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the results</span></span>
+<span id="cb63-36"><a href="#cb63-36" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"The return period for 35°C in Geneva is approximately"</span>, <span class="fu">round</span>(return_period_geneva, <span class="dv">2</span>), <span class="st">"years.</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The return period for 35°C in Geneva is approximately 4.16 years.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"The return period for 35°C in Säntis is approximately"</span>, <span class="fu">round</span>(return_period_santis, <span class="dv">2</span>), <span class="st">"years.</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The return period for 35°C in Säntis is approximately 6.29 years.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"The return period for 35°C in Lugano is approximately"</span>, <span class="fu">round</span>(return_period_lugano, <span class="dv">2</span>), <span class="st">"years.</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The return period for 35°C in Lugano is approximately 14.04 years.</code></pre>
+</div>
+</div>
+<p>As a result, we can observe that the return period is around 4.16 years in Geneva, Inf for Säntis and 14.04 years for Lugano.</p>
+</section>
+<section id="probability-of-new-record-high-temperature" class="level1">
+<h1>Probability of New Record High Temperature</h1>
+<p>Using the previously fitted model</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Historical record highs for each city (replace with actual values)</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>record_high_geneva <span class="ot">&lt;-</span> <span class="fu">max</span>(annual_maxima_geneva<span class="sc">$</span>MaxTemp)</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>record_high_santis <span class="ot">&lt;-</span> <span class="fu">max</span>(annual_maxima_santis<span class="sc">$</span>MaxTemp)</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>record_high_lugano <span class="ot">&lt;-</span> <span class="fu">max</span>(annual_maxima_Lugano<span class="sc">$</span>MaxTemp)</span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to calculate the probability of a new record high</span></span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>calculate_new_record_probability <span class="ot">&lt;-</span> <span class="cf">function</span>(location, scale, shape, record_high, years) {</span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Probability of not exceeding the record high in 1 year</span></span>
+<span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a>  prob_not_exceed <span class="ot">&lt;-</span> <span class="fu">pevd</span>(record_high, <span class="at">loc =</span> location, <span class="at">scale =</span> scale, <span class="at">shape =</span> shape, <span class="at">type =</span> <span class="st">"GEV"</span>)</span>
+<span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Probability of exceeding the record high in the given time horizon</span></span>
+<span id="cb69-11"><a href="#cb69-11" aria-hidden="true" tabindex="-1"></a>  prob_exceed <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (prob_not_exceed<span class="sc">^</span>years)</span>
+<span id="cb69-12"><a href="#cb69-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(prob_exceed)</span>
+<span id="cb69-13"><a href="#cb69-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb69-14"><a href="#cb69-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-15"><a href="#cb69-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate probabilities for Geneva</span></span>
+<span id="cb69-16"><a href="#cb69-16" aria-hidden="true" tabindex="-1"></a>prob_new_record_geneva_1yr <span class="ot">&lt;-</span> <span class="fu">calculate_new_record_probability</span>(location_geneva, scale_geneva, shape_geneva, record_high_geneva, <span class="dv">1</span>)</span>
+<span id="cb69-17"><a href="#cb69-17" aria-hidden="true" tabindex="-1"></a>prob_new_record_geneva_3yr <span class="ot">&lt;-</span> <span class="fu">calculate_new_record_probability</span>(location_geneva, scale_geneva, shape_geneva, record_high_geneva, <span class="dv">3</span>)</span>
+<span id="cb69-18"><a href="#cb69-18" aria-hidden="true" tabindex="-1"></a>prob_new_record_geneva_10yr <span class="ot">&lt;-</span> <span class="fu">calculate_new_record_probability</span>(location_geneva, scale_geneva, shape_geneva, record_high_geneva, <span class="dv">10</span>)</span>
+<span id="cb69-19"><a href="#cb69-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-20"><a href="#cb69-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate probabilities for Säntis</span></span>
+<span id="cb69-21"><a href="#cb69-21" aria-hidden="true" tabindex="-1"></a>prob_new_record_santis_1yr <span class="ot">&lt;-</span> <span class="fu">calculate_new_record_probability</span>(location_santis, scale_santis, shape_santis, record_high_santis, <span class="dv">1</span>)</span>
+<span id="cb69-22"><a href="#cb69-22" aria-hidden="true" tabindex="-1"></a>prob_new_record_santis_3yr <span class="ot">&lt;-</span> <span class="fu">calculate_new_record_probability</span>(location_santis, scale_santis, shape_santis, record_high_santis, <span class="dv">3</span>)</span>
+<span id="cb69-23"><a href="#cb69-23" aria-hidden="true" tabindex="-1"></a>prob_new_record_santis_10yr <span class="ot">&lt;-</span> <span class="fu">calculate_new_record_probability</span>(location_santis, scale_santis, shape_santis, record_high_santis, <span class="dv">10</span>)</span>
+<span id="cb69-24"><a href="#cb69-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-25"><a href="#cb69-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate probabilities for Lugano</span></span>
+<span id="cb69-26"><a href="#cb69-26" aria-hidden="true" tabindex="-1"></a>prob_new_record_lugano_1yr <span class="ot">&lt;-</span> <span class="fu">calculate_new_record_probability</span>(location_lugano, scale_lugano, shape_lugano, record_high_lugano, <span class="dv">1</span>)</span>
+<span id="cb69-27"><a href="#cb69-27" aria-hidden="true" tabindex="-1"></a>prob_new_record_lugano_3yr <span class="ot">&lt;-</span> <span class="fu">calculate_new_record_probability</span>(location_lugano, scale_lugano, shape_lugano, record_high_lugano, <span class="dv">3</span>)</span>
+<span id="cb69-28"><a href="#cb69-28" aria-hidden="true" tabindex="-1"></a>prob_new_record_lugano_10yr <span class="ot">&lt;-</span> <span class="fu">calculate_new_record_probability</span>(location_lugano, scale_lugano, shape_lugano, record_high_lugano, <span class="dv">10</span>)</span>
+<span id="cb69-29"><a href="#cb69-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-30"><a href="#cb69-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the results</span></span>
+<span id="cb69-31"><a href="#cb69-31" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Probability of a new record high in Geneva:</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb69-32"><a href="#cb69-32" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1 year:"</span>, <span class="fu">round</span>(prob_new_record_geneva_1yr, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb69-33"><a href="#cb69-33" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3 years:"</span>, <span class="fu">round</span>(prob_new_record_geneva_3yr, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb69-34"><a href="#cb69-34" aria-hidden="true" tabindex="-1"></a>    <span class="st">"10 years:"</span>, <span class="fu">round</span>(prob_new_record_geneva_10yr, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Probability of a new record high in Geneva:
+ 1 year: 0.0061 
+ 3 years: 0.0183 
+ 10 years: 0.0596 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Probability of a new record high in Säntis:</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1 year:"</span>, <span class="fu">round</span>(prob_new_record_santis_1yr, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3 years:"</span>, <span class="fu">round</span>(prob_new_record_santis_3yr, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"10 years:"</span>, <span class="fu">round</span>(prob_new_record_santis_10yr, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Probability of a new record high in Säntis:
+ 1 year: 0.0116 
+ 3 years: 0.0343 
+ 10 years: 0.1098 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Probability of a new record high in Lugano:</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1 year:"</span>, <span class="fu">round</span>(prob_new_record_lugano_1yr, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3 years:"</span>, <span class="fu">round</span>(prob_new_record_lugano_3yr, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"10 years:"</span>, <span class="fu">round</span>(prob_new_record_lugano_10yr, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Probability of a new record high in Lugano:
+ 1 year: 0.0068 
+ 3 years: 0.0201 
+ 10 years: 0.0655 </code></pre>
+</div>
+</div>
+</section>
+<section id="results" class="level1">
+<h1>Results</h1>
+<p>As a result, we can observe that …</p>
 <!-- -->
 
-</section>
-</section>
 </section>
 
 </main>
@@ -2034,23 +2515,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb63" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Pratical 1,2 and 3 for Group 1 (In full)</span></span>
-<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
-<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a><span class="an">date-format:</span><span class="co"> long</span></span>
-<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> Lodrik Adam, Sophie Daya, Jeff Macaraeg, Julien Perini, Alexandra Maria Santana Boado</span></span>
-<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
-<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
-<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: false</span></span>
-<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-border-left: "#0d6efd"</span></span>
-<span id="cb63-11"><a href="#cb63-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-bg: true</span></span>
-<span id="cb63-12"><a href="#cb63-12" aria-hidden="true" tabindex="-1"></a><span class="co">    highlight-style: github</span></span>
-<span id="cb63-13"><a href="#cb63-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
-<span id="cb63-14"><a href="#cb63-14" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb63-15"><a href="#cb63-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb63-16"><a href="#cb63-16" aria-hidden="true" tabindex="-1"></a><span class="in">```{r child = c("practical_11_final.qmd", "practical_12_final.qmd", "practical_13_final.qmd", "practical_21_final.qmd", "practical_22_final.qmd", "practical_23_final.qmd", "practical_34_final.qmd")}</span></span>
-<span id="cb63-17"><a href="#cb63-17" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb75" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Pratical 1,2 and 3 for Group 1 (In full)</span></span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a><span class="an">date-format:</span><span class="co"> long</span></span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> Lodrik Adam, Sophie Daya, Jeff Macaraeg, Julien Perini, Alexandra Maria Santana Boado</span></span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: false</span></span>
+<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-border-left: "#0d6efd"</span></span>
+<span id="cb75-12"><a href="#cb75-12" aria-hidden="true" tabindex="-1"></a><span class="co">    code-block-bg: true</span></span>
+<span id="cb75-13"><a href="#cb75-13" aria-hidden="true" tabindex="-1"></a><span class="co">    highlight-style: github</span></span>
+<span id="cb75-14"><a href="#cb75-14" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb75-15"><a href="#cb75-15" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb75-16"><a href="#cb75-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-17"><a href="#cb75-17" aria-hidden="true" tabindex="-1"></a><span class="fu"># Introduction</span></span>
+<span id="cb75-18"><a href="#cb75-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-19"><a href="#cb75-19" aria-hidden="true" tabindex="-1"></a>This documents is the annex to our final report for group 1. It contains the full code for the practicals 1, 2 and 3 with the results and some discussions. This allows anyone to reproduce our results and to understand the code we used.</span>
+<span id="cb75-20"><a href="#cb75-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-21"><a href="#cb75-21" aria-hidden="true" tabindex="-1"></a><span class="in">```{r child = c("practical_11_final.qmd", "practical_12_final.qmd", "practical_13_final.qmd", "practical_21_final.qmd", "practical_22_final.qmd", "practical_23_final.qmd", "practical_31_final.qmd", "practical_33_final.qmd", "practical_34_final.qmd")}</span></span>
+<span id="cb75-22"><a href="#cb75-22" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

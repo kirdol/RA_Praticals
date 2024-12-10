@@ -1,4 +1,4 @@
-# Part 2: Seasonal and Clustering Analysis
+## Part 2: Seasonal and Clustering Analysis
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # load the required packages and install them if they are not.
@@ -115,7 +115,7 @@ plot(saentis_summer$DATE, saentis_summer$TMAX, type = "l", col = "green",
      xlab = "Date", ylab = "Maximum Temperature (°C)")
 ```
 
-# Cluster analysis
+### Cluster analysis
 
 We can now focus on the clustering analysis of extreme temperature events. We will define a threshold for extreme temperatures based on the 95th percentile of summer maximum temperatures for each station.
 
