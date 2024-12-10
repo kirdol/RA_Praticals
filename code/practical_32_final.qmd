@@ -1,0 +1,410 @@
+# Part 2:
+
+```{r}
+# load the required packages and install them if they are not.
+source(here::here("code","setup.R"))
+
+stations_data <- read.csv(here("data", "Cleaned_Stations_Data.csv"))
+```
+
+```{r}
+# Convert the date column to Date format
+stations_data$DATE <- as.Date(stations_data$DATE, format = "%Y-%m-%d")
+
+# Filter the data starting from the date "1955-01-01"
+stations_data <- subset(stations_data, DATE >= as.Date("1955-01-01"))
+
+# Check the structure of the data
+str(stations_data)
+
+# Summarize the data
+summary(stations_data)
+
+# Display a preview of the data
+head(stations_data)
+
+# Verify the data filtering
+cat("Number of rows after filtering:", nrow(stations_data), "\n")
+
+# Summarize the data after filtering
+summary(stations_data)
+```
+
+
+```{r}
+# Rename rows in the NAME column
+stations_data$NAME <- gsub("LUGANO, SZ", "Lugano", stations_data$NAME)
+stations_data$NAME <- gsub("SAENTIS, SZ", "Saentis", stations_data$NAME)
+stations_data$NAME <- gsub("GENEVE COINTRIN, SZ", "Genève", stations_data$NAME)
+
+# Keep only the three specified stations: Lugano, Saentis, Genève
+stations_data <- subset(stations_data, NAME %in% c("Lugano", "Saentis", "Genève"))
+
+# Check the data after filtering
+cat("Number of rows after filtering:", nrow(stations_data), "\n")
+unique(stations_data$NAME)
+```
+
+```{r}
+# Check the structure of the data
+str(stations_data)
+
+# Summarize the data
+summary(stations_data)
+
+# Display a preview of the data
+head(stations_data)
+```
+
+
+```{r}
+# Create a plot for each station and display them separately
+stations <- unique(stations_data$NAME)
+
+for (station in stations) {
+  plot <- ggplot(subset(stations_data, NAME == station), aes(x = DATE, y = TMAX)) +
+    geom_line(color = "blue") +
+    labs(
+      title = paste("Maximum Temperature Over Time -", station),
+      x = "Date",
+      y = "Maximum Temperature (°C)"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5)
+    )
+
+  print(plot)  # Display each plot
+}
+```
+
+
+```{r}
+# Create a histogram for each station
+for (station in stations) {
+  plot <- ggplot(subset(stations_data, NAME == station), aes(x = TMAX)) +
+    geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 0.7) +
+    labs(
+      title = paste("Histogram of Maximum Temperatures -", station),
+      x = "Maximum Temperature (°C)",
+      y = "Frequency"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(hjust = 0.5)
+    )
+
+  print(plot)  # Display each histogram
+}
+```
+
+
+```{r}
+# Check for missing values
+na_counts <- colSums(is.na(stations_data))
+cat("Number of missing values per column before removal:\n")
+print(na_counts)
+
+# Remove only rows where TMAX is NA
+stations_data <- stations_data[!is.na(stations_data$TMAX), ]
+
+# Check for missing values again
+na_counts_after <- colSums(is.na(stations_data))
+cat("\nNumber of missing values per column after removal:\n")
+print(na_counts_after)
+
+# Split the data by station
+stations_split <- split(stations_data, stations_data$NAME)
+
+# Count the number of values per station
+values_per_station <- sapply(stations_split, nrow)
+cat("\nNumber of remaining values per station after removing NAs in TMAX:\n")
+print(values_per_station)
+
+# Display the result for each station
+for (station in names(values_per_station)) {
+  cat("\nStation:", station, " | Number of rows:", values_per_station[station], "\n")
+}
+```
+
+
+```{r}
+# We will create a subset for each station.
+
+# Check the unique station names to confirm
+unique(stations_data$NAME)
+
+# Split the data by station
+lugano_data <- subset(stations_data, NAME == "Lugano")
+genève_data <- subset(stations_data, NAME == "Genève")
+saentis_data <- subset(stations_data, NAME == "Saentis")
+```
+
+```{r}
+# Check the dimensions of the subsets
+cat("Number of rows for Lugano:", nrow(lugano_data), "\n")
+cat("Number of rows for Genève:", nrow(genève_data), "\n")
+cat("Number of rows for Säntis:", nrow(saentis_data), "\n")
+```
+
+
+```{r}
+# Function to explore a station
+explore_station <- function(data, station_name) {
+  cat("\n--- Exploration for station:", station_name, "---\n")
+
+  # Preview of the data
+  cat("\nData preview:\n")
+  print(head(data))
+
+  # Descriptive statistics
+  cat("\nDescriptive statistics:\n")
+  print(summary(data))
+
+  # Checking for missing values
+  cat("\nNumber of missing values per column:\n")
+  print(colSums(is.na(data)))
+
+  # Histogram of maximum temperatures
+  cat("\nHistogram of maximum temperatures for:", station_name, "\n")
+  print(
+    ggplot(data, aes(x = TMAX)) +
+      geom_histogram(binwidth = 1, fill = "red", color = "black") +
+      labs(title = paste("Distribution of Maximum Temperatures -", station_name),
+           x = "Maximum Temperature (°C)", y = "Frequency") +
+      theme_minimal()
+  )
+
+  # Time series of maximum temperatures
+  cat("\nTime series of maximum temperatures for:", station_name, "\n")
+  print(
+    ggplot(data, aes(x = DATE, y = TMAX)) +
+      geom_line(color = "red") +
+      labs(title = paste("Maximum Temperatures Over Time -", station_name),
+           x = "Date", y = "Maximum Temperature (°C)") +
+      theme_minimal()
+  )
+}
+
+# Exploration for Lugano
+explore_station(lugano_data, "Lugano")
+
+# Exploration for Genève
+explore_station(genève_data, "Genève")
+
+# Exploration for Saentis
+explore_station(saentis_data, "Saentis")
+```
+
+###########
+
+```{r}
+# Filter summer data for Lugano
+lugano_summer <- subset(lugano_data, format(DATE, "%m") %in% c("06", "07", "08", "09"))
+
+# Filter summer data for Genève
+genève_summer <- subset(genève_data, format(DATE, "%m") %in% c("06", "07", "08", "09"))
+
+# Filter summer data for Säntis
+saentis_summer <- subset(saentis_data, format(DATE, "%m") %in% c("06", "07", "08", "09"))
+
+# Check the dimensions of the summer subsets
+cat("Number of summer rows for Lugano:", nrow(lugano_summer), "\n")
+cat("Number of summer rows for Genève:", nrow(genève_summer), "\n")
+cat("Number of summer rows for Säntis:", nrow(saentis_summer), "\n")
+```
+
+
+```{r}
+# Plot the evolution of summer maximum temperatures for Lugano
+plot(lugano_summer$DATE, lugano_summer$TMAX, type = "l", col = "red",
+     main = "Evolution of Summer Maximum Temperatures - Lugano",
+     xlab = "Date", ylab = "Maximum Temperature (°C)")
+
+# Plot the evolution of summer maximum temperatures for Genève
+plot(genève_summer$DATE, genève_summer$TMAX, type = "l", col = "blue",
+     main = "Evolution of Summer Maximum Temperatures - Genève",
+     xlab = "Date", ylab = "Maximum Temperature (°C)")
+
+# Plot the evolution of summer maximum temperatures for Säntis
+plot(saentis_summer$DATE, saentis_summer$TMAX, type = "l", col = "green",
+     main = "Evolution of Summer Maximum Temperatures - Säntis",
+     xlab = "Date", ylab = "Maximum Temperature (°C)")
+```
+
+# Cluster analysis
+
+```{r}
+# Define a threshold for extreme temperatures
+# We can define a threshold based on the 95th percentile of summer maximum temperatures for each station.
+
+# Calculate thresholds for each station
+threshold_lugano <- quantile(lugano_summer$TMAX, 0.95, na.rm = TRUE)
+threshold_genève <- quantile(genève_summer$TMAX, 0.95, na.rm = TRUE)
+threshold_saentis <- quantile(saentis_summer$TMAX, 0.95, na.rm = TRUE)
+
+cat("Threshold for Lugano:", threshold_lugano, "\n")
+cat("Threshold for Genève:", threshold_genève, "\n")
+cat("Threshold for Säntis:", threshold_saentis, "\n")
+```
+
+
+```{r}
+# Validation with the MRL Plot for Lugano
+cat("Mean Residual Life Plot for Lugano\n")
+mrlplot(lugano_summer$TMAX, main = "Mean Residual Life Plot - Lugano")
+
+# Validation with the MRL Plot for Genève
+cat("Mean Residual Life Plot for Genève\n")
+mrlplot(genève_summer$TMAX, main = "Mean Residual Life Plot - Genève")
+
+# Validation with the MRL Plot for Säntis
+cat("Mean Residual Life Plot for Säntis\n")
+mrlplot(saentis_summer$TMAX, main = "Mean Residual Life Plot - Säntis")
+```
+
+
+
+
+```{r}
+# Identify extreme days for Lugano
+lugano_extreme_days <- lugano_summer[lugano_summer$TMAX > threshold_lugano, ]
+cat("Number of extreme days for Lugano:", nrow(lugano_extreme_days), "\n")
+
+# Identify extreme days for Genève
+geneve_extreme_days <- genève_summer[genève_summer$TMAX > threshold_genève, ]
+cat("Number of extreme days for Genève:", nrow(geneve_extreme_days), "\n")
+
+# Identify extreme days for Säntis
+saentis_extreme_days <- saentis_summer[saentis_summer$TMAX > threshold_saentis, ]
+cat("Number of extreme days for Säntis:", nrow(saentis_extreme_days), "\n")
+```
+
+
+
+```{r}
+# Calculation of the extremal index for each station
+extremal_index_lugano <- extremalindex(lugano_summer$TMAX, threshold = threshold_lugano)
+extremal_index_geneve <- extremalindex(genève_summer$TMAX, threshold = threshold_genève)
+extremal_index_saentis <- extremalindex(saentis_summer$TMAX, threshold = threshold_saentis)
+
+cat("Extremal index for Lugano:", extremal_index_lugano, "\n")
+cat("Extremal index for Genève:", extremal_index_geneve, "\n")
+cat("Extremal index for Säntis:", extremal_index_saentis, "\n")
+```
+
+
+```{r}
+# Decluster the data using the chosen threshold for each station
+lugano_declustered <- decluster(lugano_summer$TMAX, threshold = threshold_lugano, run.length = 1)
+genève_declustered <- decluster(genève_summer$TMAX, threshold = threshold_genève, run.length = 1)
+saentis_declustered <- decluster(saentis_summer$TMAX, threshold = threshold_saentis, run.length = 1)
+
+# Add the declustered data to the corresponding datasets
+lugano_summer$Declustered <- ifelse(lugano_summer$TMAX >= threshold_lugano, lugano_declustered, NA)
+genève_summer$Declustered <- ifelse(genève_summer$TMAX >= threshold_genève, genève_declustered, NA)
+saentis_summer$Declustered <- ifelse(saentis_summer$TMAX >= threshold_saentis, saentis_declustered, NA)
+```
+
+
+
+```{r}
+# Visualiser les données déclusterisées
+
+# Visualisation pour Lugano
+ggplot() +
+  geom_line(data = lugano_summer, aes(x = DATE, y = TMAX), color = "blue", alpha = 0.5) +
+  geom_point(data = subset(lugano_summer, !is.na(Declustered)), aes(x = DATE, y = Declustered), color = "red") +
+  labs(title = "Declustered Temperatures - Lugano", x = "Date", y = "Max Temperature (°C)") +
+  theme_minimal()
+
+# Visualisation pour Genève
+ggplot() +
+  geom_line(data = genève_summer, aes(x = DATE, y = TMAX), color = "blue", alpha = 0.5) +
+  geom_point(data = subset(genève_summer, !is.na(Declustered)), aes(x = DATE, y = Declustered), color = "red") +
+  labs(title = "Declustered Temperatures - Genève", x = "Date", y = "Max Temperature (°C)") +
+  theme_minimal()
+
+# Visualisation pour Säntis
+ggplot() +
+  geom_line(data = saentis_summer, aes(x = DATE, y = TMAX), color = "blue", alpha = 0.5) +
+  geom_point(data = subset(saentis_summer, !is.na(Declustered)), aes(x = DATE, y = Declustered), color = "red") +
+  labs(title = "Declustered Temperatures - Säntis", x = "Date", y = "Max Temperature (°C)") +
+  theme_minimal()
+```
+
+# Fit a Generalized Pareto Distribution (GPD) to the declustered extreme temperatures and estimate probabilities and return levels
+
+```{r}
+# Define a function to fit the GPD model and calculate return levels
+fit_gpd <- function(data, declustered_column, threshold, return_period) {
+  # Extract declustered extreme values
+  extreme_values <- data[[declustered_column]][!is.na(data[[declustered_column]])]
+
+  # Fit the Generalized Pareto Distribution (GPD)
+  gpd_fit <- fevd(extreme_values, type = "GP", threshold = threshold)
+
+  # Calculate the return level for the specified return period
+  return_level <- return.level(gpd_fit, return.period = return_period)
+
+  # Return the GPD fit and return level
+  list(fit = gpd_fit, return_level = return_level)
+}
+
+# Fit GPD for Lugano
+gpd_lugano <- fit_gpd(lugano_summer, "Declustered", threshold_lugano, return_period = 10)
+
+# Fit GPD for Genève
+gpd_genève <- fit_gpd(genève_summer, "Declustered", threshold_genève, return_period = 10)
+
+# Fit GPD for Säntis
+gpd_saentis <- fit_gpd(saentis_summer, "Declustered", threshold_saentis, return_period = 10)
+```
+
+
+```{r}
+# Print summaries and return levels
+cat("Lugano - 10-Year Return Level:", gpd_lugano$return_level, "\n")
+cat("Genève - 10-Year Return Level:", gpd_genève$return_level, "\n")
+cat("Säntis - 10-Year Return Level:", gpd_saentis$return_level, "\n")
+
+# Plot the GPD model fit for each station
+par(mfrow = c(1, 3))  # Arrange plots in a single row
+plot(gpd_lugano$fit, main = "GPD Fit - Lugano")
+plot(gpd_genève$fit, main = "GPD Fit - Genève")
+plot(gpd_saentis$fit, main = "GPD Fit - Säntis")
+```
+
+```{r}
+# Compute the probability of consecutive extreme days for each station
+compute_extreme_following_prob <- function(extremal_index) {
+  return(1 - extremal_index) # Probability of consecutive extremes
+}
+
+# For Lugano
+extremal_index_lugano <- extremalindex(lugano_summer$TMAX, threshold = threshold_lugano)
+prob_consecutive_extremes_lugano <- compute_extreme_following_prob(extremal_index_lugano[1])
+cat("Probability of consecutive extremes for Lugano:", prob_consecutive_extremes_lugano, "\n")
+
+# For Genève
+extremal_index_genève <- extremalindex(genève_summer$TMAX, threshold = threshold_genève)
+prob_consecutive_extremes_genève <- compute_extreme_following_prob(extremal_index_genève[1])
+cat("Probability of consecutive extremes for Genève:", prob_consecutive_extremes_genève, "\n")
+
+# For Saentis
+extremal_index_saentis <- extremalindex(saentis_summer$TMAX, threshold = threshold_saentis)
+prob_consecutive_extremes_saentis <- compute_extreme_following_prob(extremal_index_saentis[1])
+cat("Probability of consecutive extremes for Saentis:", prob_consecutive_extremes_saentis, "\n")
+```
+
+
+
+
+
+
+
+
+
+
+
+

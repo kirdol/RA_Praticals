@@ -177,5 +177,3 @@ of using the POT approach compared to the block maxima method. Which method do y
 prefer?
 :::
 
-
-
