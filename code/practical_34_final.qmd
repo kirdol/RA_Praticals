@@ -1,7 +1,5 @@
 
-{{< pagebreak >}}
-
-## Part 4: Return Period & Probabilities of New Record High Temperatures
+# Part 4: Return Period & Probabilities of New Record High Temperatures
 
 In this part, we will discuss the return periods & probability analysis of having a new record of heatwaves in the cities of Geneva, Säntis and Lugano. As seen when comparing the Block Maxima and the Peaks-over-Threshol approaches, the Block Maxima one seems to be more accurate to use. Thus, we will only use this approach when calculating the return period and the probabilities of obtaining a new record of temperature for 1, 3 and 10 years. To begin with, we will take the code from part 3 to obtain the GEV distribution for all cities.
 
@@ -37,7 +35,7 @@ data_lugano <- data_temp %>%
   mutate(DATE = as.Date(DATE))
 ```
 
-### Block Maxima Approach (GEV Distribution)
+## Block Maxima Approach (GEV Distribution)
 
 See part 3 for the code.
 
@@ -101,7 +99,7 @@ gev_return_levels_santis <- return.level(gev_fit_santis, return.period = c(10, 5
 gev_return_levels_Lugano <- return.level(gev_fit_Lugano, return.period = c(10, 50, 100))
 ```
 
-### Peaks-over-Threshold Approach (GPD Distribution)
+## Peaks-over-Threshold Approach (GPD Distribution)
 
 See part 3 for the code.
 
@@ -216,16 +214,15 @@ gpd_return_levels_santis <- return.level(gpd_fit_santis, return.period = c(10, 5
 gpd_return_levels_Lugano <- return.level(gpd_fit_lugano, return.period = c(10, 50, 100))
 ```
 
+## Return Period
 
 ::: {.callout-note icon="false"}
 ## Question
 
-Can a Generalized Extreme Value (GEV) distribution accurately model annual maximum temperatures in Switzerland?
+What is the return period of extreme temperature events exceeding a specific threshold (e.g., 35°C)?
 :::
 
-### Return Period
-
-Now, we will analyse the return period for each city. The return period is the expected time (here, in years) between occurrences of an extreme event to be at least as extreme as a given value.
+Now, we will analyse the return period for each city. The return period is the expected time (here, in years) between occurrences of an extreme event to be at least as extreme as a given value. Here, we will test for a threshold of 35°C, which we can consider as extreme.
 
 ```{r}
 # Load required library
@@ -248,7 +245,6 @@ shape_lugano <- gev_fit_Lugano$results$par["shape"]
 
 # Set the temperature threshold
 temp_threshold <- 35
-temp_threshold_santis <- 19
 
 # Function to calculate return period
 calculate_return_period <- function(location, scale, shape, temp_threshold) {
@@ -259,7 +255,7 @@ calculate_return_period <- function(location, scale, shape, temp_threshold) {
 
 # Calculate return periods
 return_period_geneva <- calculate_return_period(location_geneva, scale_geneva, shape_geneva, temp_threshold)
-return_period_santis <- calculate_return_period(location_santis, scale_santis, shape_santis, temp_threshold_santis)
+return_period_santis <- calculate_return_period(location_santis, scale_santis, shape_santis, temp_threshold)
 return_period_lugano <- calculate_return_period(location_lugano, scale_lugano, shape_lugano, temp_threshold)
 
 # Print the results
@@ -268,11 +264,45 @@ cat("The return period for 35°C in Säntis is approximately", round(return_peri
 cat("The return period for 35°C in Lugano is approximately", round(return_period_lugano, 2), "years.\n")
 ```
 
-As a result, we can observe that the return period is around 4.16 years in Geneva, Inf for Säntis and 14.04 years for Lugano.
+As a result, we can observe the following return periods:
 
-### Probability of New Record High Temperature
+| Station  | Elevation | Return period (years) |
+|----------|-----------|-----------------------|
+| Geneva   | 375m      | `r round(return_period_geneva, 2)` |
+| Säntis   | 2500m     | `r round(return_period_santis, 2)` |
+| Lugano   | 275m      | `r round(return_period_lugano, 2)` |
 
-Using the previously fitted model
+On average, Geneva is expected to experience temperatures exceeding 35°C approximately once every `r round(return_period_geneva, 2)` years, once every `r round(return_period_lugano, 2)` for Lugano. These results indicate that extreme heat events are relatively frequent in Geneva, suggesting that the city faces a high risk of recurrent heat waves, which could have implications for urban infrastructure, public health and energy demand. Geneva is a city that needs adaptation stratefies and ongoing monitoring systems to mitigate the risks. While less frequent than Geneva, heat waves in Lugano are still a concern, as such events might be relatively rare but the city might need to prepare for occasional extreme heat.
+
+As of Säntis, it doesn't seem to reach 35°C anytime in the following years. This is due to the higher elevation of the city and its cooler climate, meaning that extreme heat waves are not significant. However, incrasing temperatures in cities such as Säntis are still posing a risk. We can also try below to put a lower threshold (e.g. 19°C) to obtain a return period.
+	
+
+```{r}
+# Set the temperature threshold for Säntis
+temp_threshold_santis <- 19
+
+# Calculate a new return period for Säntis
+return_period_santis2 <- calculate_return_period(location_santis, scale_santis, shape_santis, temp_threshold_santis)
+
+# Print new result for Säntis
+cat("The return period for 19°C in Säntis is approximately", round(return_period_santis2, 2), "years.\n")
+```
+
+We can here observe that in an elevated city such as Säntis, the return period is `r round(return_period_santis2, 2)`.
+
+The differences in return periods highlight the variation in elevation, geography and microclimates of regions in Switzerland and their susceptibility to extreme heat waves. Although not similar across regions, increasing temperatures poses serious issues for all regions.
+
+## Probability of New Record High Temperature
+
+::: {.callout-note icon="false"}
+## Question
+
+What is the probability of observing a record high temperature in Switzerland within the next year? 3 years? Decade?
+:::
+
+Using the previously fitted model using the GEV distribution, let's calculate the probability of reaching a new record for these cities in Switzerland. 
+
+First, we calculate the highest temperature records for the 3 cities:
 
 ```{r}
 # Historical record highs for each city (replace with actual values)
@@ -280,6 +310,15 @@ record_high_geneva <- max(annual_maxima_geneva$MaxTemp)
 record_high_santis <- max(annual_maxima_santis$MaxTemp)
 record_high_lugano <- max(annual_maxima_Lugano$MaxTemp)
 
+# Print the highest recorded temperatures
+cat("The highest recorded temperature for Geneva is", round(record_high_geneva, 2), "°C.\n")
+cat("The highest recorded temperature for Säntis is", round(record_high_santis, 2), "°C.\n")
+cat("The highest recorded temperature for Lugano is", round(record_high_lugano, 2), "°C.\n")
+```
+
+We observe in descending order that the highest temperatures for Geneva is `r round(record_high_geneva)`, `r round(record_high_lugano)` for Lugano and round(record_high_santis)` for Säntis. Now, we can calculate the probabilities of having a new record for each city within 1, 3 and 10 years.
+
+```{r}
 # Function to calculate the probability of a new record high
 calculate_new_record_probability <- function(location, scale, shape, record_high, years) {
   # Probability of not exceeding the record high in 1 year
@@ -304,23 +343,37 @@ prob_new_record_lugano_1yr <- calculate_new_record_probability(location_lugano, 
 prob_new_record_lugano_3yr <- calculate_new_record_probability(location_lugano, scale_lugano, shape_lugano, record_high_lugano, 3)
 prob_new_record_lugano_10yr <- calculate_new_record_probability(location_lugano, scale_lugano, shape_lugano, record_high_lugano, 10)
 
-# Print the results
+# Print the results as percentages
 cat("Probability of a new record high in Geneva:\n",
-    "1 year:", round(prob_new_record_geneva_1yr, 4), "\n",
-    "3 years:", round(prob_new_record_geneva_3yr, 4), "\n",
-    "10 years:", round(prob_new_record_geneva_10yr, 4), "\n\n")
+    "1 year:", round(prob_new_record_geneva_1yr * 100, 2), "%\n",
+    "3 years:", round(prob_new_record_geneva_3yr * 100, 2), "%\n",
+    "10 years:", round(prob_new_record_geneva_10yr * 100, 2), "%\n\n")
 
 cat("Probability of a new record high in Säntis:\n",
-    "1 year:", round(prob_new_record_santis_1yr, 4), "\n",
-    "3 years:", round(prob_new_record_santis_3yr, 4), "\n",
-    "10 years:", round(prob_new_record_santis_10yr, 4), "\n\n")
+    "1 year:", round(prob_new_record_santis_1yr * 100, 2), "%\n",
+    "3 years:", round(prob_new_record_santis_3yr * 100, 2), "%\n",
+    "10 years:", round(prob_new_record_santis_10yr * 100, 2), "%\n\n")
 
 cat("Probability of a new record high in Lugano:\n",
-    "1 year:", round(prob_new_record_lugano_1yr, 4), "\n",
-    "3 years:", round(prob_new_record_lugano_3yr, 4), "\n",
-    "10 years:", round(prob_new_record_lugano_10yr, 4), "\n")
+    "1 year:", round(prob_new_record_lugano_1yr * 100, 2), "%\n",
+    "3 years:", round(prob_new_record_lugano_3yr * 100, 2), "%\n",
+    "10 years:", round(prob_new_record_lugano_10yr * 100, 2), "%\n")
 ```
 
-### Results
+As a result, we can observe the following probabilities for each city:
 
-As a result, we can observe that ...
+| Station  | Elevation | 1-year probability (%) | 3-year probability (%) | 10-year probability (%) |
+|----------|-----------|------------------------|------------------------|-------------------------|
+| Geneva   | 375m      | `r round(prob_new_record_geneva_1yr * 100, 2)` | `r round(prob_new_record_geneva_3yr * 100, 2)` | `r round(prob_new_record_geneva_10yr * 100, 2)` |
+| Säntis   | 2500m     | `r round(prob_new_record_santis_1yr * 100, 2)` | `r round(prob_new_record_santis_3yr * 100, 2)` | `r round(prob_new_record_santis_10yr * 100, 2)` |
+| Lugano   | 275m      | `r round(prob_new_record_lugano_1yr * 100, 2)` | `r round(prob_new_record_lugano_3yr * 100, 2)` | `r round(prob_new_record_lugano_10yr * 100, 2)` |
+
+We observe that Säntis has the highest probabilities of reaching a new record. This can act as a warning indicator of shifting climate patterns. Indeed, high altitude regions are sensitive to global warming and increasing heat waves risks here could signal broader changes that might affect other regions.
+Geneva and Lugano which have lower elevations reflect milder extremes, though still present.
+
+Now, let's interpret the risks on the short, mid and long term.
+- In the short term, even though heat waves might occur, they are less likely to reach unprecedented levels. It doesn't mean that they won't happen, but just that the records might stay within the historical ranges.
+- In the mid term, record-breaking temperatures remain quite rare but the risk of extreme events is growing, indicating potential stress on ecosystems, agriculture and infrasturctures in case these events are prolonged.
+- On the longer term, new record of temperatures are plausible as the probabilities increase. There is a risk of growing vulnerability depending on the frequency and intensity of the heat waves. This indiciates higher risks that heat waves might impact infrastructures and health, such as higher risk of heat-related health issues, energy demands or disrputions on agriculture or water resources.
+
+As the time horizon increases, so does the probability of seeing a record high temperature for each station. Although the records are low in the short term, the likelihood clearly grows significantly over longer periods.
