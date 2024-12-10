@@ -11,7 +11,7 @@ stations_data <- read.csv(here("data", "Cleaned_Stations_Data.csv"))
 ## Question
 
 -	Do extreme temperature events show clustering behavior during specific seasons (e.g., summer months)?
--	What is the extremal index for temperature data in Switzerland, and how does it inform the clustering of extreme events?
+-	What is the extreme index for temperature data in Switzerland, and how does it inform the clustering of extreme events?
 :::
 
 First we will explore the data and visualize the maximum temperatures over time for each station.
@@ -26,7 +26,7 @@ stations_data <- subset(stations_data, DATE >= as.Date("1955-01-01"))
 
 We can then create plots to visualize the maximum temperatures over time for each station.
 
-```{r warning = FALSE}
+```{r echo = FALSE, warning = FALSE}
 # Create a plot for each station and display them separately
 stations <- unique(stations_data$NAME)
 
@@ -49,7 +49,7 @@ for (station in stations) {
 
 We can also create histograms to visualize the distribution of maximum temperatures for each station.
 
-```{r warning = FALSE}
+```{r echo = FALSE, warning = FALSE}
 # Create a histogram for each station
 for (station in stations) {
   plot <- ggplot(subset(stations_data, NAME == station), aes(x = TMAX)) +
@@ -68,99 +68,37 @@ for (station in stations) {
 }
 ```
 
-We will now explore the data for each station, including descriptive statistics, missing values, and visualizations of maximum temperatures.
+This part clean the data by removing rows with missing values for the TMAX column and then split the data by station.
 
 ```{r}
 # Remove only rows where TMAX is NA
 stations_data <- stations_data[!is.na(stations_data$TMAX), ]
 
 # Split the data by station
-stations_split <- split(stations_data, stations_data$NAME)
-
-# Count the number of values per station
-values_per_station <- sapply(stations_split, nrow)
-cat("\nNumber of remaining values per station after removing NAs in TMAX:\n")
-print(values_per_station)
-```
-
-
-```{r}
-# We will create a subset for each station.
-# Split the data by station
 lugano_data <- subset(stations_data, NAME == "Lugano")
 genève_data <- subset(stations_data, NAME == "Genève")
 saentis_data <- subset(stations_data, NAME == "Saentis")
+
+# Number of rows for each station
+rows_l <- nrow(lugano_data)
+rows_g <- nrow(genève_data)
+rows_s <- nrow(saentis_data)
 ```
 
+We see that we have `r rows_l` rows for Lugano, `r rows_g` rows for Genève, and `r rows_s` rows for Säntis.
+
+As we are interested at heatwaves, we'll only focus on the summer period. We'll filter the data for the months of June, July, August, and September.
 
 ```{r}
-# Function to explore a station
-explore_station <- function(data, station_name) {
-  cat("\n--- Exploration for station:", station_name, "---\n")
-
-  # Preview of the data
-  cat("\nData preview:\n")
-  print(head(data))
-
-  # Descriptive statistics
-  cat("\nDescriptive statistics:\n")
-  print(summary(data))
-
-  # Checking for missing values
-  cat("\nNumber of missing values per column:\n")
-  print(colSums(is.na(data)))
-
-  # Histogram of maximum temperatures
-  cat("\nHistogram of maximum temperatures for:", station_name, "\n")
-  print(
-    ggplot(data, aes(x = TMAX)) +
-      geom_histogram(binwidth = 1, fill = "red", color = "black") +
-      labs(title = paste("Distribution of Maximum Temperatures -", station_name),
-           x = "Maximum Temperature (°C)", y = "Frequency") +
-      theme_minimal()
-  )
-
-  # Time series of maximum temperatures
-  cat("\nTime series of maximum temperatures for:", station_name, "\n")
-  print(
-    ggplot(data, aes(x = DATE, y = TMAX)) +
-      geom_line(color = "red") +
-      labs(title = paste("Maximum Temperatures Over Time -", station_name),
-           x = "Date", y = "Maximum Temperature (°C)") +
-      theme_minimal()
-  )
-}
-
-# Exploration for Lugano
-explore_station(lugano_data, "Lugano")
-
-# Exploration for Genève
-explore_station(genève_data, "Genève")
-
-# Exploration for Saentis
-explore_station(saentis_data, "Saentis")
-```
-
-Now we'll only focus on the summer period.
-
-```{r}
-# Filter summer data for Lugano
+# Filter summer data per station
 lugano_summer <- subset(lugano_data, format(DATE, "%m") %in% c("06", "07", "08", "09"))
-
-# Filter summer data for Genève
 genève_summer <- subset(genève_data, format(DATE, "%m") %in% c("06", "07", "08", "09"))
-
-# Filter summer data for Säntis
 saentis_summer <- subset(saentis_data, format(DATE, "%m") %in% c("06", "07", "08", "09"))
-
-# Check the dimensions of the summer subsets
-cat("Number of summer rows for Lugano:", nrow(lugano_summer), "\n")
-cat("Number of summer rows for Genève:", nrow(genève_summer), "\n")
-cat("Number of summer rows for Säntis:", nrow(saentis_summer), "\n")
 ```
 
+Let's visualize the evolution of summer maximum temperatures for each station.
 
-```{r}
+```{r echo = FALSE}
 # Plot the evolution of summer maximum temperatures for Lugano
 plot(lugano_summer$DATE, lugano_summer$TMAX, type = "l", col = "red",
      main = "Evolution of Summer Maximum Temperatures - Lugano",
@@ -179,32 +117,26 @@ plot(saentis_summer$DATE, saentis_summer$TMAX, type = "l", col = "green",
 
 # Cluster analysis
 
-```{r}
-# Define a threshold for extreme temperatures
-# We can define a threshold based on the 95th percentile of summer maximum temperatures for each station.
+We can now focus on the clustering analysis of extreme temperature events. We will define a threshold for extreme temperatures based on the 95th percentile of summer maximum temperatures for each station.
 
+```{r}
 # Calculate thresholds for each station
 threshold_lugano <- quantile(lugano_summer$TMAX, 0.95, na.rm = TRUE)
 threshold_genève <- quantile(genève_summer$TMAX, 0.95, na.rm = TRUE)
 threshold_saentis <- quantile(saentis_summer$TMAX, 0.95, na.rm = TRUE)
-
-cat("Threshold for Lugano:", threshold_lugano, "\n")
-cat("Threshold for Genève:", threshold_genève, "\n")
-cat("Threshold for Säntis:", threshold_saentis, "\n")
 ```
 
+The thresholds for Lugano is `r threshold_lugano`, for Genève is `r threshold_genève`, and for Säntis is `r threshold_saentis`. We can now validate with Mean Residual Life (MRL) plots this results.
 
-```{r}
+
+```{r echo = FALSE}
 # Validation with the MRL Plot for Lugano
-cat("Mean Residual Life Plot for Lugano\n")
 mrlplot(lugano_summer$TMAX, main = "Mean Residual Life Plot - Lugano")
 
 # Validation with the MRL Plot for Genève
-cat("Mean Residual Life Plot for Genève\n")
 mrlplot(genève_summer$TMAX, main = "Mean Residual Life Plot - Genève")
 
 # Validation with the MRL Plot for Säntis
-cat("Mean Residual Life Plot for Säntis\n")
 mrlplot(saentis_summer$TMAX, main = "Mean Residual Life Plot - Säntis")
 ```
 
@@ -213,18 +145,15 @@ The Mean Residual Life (MRL) plot is used to validate the choice of thresholds f
 ```{r}
 # Identify extreme days for Lugano
 lugano_extreme_days <- lugano_summer[lugano_summer$TMAX > threshold_lugano, ]
-cat("Number of extreme days for Lugano:", nrow(lugano_extreme_days), "\n")
 
 # Identify extreme days for Genève
 geneve_extreme_days <- genève_summer[genève_summer$TMAX > threshold_genève, ]
-cat("Number of extreme days for Genève:", nrow(geneve_extreme_days), "\n")
 
 # Identify extreme days for Säntis
 saentis_extreme_days <- saentis_summer[saentis_summer$TMAX > threshold_saentis, ]
-cat("Number of extreme days for Säntis:", nrow(saentis_extreme_days), "\n")
 ```
 
-
+The number of extreme days above the chosen threshold provides a measure of the frequency of extreme events at each station. For example, Lugano has `r nrow(lugano_extreme_days)` extreme days, Geneva has `r nrow(geneve_extreme_days)`, and Säntis has `r nrow(saentis_extreme_days)`. These counts indicate the occurrence of extreme temperatures during the summer months, with Säntis experiencing the highest number of extreme days among the three stations.
 
 ```{r}
 # Calculation of the extremal index for each station
@@ -240,10 +169,9 @@ cat("Extremal index for Säntis:", extremal_index_saentis, "\n")
 These results represent the extremal index calculations for each station, which measure the tendency of extreme events to occur in clusters. Here's what the numbers mean:
 
 **Extremal Index (First Number):**
-- For Lugano: 0.2007 For Genève: 0.2699 For Säntis: 0.3573 The extremal index ranges between 0 and 1:
-A value close to 0 indicates that extreme events are strongly clustered. A value closer to 1 suggests that extreme events are more isolated and independent. In this case, Lugano shows the most clustering of extremes (lowest index), while Säntis has more independent extreme events (highest index).
+- For Lugano: `r round(extremal_index_lugano[1],2)`, for Geneva `r round(extremal_index_geneve[1],2)`, and for Säntis `r round(extremal_index_saentis[1],2)`. The extremal index ranges between 0 and 1. A value close to 0 indicates that extreme events are strongly clustered. A value closer to 1 suggests that extreme events are more isolated and independent. In this case, Lugano shows the most clustering of extremes (lowest index), while Säntis has more independent extreme events (highest index).
 **Number of Clusters (Second Number):**
-For Lugano: 80 clusters For Genève: 112 clusters For Säntis: 148 clusters This indicates the number of distinct clusters of extreme events detected for each station. More clusters suggest a higher frequency of extremes occurring over the studied period.
+For Lugano: `r round(extremal_index_lugano[2],0)`, for Geneva `r round(extremal_index_geneve[2],0)`, and for Säntis `r round(extremal_index_saentis[2],0)`. This indicates the number of distinct clusters of extreme events detected for each station. More clusters suggest a higher frequency of extremes occurring over the studied period. This indicates the number of distinct clusters of extreme events detected for each station. More clusters suggest a higher frequency of extremes occurring over the studied period.
 **Run Length (Third Number):**
 For Lugano: 17 For Genève: 8 For Säntis: 8 This reflects the "run parameter," which defines the minimum separation between events for them to be considered independent clusters. Higher values mean the analysis allows for longer gaps between clustered events.
 Interpretation Lugano's low extremal index (0.2007), combined with a relatively low number of clusters (80), indicates strongly clustered extreme events. Genève has a slightly higher extremal index (0.2699) and more clusters (112), suggesting less clustering than Lugano. Säntis shows the highest extremal index (0.3573) and the most clusters (148), indicating that extremes here are more independent and less likely to occur in tightly grouped clusters. These differences likely reflect local climatic and geographic conditions influencing how extreme temperatures occur.
