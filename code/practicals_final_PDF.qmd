@@ -26,5 +26,5 @@ Certain sections of the code have been omitted from the generated PDF and HTML v
 
 {{< pagebreak >}}
 
-```{r child = c("practical_11_final.qmd", "practical_13_final.qmd", "practical_21_final.qmd", "practical_22_final.qmd", "practical_23_final.qmd", "practical_31_final.qmd", "practical_33_final.qmd", "practical_34_final.qmd")}
+```{r child = c("practical_11_final.qmd", "practical_12_final.qmd", "practical_13_final.qmd", "practical_21_final.qmd", "practical_22_final.qmd", "practical_23_final.qmd", "practical_31_final.qmd", "practical_33_final.qmd", "practical_34_final.qmd")}
 ```
