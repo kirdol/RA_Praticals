@@ -1,7 +1,7 @@
 
 # Part 4: Return Period & Probabilities of New Record High Temperatures
 
-In this part, we will discuss the return periods & probability analysis of having a new record of heatwaves in the cities of Geneva, Säntis and Lugano. As seen when comparing the Block Maxima and the Peaks-over-Threshol approaches, the Block Maxima one seems to be more accurate to use. Thus, we will only use this approach when calculating the return period and the probabilities of obtaining a new record of temperature for 1, 3 and 10 years. To begin with, we will take the code from part 3 to obtain the GEV distribution for all cities.
+In this part, we will discuss the return periods & probability analysis of having a new record of heatwaves in the cities of Geneva, Säntis and Lugano. As seen when comparing the Block Maxima and the Peaks-over-Threshold approaches, the Block Maxima one seems to be more accurate to use. Thus, we will only use this approach when calculating the return period and the probabilities of obtaining a new record of temperature for 1, 3 and 10 years. To begin with, we will take the code from part 3 to obtain the GEV distribution for all cities.
 
 ```{r, echo = FALSE, include = FALSE}
 # load the required packages and install them if they are not.
@@ -157,10 +157,9 @@ As a result, we can observe the following return periods:
 | Säntis   | 2500m     | `r round(return_period_santis, 2)` |
 | Lugano   | 275m      | `r round(return_period_lugano, 2)` |
 
-On average, Geneva is expected to experience temperatures exceeding 35°C approximately once every `r round(return_period_geneva, 2)` years, once every `r round(return_period_lugano, 2)` for Lugano. These results indicate that extreme heat events are relatively frequent in Geneva, suggesting that the city faces a high risk of recurrent heat waves, which could have implications for urban infrastructure, public health and energy demand. Geneva is a city that needs adaptation stratefies and ongoing monitoring systems to mitigate the risks. While less frequent than Geneva, heat waves in Lugano are still a concern, as such events might be relatively rare but the city might need to prepare for occasional extreme heat.
+On average, Geneva is expected to experience temperatures exceeding 35°C approximately once every `r round(return_period_geneva, 2)` years, once every `r round(return_period_lugano, 2)` for Lugano. These results indicate that extreme heat events are relatively frequent in Geneva, suggesting that the city faces a high risk of recurrent heat waves, which could have implications for urban infrastructure, public health and energy demand. Geneva is a city that needs adaptation strategies and ongoing monitoring systems to mitigate the risks. While less frequent than Geneva, heat waves in Lugano are still a concern, as such events might be relatively rare but the city might need to prepare for occasional extreme heat.
 
 As of Säntis, it doesn't seem to reach 35°C anytime in the following years. This is due to the higher elevation of the city and its cooler climate, meaning that extreme heat waves are not significant. However, incrasing temperatures in cities such as Säntis are still posing a risk. We can also try below to put a lower threshold (e.g. 19°C) to obtain a return period.
-	
 
 ```{r}
 # Set the temperature threshold for Säntis
@@ -201,7 +200,15 @@ cat("The highest recorded temperature for Säntis is", round(record_high_santis,
 cat("The highest recorded temperature for Lugano is", round(record_high_lugano, 2), "°C.\n")
 ```
 
-We observe in descending order that the highest temperatures for Geneva is `r round(record_high_geneva)`, `r round(record_high_lugano)` for Lugano and round(record_high_santis)` for Säntis. Now, we can calculate the probabilities of having a new record for each city within 1, 3 and 10 years.
+As a result, we obtain the following records:
+
+| Station  | Elevation | Highest recorded temperature (°C) |
+|----------|-----------|------------------------------------|
+| Geneva   | 375m      | `r round(record_high_geneva, 2)`  |
+| Säntis   | 2500m     | `r round(record_high_santis, 2)`  |
+| Lugano   | 275m      | `r round(record_high_lugano, 2)`  |
+
+Now, we can calculate the probabilities of having a new record for each city within 1, 3 and 10 years. We are calculating the probability of exceeding this record in the given time horizon.
 
 ```{r}
 # Function to calculate the probability of a new record high
@@ -257,8 +264,8 @@ We observe that Säntis has the highest probabilities of reaching a new record. 
 Geneva and Lugano which have lower elevations reflect milder extremes, though still present.
 
 Now, let's interpret the risks on the short, mid and long term.
-- In the short term, even though heat waves might occur, they are less likely to reach unprecedented levels. It doesn't mean that they won't happen, but just that the records might stay within the historical ranges.
-- In the mid term, record-breaking temperatures remain quite rare but the risk of extreme events is growing, indicating potential stress on ecosystems, agriculture and infrasturctures in case these events are prolonged.
-- On the longer term, new record of temperatures are plausible as the probabilities increase. There is a risk of growing vulnerability depending on the frequency and intensity of the heat waves. This indiciates higher risks that heat waves might impact infrastructures and health, such as higher risk of heat-related health issues, energy demands or disrputions on agriculture or water resources.
+- In the short-term, even though heat waves might occur, they are less likely to reach unprecedented levels. It doesn't mean that they won't happen, but just that the records might stay within the historical ranges.
+- In the mid-term, record-breaking temperatures remain quite rare, but the risk of extreme events is growing, indicating potential stress on ecosystems, agriculture and infrastructures in case these events are prolonged.
+- On the longer term, new records of temperatures are plausible as the probabilities increase. There is a risk of growing vulnerability depending on the frequency and intensity of the heat waves. This indicates higher risks that heat waves might impact infrastructures and health, such as higher risk of heat-related health issues, energy demands or disruptions on agriculture or water resources.
 
 As the time horizon increases, so does the probability of seeing a record high temperature for each station. Although the records are low in the short term, the likelihood clearly grows significantly over longer periods.
