@@ -106,10 +106,10 @@ gev_return_levels_Lugano <- return.level(gev_fit_Lugano, return.period = c(10, 5
 ::: {.callout-note icon="false"}
 ## Question
 
-What is the return period of extreme temperature events exceeding a specific threshold (e.g., 35°C)?
+What is the return period of extreme temperature events exceeding a specific threshold?
 :::
 
-Now, we will analyse the return period for each city. The return period is the expected time (here, in years) between occurrences of an extreme event to be at least as extreme as a given value. Here, we will test for a threshold of 35°C, which we can consider as extreme.
+Now, we will analyse the return period for each city. The return period is the average interval between occurrences of extreme temperatures (exceeding the threshold, here at the 95th percentile) at each station. Here, we will test for a threshold set at the 95th percentile, which we can consider as extreme.
 
 ```{r}
 # Load required library
@@ -161,13 +161,9 @@ As a result, we can observe the following return periods:
 | Säntis   | 2500m     | `r round(return_period_santis, 2)` |
 | Lugano   | 275m      | `r round(return_period_lugano, 2)` |
 
-On average, Geneva is expected to experience temperatures exceeding 35°C approximately once every `r round(return_period_geneva, 2)` years, once every `r round(return_period_lugano, 2)` for Lugano. These results indicate that extreme heat events are relatively frequent in Geneva, suggesting that the city faces a high risk of recurrent heat waves, which could have implications for urban infrastructure, public health and energy demand. Geneva is a city that needs adaptation strategies and ongoing monitoring systems to mitigate the risks. While less frequent than Geneva, heat waves in Lugano are still a concern, as such events might be relatively rare but the city might need to prepare for occasional extreme heat.
+On average, Geneva is expected to experience temperatures exceeding their 95th percentile approximately once every `r round(return_period_geneva, 2)` years, once every `r round(return_period_santis, 2)` for Säntis and once every `r round(return_period_lugano, 2)` for Lugano. Looking at the results, we can observe that Geneva and Lugano, which both are at a lower elevation than Säntis, experience extreme heats more frequently, indicating a higher vulnerability to heat waves compared to Säntis. For Geneva, which is a city influenced by the lake and continental climate, this suggests that these extremes are not annual, but they are plausible. For Lugano, it faces those heats a bit more frequently due to its lower elevation and warmer southern climate, so both cities need to prepare some adaptation strategies to mitigate the risk of issues such as for the environment or public health in the event of extreme temperatures. On the other hand, Säntis faces these extremes way less often thanks to its higher altitude and cooler overall temperatures. However, increasing temperatures can also be disruptive for its ecosystems and infrastructure.
 
-As of Säntis, it doesn't seem to reach 35°C anytime in the following years. This is due to the higher elevation of the city and its cooler climate, meaning that extreme heat waves are not significant. However, incrasing temperatures in cities such as Säntis are still posing a risk. We can also try below to put a lower threshold (e.g. 19°C) to obtain a return period.
-
-The differences in return periods highlight the variation in elevation, geography and microclimates of regions in Switzerland and their susceptibility to extreme heat waves. Although not similar across regions, increasing temperatures poses serious issues for all regions.
-
-A DVP!!!
+The differences in return periods highlight the variation in elevation, geography and micro-climates of regions in Switzerland and their susceptibility to extreme heat waves. Although not similar across regions, increasing temperatures poses serious issues for all regions. As return periods are not static, in a context of climate change, the same threshold can be exceeded more frequently as average temperatures rise, leading to a decrease in return period. The results highlights our understanding of the current risk and the importance of setting clear strategies to mitigate any potentially arising risks.
 
 ## Probability of New Record High Temperature
 
