@@ -21,7 +21,9 @@ packages <- c(
   "evir",
   "ismev",
   "tidyverse",
-  "extRemes"
+  "extRemes",
+  "zoo",
+  "forecast"
 )
 
 # Function that install the packages if not already installed on your computer

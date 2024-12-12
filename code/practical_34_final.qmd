@@ -1,7 +1,7 @@
 
 {{< pagebreak >}}
 
-# Part 4: Return Period & Probabilities of New Record High Temperatures
+## Part 4: Return Period & Probabilities of New Record High Temperatures
 
 In this part, we will discuss the return periods & probability analysis of having a new record of heatwaves in the cities of Geneva, Säntis and Lugano. As seen when comparing the Block Maxima and the Peaks-over-Threshold approaches, the Block Maxima one seems to be more accurate to use. Thus, we will only use this approach when calculating the return period and the probabilities of obtaining a new record of temperature for 1, 3 and 10 years. To begin with, we will take the code from part 3 to obtain the GEV distribution for all cities.
 
@@ -37,7 +37,7 @@ data_lugano <- data_temp %>%
   mutate(DATE = as.Date(DATE))
 ```
 
-## Block Maxima Approach (GEV Distribution)
+### Block Maxima Approach (GEV Distribution)
 
 See part 3 for the code.
 
@@ -101,7 +101,7 @@ gev_return_levels_santis <- return.level(gev_fit_santis, return.period = c(10, 5
 gev_return_levels_Lugano <- return.level(gev_fit_Lugano, return.period = c(10, 50, 100))
 ```
 
-## Return Period
+### Return Period
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -178,7 +178,7 @@ We can here observe that in an elevated city such as Säntis, the return period 
 
 The differences in return periods highlight the variation in elevation, geography and microclimates of regions in Switzerland and their susceptibility to extreme heat waves. Although not similar across regions, increasing temperatures poses serious issues for all regions.
 
-## Probability of New Record High Temperature
+### Probability of New Record High Temperature
 
 ::: {.callout-note icon="false"}
 ## Question

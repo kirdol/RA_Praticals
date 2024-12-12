@@ -2,3 +2,308 @@
 {{< pagebreak >}}
 
 # Practical 3: Heat wave in Switzerland
+
+## Part 1: Extreme Temperature Events Analysis
+
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+# load the required packages and install them if they are not.
+source(here::here("code","setup.R"))
+
+# Load the dataset
+data <- read.csv(here::here("data","Cleaned_Stations_Data.csv"))
+
+# Convert DATE column to Date format
+data$Date <- as.Date(data$DATE, format = "%Y-%m-%d")
+```
+
+::: {.callout-note icon="false"}
+## Question
+
+-	What are the trends and patterns of extreme heat events in Switzerland over the past century?
+-	How has the frequency of heatwaves changed over time, and can we model future occurrences?
+:::
+
+Draw an histogram of the daily maximum temperatures values.
+
+```{r}
+# Filter out rows with non-finite values in TMAX
+data_filtered <- data %>%
+  filter(!is.na(TMAX))  # Use the correct column name for maximum temperature
+```
+
+
+```{r echo = FALSE}
+# Histogram of daily temperatures (TMAX) for each station
+ggplot(data_filtered, aes(x = TMAX, fill = NAME)) +
+  geom_histogram(binwidth = 2, alpha = 0.7, position = "identity") +
+  facet_wrap(~NAME, scales = "free") +
+  labs(title = "Histogram of Daily Maximum Temperatures by Station",
+       x = "Daily Maximum Temperature (°C)",
+       y = "Frequency",
+       fill = "Station") +
+  theme_minimal()
+
+```
+
+The histograms of daily maximum temperatures reveal clear climatic differences between the three stations. Geneva has a temperate climate, with most temperatures between 0°C and 30°C. Lugano has warmer conditions, reflecting its southern location. Säntis, a high-altitude resort, has much colder temperatures, ranging from -20°C to 20°C, with a peak around 0°C. These differences highlight the influence of altitude and geography on temperature distribution.
+
+Extract the yearly maximum values for each station and draw their histogram:
+
+```{r}
+# Extract yearly maximum values for each station
+yearly_max <- data %>%
+  group_by(NAME, Year = format(Date, "%Y")) %>%
+  summarise(Yearly_Max = max(TMAX, na.rm = TRUE), .groups = "drop")
+```
+
+
+```{r echo = FALSE}
+# Plot histograms of yearly maximum values for each station
+ggplot(yearly_max, aes(x = Yearly_Max, fill = NAME)) +
+  geom_histogram(binwidth = 1, alpha = 0.7, position = "identity") +
+  facet_wrap(~NAME, scales = "free") +
+  labs(title = "Histogram of Yearly Maximum Temperatures by Station",
+       x = "Yearly Maximum Temperature (°C)",
+       y = "Frequency",
+       fill = "Station") +
+  theme_minimal()
+```
+
+Analyse trends and patterns of extreme heat events for each station
+
+To analyse the trends in extreme heat events for each station, I first calculated the 95th percentile of maximum temperatures (TMAX) for each station to define the threshold for extreme heat events. Next, I counted the number of extreme heat events for each station and year, grouping the data by station name and year. Finally, I visualised the trends by plotting the number of extreme heat events over time for each station.
+
+```{r}
+# Calculate 95th percentile thresholds for each station
+extreme_thresholds <- data %>%
+  group_by(NAME) %>%
+  summarise(Threshold_95 = quantile(TMAX, 0.95, na.rm = TRUE))
+
+# Identify extreme heat events per station
+data_extreme <- data %>%
+  inner_join(extreme_thresholds, by = "NAME") %>%
+  mutate(Extreme = TMAX > Threshold_95)
+
+# Count the total number of extreme events per station
+extreme_event_counts <- data_extreme %>%
+  filter(Extreme) %>%
+  group_by(NAME) %>%
+  summarise(Total_Extreme_Events = n(), .groups = "drop")
+
+# Print the total number of extreme events per station
+print(extreme_event_counts)
+
+# Count extreme events by year and station
+extreme_counts_by_year <- data_extreme %>%
+  filter(Extreme) %>%
+  mutate(Year = format(Date, "%Y")) %>%
+  group_by(NAME, Year) %>%
+  summarise(Count = n(), .groups = "drop")
+```
+
+
+```{r echo = FALSE}
+# Visualization: Trends in extreme heat events by station
+ggplot(extreme_counts_by_year, aes(x = as.numeric(Year), y = Count, color = NAME)) +
+  geom_line() +
+  labs(title = "Trends in Extreme Heat Events by Station",
+       x = "Year",
+       y = "Number of Extreme Events",
+       color = "Station") +
+  theme_minimal()
+```
+
+The graph shows the trends in extreme heat events for the three stations: Geneva, Lugano and Säntis. All stations exhibit fluctuations, with notable peaks around 2003, 2015 and 2022-2023. The total number of extreme heat events above the 95th percentile threshold for each station shows similar magnitudes. Lugano has the highest count of extreme events (1,239), closely followed by Geneva (1,230), with Säntis having the fewest (1,223). This similarity may indicate that the frequency of extreme heat events is comparable across the stations despite their varying geographical and climatic characteristics. However, differences in the thresholds for each station and regional climatic patterns should be considered. For instance, Geneva and Lugano experience higher maximum temperatures, which suggest more frequent heat extremes due to their lower altitudes and warmer climates. On the other hand, Säntis has a significantly lower threshold, which indicate that extreme events are relative to the local climate conditions.
+
+```{r}
+# Merge station names into the thresholds data using 'NAME' column
+thresholds_with_names <- extreme_thresholds %>%
+  left_join(data %>% select(NAME) %>% distinct(), by = "NAME")
+
+# Display the thresholds with station names
+thresholds_with_names %>%
+  arrange(desc(Threshold_95)) %>%
+  print()
+```
+
+The thresholds: Geneva: 29.2ºC, Lugano: 29,1ºC, and Säntis 12,7ºC.
+
+In this part, we'll analyze daily maximum temperatures by applying STL decomposition to separate the data into trend, seasonal, and irregular components. We will then use the trend component to forecast future temperatures for the next 10 years using an ARIMA model.
+
+Yearly maximum temperature trends and predictions for the next 10 years for Lugano.
+
+```{r}
+# Filter the data for Lugano
+lugano_data <- data %>%
+  filter(NAME == "Lugano")
+
+# Check for missing values
+sum(is.na(lugano_data$TMAX))
+
+# Replace NAs with the average temperature
+lugano_data$TMAX[is.na(lugano_data$TMAX)] <- mean(lugano_data$TMAX, na.rm = TRUE)
+
+# Create a time series of daily maximum temperatures
+ts_daily_max <- ts(lugano_data$TMAX, frequency = 365, start = c(min(lugano_data$Date), 1))
+
+# Apply STL decomposition (with seasonality)
+stl_decomp <- stl(ts_daily_max, s.window = "periodic")
+
+# Extract the trend component from the STL decomposition
+trend_component <- stl_decomp$time.series[, "trend"]
+```
+
+
+```{r echo = FALSE}
+# Display the STL decomposition
+autoplot(stl_decomp) + 
+  ggtitle("STL Decomposition of Daily Maximum Temperatures for Lugano")
+```
+
+
+```{r}
+# Apply an ARIMA model to the trend component
+arima_model <- auto.arima(trend_component, seasonal = FALSE, stepwise = TRUE)
+
+# Forecast the next 10 years (365 days per year)
+forecast_steps <- 365 * 10  # Forecast for 10 years
+arima_forecast <- forecast(arima_model, h = forecast_steps)
+
+# Extract the forecasted values
+forecast_values <- data.frame(Year = seq(max(lugano_data$Date) + 1, by = "day", length.out = forecast_steps),
+                              Forecast_Max = as.numeric(arima_forecast$mean))
+```
+
+
+```{r echo = FALSE}
+# Visualize the results
+ggplot() +
+  geom_line(data = lugano_data, aes(x = Date, y = TMAX), color = "blue", alpha = 0.5) +
+  geom_line(data = data.frame(Date = lugano_data$Date, Trend = trend_component), aes(x = Date, y = Trend), color = "red", size = 1) +
+  geom_line(data = forecast_values, aes(x = Year, y = Forecast_Max), color = "green", linetype = "dashed") +
+  labs(title = "Daily Maximum Temperature and Forecasts for Lugano (STL Decomposition)",
+       x = "Date",
+       y = "Maximum Temperature (°C)") +
+  theme_minimal()
+```
+
+The analysis of daily maximum temperatures for Lugano shows a small decrease over time, as seen in the red trend line from the STL decomposition. While the drop is not drastic, there is a slight downward trend. The forecast, based on the ARIMA model applied to the trend, suggests that this trend will continue with minimal changes over the next 10 years, indicating a period of stability in temperature patterns for Lugano.
+
+Yearly maximum temperature trends and predictions for the next 10 years for Geneva.
+
+```{r}
+# Filter the data for Geneva
+geneva_data <- data %>%
+  filter(NAME == "Genève")
+
+# Check for missing values
+sum(is.na(geneva_data$TMAX))
+
+# Replace NAs with the average temperature
+geneva_data$TMAX[is.na(geneva_data$TMAX)] <- mean(geneva_data$TMAX, na.rm = TRUE)
+
+# Create a time series of daily maximum temperatures
+ts_daily_max_geneva <- ts(geneva_data$TMAX, frequency = 365, start = c(min(geneva_data$Date), 1))
+
+# Apply STL decomposition (with seasonality)
+stl_decomp_geneva <- stl(ts_daily_max_geneva, s.window = "periodic")
+
+# Extract the trend component from the STL decomposition
+trend_component_geneva <- stl_decomp_geneva$time.series[, "trend"]
+```
+
+
+```{r echo = FALSE}
+# Display the STL decomposition
+autoplot(stl_decomp_geneva) + 
+  ggtitle("STL Decomposition of Daily Maximum Temperatures for Geneva")
+```
+
+
+```{r}
+# Apply an ARIMA model to the trend component
+arima_model_geneva <- auto.arima(trend_component_geneva, seasonal = FALSE, stepwise = TRUE)
+
+# Forecast the next 10 years (365 days per year)
+forecast_steps <- 365 * 10  # Forecast for 10 years
+arima_forecast_geneva <- forecast(arima_model_geneva, h = forecast_steps)
+
+# Extract the forecasted values
+forecast_values_geneva <- data.frame(Year = seq(max(geneva_data$Date) + 1, by = "day", length.out = forecast_steps),
+                                     Forecast_Max = as.numeric(arima_forecast_geneva$mean))
+```
+
+
+```{r echo = FALSE}
+# Visualize the results
+ggplot() +
+  geom_line(data = geneva_data, aes(x = Date, y = TMAX), color = "blue", alpha = 0.5) +
+  geom_line(data = data.frame(Date = geneva_data$Date, Trend = trend_component_geneva), aes(x = Date, y = Trend), color = "red", size = 1) +
+  geom_line(data = forecast_values_geneva, aes(x = Year, y = Forecast_Max), color = "green", linetype = "dashed") +
+  labs(title = "Daily Maximum Temperature and Forecasts for Geneva (STL Decomposition)",
+       x = "Date",
+       y = "Maximum Temperature (°C)") +
+  theme_minimal()
+```
+
+The analysis of daily maximum temperatures for **Geneva** shows a small increase over time, as seen in the red trend line from the STL decomposition. However, this increase is not large, and the temperatures stay fairly stable. The forecast, based on the ARIMA model applied to the trend, suggests that this stable pattern will continue over the next 10 years, with only slight changes, indicating little variation in temperature for Geneva.
+
+Yearly maximum temperature trends and predictions for the next 10 years for Säntis.
+
+```{r}
+# Filter the data for Saentis
+saentis_data <- data %>%
+  filter(NAME == "Saentis")
+
+# Check for missing values
+sum(is.na(saentis_data$TMAX))
+
+# Replace NAs with the average temperature
+saentis_data$TMAX[is.na(saentis_data$TMAX)] <- mean(saentis_data$TMAX, na.rm = TRUE)
+
+# Create a time series of daily maximum temperatures
+ts_daily_max_saentis <- ts(saentis_data$TMAX, frequency = 365, start = c(min(saentis_data$Date), 1))
+
+# Apply STL decomposition (with seasonality)
+stl_decomp_saentis <- stl(ts_daily_max_saentis, s.window = "periodic")
+
+# Extract the trend component from the STL decomposition
+trend_component_saentis <- stl_decomp_saentis$time.series[, "trend"]
+```
+
+
+```{r echo = FALSE}
+# Display the STL decomposition
+autoplot(stl_decomp_saentis) + 
+  ggtitle("STL Decomposition of Daily Maximum Temperatures for Saentis")
+```
+
+
+```{r}
+# Apply an ARIMA model to the trend component
+arima_model_saentis <- auto.arima(trend_component_saentis, seasonal = FALSE, stepwise = TRUE)
+
+# Forecast the next 10 years (365 days per year)
+forecast_steps <- 365 * 10  # Forecast for 10 years
+arima_forecast_saentis <- forecast(arima_model_saentis, h = forecast_steps)
+
+# Extract the forecasted values
+forecast_values_saentis <- data.frame(Year = seq(max(saentis_data$Date) + 1, by = "day", length.out = forecast_steps),
+                                      Forecast_Max = as.numeric(arima_forecast_saentis$mean))
+```
+
+
+```{r echo = FALSE}
+# Visualize the results
+ggplot() +
+  geom_line(data = saentis_data, aes(x = Date, y = TMAX), color = "blue", alpha = 0.5) +
+  geom_line(data = data.frame(Date = saentis_data$Date, Trend = trend_component_saentis), aes(x = Date, y = Trend), color = "red", size = 1) +
+  geom_line(data = forecast_values_saentis, aes(x = Year, y = Forecast_Max), color = "green", linetype = "dashed") +
+  labs(title = "Daily Maximum Temperature and Forecasts for Saentis (STL Decomposition)",
+       x = "Date",
+       y = "Maximum Temperature (°C)") +
+  theme_minimal()
+```
+
+The analysis of daily maximum temperatures for Säntis shows a slight upward trend, as indicated by the red trend line from the STL decomposition. While the increase is modest, it suggests a gradual rise in temperatures over time. The forecast, based on the ARIMA model applied to the trend component, predicts that this upward trend will continue over the next 10 years, with minimal change, indicating a period of slow warming for Saentis.
