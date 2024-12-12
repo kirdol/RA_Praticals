@@ -146,20 +146,15 @@ calculate_return_period <- function(location, scale, shape, threshold) {
 return_period_geneva <- calculate_return_period(location_geneva, scale_geneva, shape_geneva, threshold_geneva)
 return_period_santis <- calculate_return_period(location_santis, scale_santis, shape_santis, threshold_santis)
 return_period_lugano <- calculate_return_period(location_lugano, scale_lugano, shape_lugano, threshold_lugano)
-
-# Print the results
-cat("For Geneva, the 95th percentile threshold is", round(threshold_geneva, 2), "°C and the return period is approximately", round(return_period_geneva, 2), "years.\n")
-cat("For Säntis, the 95th percentile threshold is", round(threshold_santis, 2), "°C and the return period is approximately", round(return_period_santis, 2), "years.\n")
-cat("For Lugano, the 95th percentile threshold is", round(threshold_lugano, 2), "°C and the return period is approximately", round(return_period_lugano, 2), "years.\n")
 ```
 
 As a result, we can observe the following return periods:
 
-| Station  | Elevation | Return period (years) |
-|----------|-----------|-----------------------|
-| Geneva   | 375m      | `r round(return_period_geneva, 2)` |
-| Säntis   | 2500m     | `r round(return_period_santis, 2)` |
-| Lugano   | 275m      | `r round(return_period_lugano, 2)` |
+| Station  | Elevation | Threshold (°C) | Return period (years) |
+|----------|-----------|----------------|-----------------------|
+| Geneva   | 375m      | `r round(threshold_geneva, 2)` | `r round(return_period_geneva, 2)` |
+| Säntis   | 2500m     | `r round(threshold_santis, 2)` | `r round(return_period_santis, 2)` |
+| Lugano   | 275m      | `r round(threshold_lugano, 2)` | `r round(return_period_lugano, 2)` |
 
 On average, Geneva is expected to experience temperatures exceeding their 95th percentile approximately once every `r round(return_period_geneva, 2)` years, once every `r round(return_period_santis, 2)` for Säntis and once every `r round(return_period_lugano, 2)` for Lugano. Looking at the results, we can observe that Geneva and Lugano, which both are at a lower elevation than Säntis, experience extreme heats more frequently, indicating a higher vulnerability to heat waves compared to Säntis. For Geneva, which is a city influenced by the lake and continental climate, this suggests that these extremes are not annual, but they are plausible. For Lugano, it faces those heats a bit more frequently due to its lower elevation and warmer southern climate, so both cities need to prepare some adaptation strategies to mitigate the risk of issues such as for the environment or public health in the event of extreme temperatures. On the other hand, Säntis faces these extremes way less often thanks to its higher altitude and cooler overall temperatures. However, increasing temperatures can also be disruptive for its ecosystems and infrastructure.
 
@@ -182,11 +177,6 @@ First, we calculate the highest temperature records for the 3 cities:
 record_high_geneva <- max(annual_maxima_geneva$MaxTemp)
 record_high_santis <- max(annual_maxima_santis$MaxTemp)
 record_high_lugano <- max(annual_maxima_Lugano$MaxTemp)
-
-# Print the highest recorded temperatures
-cat("The highest recorded temperature for Geneva is", round(record_high_geneva, 2), "°C.\n")
-cat("The highest recorded temperature for Säntis is", round(record_high_santis, 2), "°C.\n")
-cat("The highest recorded temperature for Lugano is", round(record_high_lugano, 2), "°C.\n")
 ```
 
 As a result, we obtain the following records:
@@ -223,22 +213,6 @@ prob_new_record_santis_10yr <- calculate_new_record_probability(location_santis,
 prob_new_record_lugano_1yr <- calculate_new_record_probability(location_lugano, scale_lugano, shape_lugano, record_high_lugano, 1)
 prob_new_record_lugano_3yr <- calculate_new_record_probability(location_lugano, scale_lugano, shape_lugano, record_high_lugano, 3)
 prob_new_record_lugano_10yr <- calculate_new_record_probability(location_lugano, scale_lugano, shape_lugano, record_high_lugano, 10)
-
-# Print the results as percentages
-cat("Probability of a new record high in Geneva:\n",
-    "1 year:", round(prob_new_record_geneva_1yr * 100, 2), "%\n",
-    "3 years:", round(prob_new_record_geneva_3yr * 100, 2), "%\n",
-    "10 years:", round(prob_new_record_geneva_10yr * 100, 2), "%\n\n")
-
-cat("Probability of a new record high in Säntis:\n",
-    "1 year:", round(prob_new_record_santis_1yr * 100, 2), "%\n",
-    "3 years:", round(prob_new_record_santis_3yr * 100, 2), "%\n",
-    "10 years:", round(prob_new_record_santis_10yr * 100, 2), "%\n\n")
-
-cat("Probability of a new record high in Lugano:\n",
-    "1 year:", round(prob_new_record_lugano_1yr * 100, 2), "%\n",
-    "3 years:", round(prob_new_record_lugano_3yr * 100, 2), "%\n",
-    "10 years:", round(prob_new_record_lugano_10yr * 100, 2), "%\n")
 ```
 
 As a result, we can observe the following probabilities for each city:
