@@ -178,18 +178,19 @@ The extremal index ranges between 0 and 1. A value close to 0 indicates that ext
 **Number of Clusters (Second Number):**
 For Lugano, we get `r round(extremal_index_lugano[2],0)`, for Geneva `r round(extremal_index_geneve[2],0)`, and for Säntis `r round(extremal_index_saentis[2],0)`. This indicates the number of distinct clusters of extreme events detected for each station. More clusters suggest a higher frequency of extremes occurring over the studied period. This indicates the number of distinct clusters of extreme events detected for each station. More clusters suggest a higher frequency of extremes occurring over the studied period.
 
-**Run Length (Third Number):**
-For Lugano: `r round(extremal_index_lugano[3],0)`, for Geneva `r round(extremal_index_geneve[3],0)`, and for Säntis `r round(extremal_index_saentis[3],0)`. This reflects the "run parameter," which defines the minimum separation between events for them to be considered independent clusters. Higher values mean the analysis allows for longer gaps between clustered events.
+**Max Run Length (Third Number):**
+For Lugano: `r round(extremal_index_lugano[3],0)`, for Geneva `r round(extremal_index_geneve[3],0)`, and for Säntis `r round(extremal_index_saentis[3],0)`. This indicates the maximum run length of a cluster, which is the largest number of consecutive days within one cluster where extreme events occurred.
 
-Interpretation Lugano's low extremal index (0.2007), combined with a relatively low number of clusters (80), indicates strongly clustered extreme events. Genève has a slightly higher extremal index (0.2699) and more clusters (112), suggesting less clustering than Lugano. Säntis shows the highest extremal index (0.3573) and the most clusters (148), indicating that extremes here are more independent and less likely to occur in tightly grouped clusters. These differences likely reflect local climatic and geographic conditions influencing how extreme temperatures occur.
+**Interpretation:**
+Lugano has the strongest clustering (lowest extremal index) and also experiences longer extreme event clusters (17 days). This suggests that once an extreme event starts in Lugano, it is more likely to persist for a prolonged period. Genève has moderate clustering and more clusters (112), but the clusters are shorter (8 days). This reflects a higher frequency of extremes but with shorter durations. Säntis has the weakest clustering (highest extremal index) and the most clusters (148), but like Genève, the clusters have a maximum duration of 8 days. This suggests that extreme events in Säntis are relatively isolated and occur more independently. Overall, these results show differences in the frequency, persistence, and clustering of extreme temperature events across the three stations.
 
 We can now proceed to decluster the data to remove dependencies between extreme events.
 
 ```{r}
 # Decluster the data using the chosen threshold for each station
-lugano_declustered <- decluster(lugano_summer$TMAX, threshold = threshold_lugano, run.length = 1)
-genève_declustered <- decluster(genève_summer$TMAX, threshold = threshold_genève, run.length = 1)
-saentis_declustered <- decluster(saentis_summer$TMAX, threshold = threshold_saentis, run.length = 1)
+lugano_declustered <- decluster(lugano_summer$TMAX, threshold = threshold_lugano)
+genève_declustered <- decluster(genève_summer$TMAX, threshold = threshold_genève)
+saentis_declustered <- decluster(saentis_summer$TMAX, threshold = threshold_saentis)
 
 # Add the declustered data to the corresponding datasets
 lugano_summer$Declustered <- ifelse(lugano_summer$TMAX >= threshold_lugano, lugano_declustered, NA)
@@ -197,7 +198,24 @@ genève_summer$Declustered <- ifelse(genève_summer$TMAX >= threshold_genève, g
 saentis_summer$Declustered <- ifelse(saentis_summer$TMAX >= threshold_saentis, saentis_declustered, NA)
 ```
 
-We have now declustered the extreme temperature data for each station and we can visualize the results.
+**Purpose of Declustering:**
+Declustering aims to remove temporal dependence within clusters of extreme values. Extreme temperature events often occur consecutively (e.g., during heatwaves), but statistical models like the Generalized Pareto Distribution (GPD) require independent extreme events. Declustering ensures we retain only the most representative extreme events within a cluster.
+
+**Threshold Selection:**
+The process begins with a chosen threshold for each station (`r threshold_lugano`, `r threshold_genève`, `r threshold_saentis`). Only values exceeding these thresholds are considered as "extreme."
+
+**decluster Function:**
+
+- The decluster function scans through the extreme temperature values and identifies clusters of consecutive exceedances above the threshold.
+- The run.length parameter defines the minimum gap (in days) between two clusters. Here, by default, run.length = 1 means that at least one day below the threshold is needed to separate two clusters.
+- The function outputs a declustered series where only one representative extreme value (usually the maximum) is retained per cluster. 
+
+**Adding Declustered Data to the Dataset:**
+After declustering, we match the declustered extreme values to their respective dates in the original datasets (lugano_summer, genève_summer, saentis_summer). If a value in the original dataset is part of the declustered series, it is retained in the new column Declustered. Otherwise, it is set to NA. 
+
+**Outcome:**
+
+The datasets now have a Declustered column, which contains only the independent extreme events identified after declustering. This column can be used for further statistical analyses, such as fitting extreme value models (e.g., GPD) or estimating return levels.
 
 ```{r echo = FALSE}
 # Visualization for Lugano
@@ -222,15 +240,46 @@ ggplot() +
   theme_minimal()
 ```
 
-**Explanation Objective:** Declustering helps remove dependencies between extreme events that occur in close succession, ensuring that only independent extreme events are considered for further analysis. This is important for correctly modeling extreme behavior and deriving accurate probabilities for rare events.
+In this step, we visualize the declustered extreme temperature data alongside the original temperature series for each station (Lugano, Genève, and Säntis).
 
-**Steps:**
+**Purpose:**
 
-**Threshold Selection:**
-Using the thresholds previously validated with the Mean Residual Life (MRL) plot, we identify extreme events for each station.
+After applying the declustering process, we want to identify and isolate independent extreme events. The declustered data removes consecutive exceedances above a defined threshold, retaining only one representative extreme temperature per cluster.
 
-**Declustering:**
-Using the decluster function from the extRemes package, we filter the extreme values such that only the first event in each cluster is retained. The run.length parameter determines the minimum separation in days between clusters. For example, a run.length of 1 means any extreme values occurring consecutively are considered part of the same cluster.
+**What we do:**
 
-**Visualization:**
-The gray line represents the original maximum temperatures over time. The red, blue, or green points represent the declustered extreme values. These are independent extremes retained after declustering. The resulting plot allows us to visually verify how declustering isolates the independent extremes while removing consecutive dependencies.
+The blue line (geom_line) represents the original time series of maximum temperatures for the summer months. The red points (geom_point) represent the declustered extreme temperatures, which correspond to independent extreme events above the defined threshold. These declustered values are extracted using the decluster function earlier and are stored in a new column (Declustered).
+
+**Why it is useful:**
+
+The visual comparison between the original data and the declustered extremes allows us to verify the effectiveness of the declustering process. The declustered points (red dots) highlight when extreme events occur independently, removing short-term dependencies. This cleaned version of the data is crucial for accurate statistical modeling of extreme events, such as fitting a Generalized Pareto Distribution (GPD).
+
+**How to interpret:**
+
+Overall, the declustered temperature graphs show an increasing trend in the frequency and intensity of extreme events, particularly in Genève, where the rise is most pronounced since the 1980s. At Säntis, the trend is less clear, with frequent but lower-intensity extremes remaining relatively stable over time. For Lugano, the pattern is less distinct, making it harder to confirm a clear upward trend, though some higher peaks appear more frequent in recent decades.
+
+Then, to calculate the probability that an extreme day is followed by another extreme day for each station, we use the extremal index, which measures the degree of clustering of extremes. The extremal index can be interpreted as the inverse of the average cluster size.
+
+```{r}
+# Compute the probability of consecutive extreme days for each station
+compute_extreme_following_prob <- function(extremal_index) {
+  return(1 - extremal_index) # Probability of consecutive extremes
+}
+
+# For Lugano
+extremal_index_lugano <- extremalindex(lugano_summer$TMAX, threshold = threshold_lugano)
+prob_consecutive_extremes_lugano <- compute_extreme_following_prob(extremal_index_lugano[1])
+cat("Probability of consecutive extremes for Lugano:", prob_consecutive_extremes_lugano, "\n")
+
+# For Genève
+extremal_index_genève <- extremalindex(genève_summer$TMAX, threshold = threshold_genève)
+prob_consecutive_extremes_genève <- compute_extreme_following_prob(extremal_index_genève[1])
+cat("Probability of consecutive extremes for Genève:", prob_consecutive_extremes_genève, "\n")
+
+# For Saentis
+extremal_index_saentis <- extremalindex(saentis_summer$TMAX, threshold = threshold_saentis)
+prob_consecutive_extremes_saentis <- compute_extreme_following_prob(extremal_index_saentis[1])
+cat("Probability of consecutive extremes for Saentis:", prob_consecutive_extremes_saentis, "\n")
+```
+
+
