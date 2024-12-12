@@ -115,6 +115,11 @@ Now, we will analyse the return period for each city. The return period is the e
 # Load required library
 library(extRemes)
 
+# Compute the 95th percentile threshold for each city
+threshold_geneva <- quantile(annual_maxima_geneva$MaxTemp, 0.95, na.rm = TRUE)
+threshold_santis <- quantile(annual_maxima_santis$MaxTemp, 0.95, na.rm = TRUE)
+threshold_lugano <- quantile(annual_maxima_Lugano$MaxTemp, 0.95, na.rm = TRUE)
+
 # Extract GEV parameters for Geneva
 location_geneva <- gev_fit_geneva$results$par["location"]
 scale_geneva <- gev_fit_geneva$results$par["scale"]
@@ -130,25 +135,22 @@ location_lugano <- gev_fit_Lugano$results$par["location"]
 scale_lugano <- gev_fit_Lugano$results$par["scale"]
 shape_lugano <- gev_fit_Lugano$results$par["shape"]
 
-# Set the temperature threshold
-temp_threshold <- 35
-
 # Function to calculate return period
-calculate_return_period <- function(location, scale, shape, temp_threshold) {
-  cdf_value <- pevd(temp_threshold, loc = location, scale = scale, shape = shape, type = "GEV")
+calculate_return_period <- function(location, scale, shape, threshold) {
+  cdf_value <- pevd(threshold, loc = location, scale = scale, shape = shape, type = "GEV")
   return_period <- 1 / (1 - cdf_value)
   return(return_period)
 }
 
-# Calculate return periods
-return_period_geneva <- calculate_return_period(location_geneva, scale_geneva, shape_geneva, temp_threshold)
-return_period_santis <- calculate_return_period(location_santis, scale_santis, shape_santis, temp_threshold)
-return_period_lugano <- calculate_return_period(location_lugano, scale_lugano, shape_lugano, temp_threshold)
+# Calculate return periods using the 95th percentile thresholds
+return_period_geneva <- calculate_return_period(location_geneva, scale_geneva, shape_geneva, threshold_geneva)
+return_period_santis <- calculate_return_period(location_santis, scale_santis, shape_santis, threshold_santis)
+return_period_lugano <- calculate_return_period(location_lugano, scale_lugano, shape_lugano, threshold_lugano)
 
 # Print the results
-cat("The return period for 35°C in Geneva is approximately", round(return_period_geneva, 2), "years.\n")
-cat("The return period for 35°C in Säntis is approximately", round(return_period_santis, 2), "years.\n")
-cat("The return period for 35°C in Lugano is approximately", round(return_period_lugano, 2), "years.\n")
+cat("For Geneva, the 95th percentile threshold is", round(threshold_geneva, 2), "°C and the return period is approximately", round(return_period_geneva, 2), "years.\n")
+cat("For Säntis, the 95th percentile threshold is", round(threshold_santis, 2), "°C and the return period is approximately", round(return_period_santis, 2), "years.\n")
+cat("For Lugano, the 95th percentile threshold is", round(threshold_lugano, 2), "°C and the return period is approximately", round(return_period_lugano, 2), "years.\n")
 ```
 
 As a result, we can observe the following return periods:
@@ -163,20 +165,10 @@ On average, Geneva is expected to experience temperatures exceeding 35°C approx
 
 As of Säntis, it doesn't seem to reach 35°C anytime in the following years. This is due to the higher elevation of the city and its cooler climate, meaning that extreme heat waves are not significant. However, incrasing temperatures in cities such as Säntis are still posing a risk. We can also try below to put a lower threshold (e.g. 19°C) to obtain a return period.
 
-```{r}
-# Set the temperature threshold for Säntis
-temp_threshold_santis <- 19
-
-# Calculate a new return period for Säntis
-return_period_santis2 <- calculate_return_period(location_santis, scale_santis, shape_santis, temp_threshold_santis)
-
-# Print new result for Säntis
-cat("The return period for 19°C in Säntis is approximately", round(return_period_santis2, 2), "years.\n")
-```
-
-We can here observe that in an elevated city such as Säntis, the return period is `r round(return_period_santis2, 2)`.
-
 The differences in return periods highlight the variation in elevation, geography and microclimates of regions in Switzerland and their susceptibility to extreme heat waves. Although not similar across regions, increasing temperatures poses serious issues for all regions.
+
+
+A DVP!!!
 
 ## Probability of New Record High Temperature
 
