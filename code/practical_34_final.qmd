@@ -101,7 +101,7 @@ gev_return_levels_santis <- return.level(gev_fit_santis, return.period = c(10, 5
 gev_return_levels_Lugano <- return.level(gev_fit_Lugano, return.period = c(10, 50, 100))
 ```
 
-### Return Period
+## Return Period
 
 ::: {.callout-note icon="false"}
 ## Question
