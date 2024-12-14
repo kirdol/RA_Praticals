@@ -1,4 +1,3 @@
-
 {{< pagebreak >}}
 
 ## Part 4: Return Period & Probabilities of New Record High Temperatures
@@ -150,15 +149,15 @@ return_period_lugano <- calculate_return_period(location_lugano, scale_lugano, s
 
 As a result, we can observe the following return periods:
 
-| Station  | Elevation | Threshold (°C) | Return period (years) |
-|----------|-----------|----------------|-----------------------|
-| Geneva   | 375m      | `r round(threshold_geneva, 2)` | `r round(return_period_geneva, 2)` |
-| Säntis   | 2500m     | `r round(threshold_santis, 2)` | `r round(return_period_santis, 2)` |
-| Lugano   | 275m      | `r round(threshold_lugano, 2)` | `r round(return_period_lugano, 2)` |
+| Station | Elevation | Threshold (°C) | Return period (years) |
+|----|----|----|----|
+| Geneva | 375m | `r round(threshold_geneva, 2)` | `r round(return_period_geneva, 2)` |
+| Säntis | 2500m | `r round(threshold_santis, 2)` | `r round(return_period_santis, 2)` |
+| Lugano | 275m | `r round(threshold_lugano, 2)` | `r round(return_period_lugano, 2)` |
 
 On average, Geneva is expected to experience temperatures exceeding their 95th percentile approximately once every `r round(return_period_geneva, 2)` years, once every `r round(return_period_santis, 2)` for Säntis and once every `r round(return_period_lugano, 2)` for Lugano. Looking at the results, we can observe that Geneva and Lugano, which both are at a lower elevation than Säntis, experience extreme heats more frequently, indicating a higher vulnerability to heat waves compared to Säntis. For Geneva, which is a city influenced by the lake and continental climate, this suggests that these extremes are not annual, but they are plausible. For Lugano, it faces those heats a bit more frequently due to its lower elevation and warmer southern climate, so both cities need to prepare some adaptation strategies to mitigate the risk of issues such as for the environment or public health in the event of extreme temperatures. On the other hand, Säntis faces these extremes way less often thanks to its higher altitude and cooler overall temperatures. However, increasing temperatures can also be disruptive for its ecosystems and infrastructure.
 
-The differences in return periods highlight the variation in elevation, geography and micro-climates of regions in Switzerland and their susceptibility to extreme heat waves. Although not similar across regions, increasing temperatures poses serious issues for all regions. As return periods are calculated in a given time using historical data, in a context of climate change, the same threshold can be exceeded more frequently as average temperatures rise, leading to a decrease in return period. The results highlights our understanding of the current risk and the importance of setting clear strategies to mitigate any potentially arising risks.
+The differences in return periods highlight the variation in elevation, geography and micro-climates of regions in Switzerland and their susceptibility to extreme heat waves. Although not similar across regions, increasing temperatures poses serious issues for all regions. As return periods are calculated in a given time using historical data, in a context of climate change with average temperature in Switzerland rising, the same threshold will be exceeded more frequently in the future than what our current models suggest. In reality, the return period are lower than what the model suggest. These results highlights our understanding of the current risk and the importance of setting clear strategies to mitigate any arising risks.
 
 ## Probability of New Record High Temperature
 
@@ -168,7 +167,7 @@ The differences in return periods highlight the variation in elevation, geograph
 What is the probability of observing a record high temperature in Switzerland within the next year? 3 years? Decade?
 :::
 
-Using the previously fitted model using the GEV distribution, let's calculate the probability of reaching a new record for these cities in Switzerland. 
+Using the previously fitted model using the GEV distribution, let's calculate the probability of reaching a new record for these cities in Switzerland.
 
 First, we calculate the highest temperature records for the 3 cities:
 
@@ -186,11 +185,11 @@ record_date_lugano <- annual_maxima_Lugano$Year[which.max(annual_maxima_Lugano$M
 
 As a result, we obtain the following records:
 
-| Station  | Elevation | Highest recorded temperature (°C) | Recorded year of record |
-|----------|-----------|-----------------------------------|-------------------------|
-| Geneva   | 375m      | `r round(record_high_geneva, 2)`  | `r record_date_geneva` |
-| Säntis   | 2500m     | `r round(record_high_santis, 2)`  | `r record_date_santis` |
-| Lugano   | 275m      | `r round(record_high_lugano, 2)`  | `r record_date_lugano` |
+| Station | Elevation | Highest recorded temperature (°C) | Recorded year of record |
+|---------|-----------|-----------------------------------|-------------------------|
+| Geneva  | 375m      | `r round(record_high_geneva, 2)`  | `r record_date_geneva`  |
+| Säntis  | 2500m     | `r round(record_high_santis, 2)`  | `r record_date_santis`  |
+| Lugano  | 275m      | `r round(record_high_lugano, 2)`  | `r record_date_lugano`  |
 
 Now, we can calculate the probabilities of having a new record for each city within 1, 3 and 10 years. We are calculating the probability of exceeding this record in the given time horizon.
 
@@ -222,19 +221,20 @@ prob_new_record_lugano_10yr <- calculate_new_record_probability(location_lugano,
 
 As a result, we can observe the following probabilities for each city:
 
-| Station  | Elevation | 1-year probability (%) | 3-year probability (%) | 10-year probability (%) |
-|----------|-----------|------------------------|------------------------|-------------------------|
-| Geneva   | 375m      | `r round(prob_new_record_geneva_1yr * 100, 2)` | `r round(prob_new_record_geneva_3yr * 100, 2)` | `r round(prob_new_record_geneva_10yr * 100, 2)` |
-| Säntis   | 2500m     | `r round(prob_new_record_santis_1yr * 100, 2)` | `r round(prob_new_record_santis_3yr * 100, 2)` | `r round(prob_new_record_santis_10yr * 100, 2)` |
-| Lugano   | 275m      | `r round(prob_new_record_lugano_1yr * 100, 2)` | `r round(prob_new_record_lugano_3yr * 100, 2)` | `r round(prob_new_record_lugano_10yr * 100, 2)` |
+| Station | Elevation | 1-year probability (%) | 3-year probability (%) | 10-year probability (%) |
+|----|----|----|----|----|
+| Geneva | 375m | `r round(prob_new_record_geneva_1yr * 100, 2)` | `r round(prob_new_record_geneva_3yr * 100, 2)` | `r round(prob_new_record_geneva_10yr * 100, 2)` |
+| Säntis | 2500m | `r round(prob_new_record_santis_1yr * 100, 2)` | `r round(prob_new_record_santis_3yr * 100, 2)` | `r round(prob_new_record_santis_10yr * 100, 2)` |
+| Lugano | 275m | `r round(prob_new_record_lugano_1yr * 100, 2)` | `r round(prob_new_record_lugano_3yr * 100, 2)` | `r round(prob_new_record_lugano_10yr * 100, 2)` |
 
 We observe that Säntis has the highest probabilities of reaching a new record. This can act as a warning indicator of shifting climate patterns. Indeed, high altitude regions are sensitive to global warming and increasing heat waves risks here could signal broader changes that might affect other regions. Geneva and Lugano which have lower elevations reflect milder extremes, though still present.
 
-As we calculate the probabilities at a given period using historical data, we obtain the above probabilities. However, the reality might be different. Indeed, as we can see for Geneva and Säntis for example, the last record high temperatures where less than 10 years ago, so we are not safe from having a new record. So, probabilities might be different than the ones given in the table, also given the rising trend at the beginning of the practical.
+As we calculate the probabilities at a given period using historical data, we obtain the above probabilities. However, the reality might be different. Indeed, as we can see for Geneva and Säntis for example, the last record high temperatures where less than 10 years ago, so we are not safe from having a new record. So, probabilities might be different and higher in the future than the ones given in the table, also given the rising trend at the beginning of the practical.
 
 Now, let's interpret the risks on the short, mid and long term.
-- In the short-term, even though heat waves might occur, they are less likely to reach unprecedented levels. It doesn't mean that they won't happen, but just that the records might stay within the historical ranges.
-- In the mid-term, record-breaking temperatures remain quite rare, but the risk of extreme events is growing, indicating potential stress on ecosystems, agriculture and infrastructures in case these events are prolonged.
-- On the longer term, new records of temperatures are plausible as the probabilities increase. There is a risk of growing vulnerability depending on the frequency and intensity of the heat waves. This indicates higher risks that heat waves might impact infrastructures and health, such as higher risk of heat-related health issues, energy demands or disruptions on agriculture or water resources.
 
-As the time horizon increases, so does the probability of seeing a record high temperature for each station. Although the records are low in the short term, the likelihood clearly grows significantly over longer periods.
+-   In the short-term, even though heat waves might occur, they are less likely to reach unprecedented levels. It doesn't mean that they won't happen, but just that the records might stay within the historical ranges.
+-   In the mid-term, record-breaking temperatures remain quite rare, but the risk of extreme events is growing, indicating potential stress on ecosystems, agriculture and infrastructures in case these events are prolonged.
+-   On the longer term, new records of temperatures are plausible as the probabilities increase. There is a risk of growing vulnerability depending on the frequency and intensity of the heat waves. This indicates higher risks that heat waves might impact infrastructures and health, such as higher risk of heat-related health issues, energy demands or disruptions on agriculture or water resources.
+
+As the time horizon increases, so does the probability of seeing a record high temperature for each station. Although the records are low in the short term, the likelihood clearly grows significantly over longer periods and the reality might even be worst than our models.
