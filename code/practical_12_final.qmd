@@ -43,6 +43,9 @@ Plot the ACF of the raw series as well as the negative log returns. Which one do
 :::
 
 ```{r, message = F, warning = F}
+# Set the plotting area to have 1 row and 2 columns
+par(mfrow = c(1, 2))
+
 # Tracer l'ACF de la série brute des prix du Bitcoin
 acf(bitcoin_prices, main = "ACF of Raw Bitcoin Prices")
 
@@ -90,6 +93,9 @@ Propose ARIMA models for the negative log returns series, based on visualization
 :::
 
 ```{r, message = F, warning = F}
+# Set the plotting area to have 1 row and 2 columns
+par(mfrow = c(1, 2))
+
 # Step 1: Visualize ACF and PACF for negative log returns
 acf(neg_log_returns_bitcoin, main = "ACF of Negative Log Returns")
 pacf(neg_log_returns_bitcoin, main = "PACF of Negative Log Returns")
@@ -209,15 +215,21 @@ print(ljung_box_test)
 acf(residuals(garch_model_arima_residuals), main = "ACF of Residuals (ARIMA + GARCH)")
 ```
 
-Quality Assessment of the ARIMA + GARCH(1,1) Fit: Parameter Estimates:
+Quality Assessment of the ARIMA + GARCH(1,1)
 
-The fitted ARIMA + GARCH(1,1) model has significant coefficients for the GARCH components: Alpha1 (0.2599) and Beta1 (0.7579) are both highly significant (p-value \< 2e-16), indicating that the GARCH(1,1) model has captured the volatility clustering effectively. The intercept (Mu) is not significant, suggesting that the mean of the residuals is close to zero, which is expected in a well-fitted model. Log-Likelihood and AIC:
+Fit:
 
-The log-likelihood of the model is high (7627.039), and the AIC (-10.59491) and BIC (-10.58026) indicate a good fit for the model. Lower AIC/BIC values suggest a better model fit. Residuals Analysis:
+Parameter Estimates: The fitted ARIMA + GARCH(1,1) model has significant coefficients for the GARCH components: Alpha1 (0.2599) and Beta1 (0.7579) are both highly significant (p-value \< 2e-16), indicating that the GARCH(1,1) model has captured the volatility clustering effectively. The intercept (Mu) is not significant, suggesting that the mean of the residuals is close to zero, which is expected in a well-fitted model.
 
-Ljung-Box Test for Serial Correlation: The p-value of the Ljung-Box test (p = 0.9365) for the residuals of the ARIMA + GARCH(1,1) model is very high, indicating no significant serial correlation. This suggests that the model has captured the dependencies in the data well, and the residuals are essentially white noise. Jarque-Bera and Shapiro-Wilk Tests for Normality: Both tests indicate non-normality of the residuals (p-value = 0.000). This is common in financial time series data, as they often exhibit heavy tails and skewness. Ljung-Box Test on Squared Residuals: The p-values for the Ljung-Box test on squared residuals are also high, indicating no remaining conditional heteroscedasticity in the model, suggesting that the GARCH model has effectively modeled the conditional variance. Conclusion:
+Log-Likelihood and AIC: The log-likelihood of the model is high (7627.039), and the AIC (-10.59491) and BIC (-10.58026) indicate a good fit for the model. Lower AIC/BIC values suggest a better model fit.
 
-The ARIMA + GARCH(1,1) model fits the data well, capturing both the autocorrelation in the returns and the conditional heteroscedasticity (volatility clustering). The residuals show no significant autocorrelation, and the GARCH model appears to have adequately handled the volatility. The model might still exhibit non-normality, but this is expected in financial data due to extreme returns or fat tails.
+Residuals Analysis: Ljung-Box Test for Serial Correlation: The p-value of the Ljung-Box test (p = 0.9365) for the residuals of the ARIMA + GARCH(1,1) model is very high, indicating no significant serial correlation. This suggests that the model has captured the dependencies in the data well, and the residuals are essentially white noise.
+
+Jarque-Bera and Shapiro-Wilk Tests for Normality: Both tests indicate non-normality of the residuals (p-value = 0.000). This is common in financial time series data, as they often exhibit heavy tails and skewness.
+
+Ljung-Box Test on Squared Residuals: The p-values for the Ljung-Box test on squared residuals are also high, indicating no remaining conditional heteroscedasticity in the model, suggesting that the GARCH model has effectively modeled the conditional variance.
+
+Conclusion: The ARIMA + GARCH(1,1) model fits the data well, capturing both the autocorrelation in the returns and the conditional heteroscedasticity (volatility clustering). The residuals show no significant autocorrelation, and the GARCH model appears to have adequately handled the volatility. The model might still exhibit non-normality, but this is expected in financial data due to extreme returns or fat tails.
 
 ### f) Model Comparison
 
