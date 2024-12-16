@@ -1,4 +1,190 @@
 
 {{< pagebreak >}}
 
-## Part 3
+```{r  echo = FALSE, message = FALSE}
+# load the required packages and install them if they are not.
+source(here::here("code","setup.R"))
+
+# Parameters
+rounding_digits <- 4
+```
+
+## Part 3: Clustering and Seasonal Variations
+
+```{r}
+# Load Geneva temperature data (assuming the file is now in CSV format)
+geneva_data <- read.csv(here::here("data","Geneva_temperature.csv"))
+
+# Inspect the structure of the data to identify the relevant columns
+str(geneva_data)
+```
+
+### a) Plot the data for Summer
+
+::: {.callout-note icon="false"}
+## Question
+
+Upload the Geneva temperature data. Plot the data. Subset the data for the summer months
+(June to September).
+:::
+
+```{r}
+# Create the Date column
+geneva_data$Date <- as.Date(paste(geneva_data$Year, geneva_data$Month, geneva_data$Day, sep = "-"))
+
+# Check if Date column was created correctly
+str(geneva_data)
+```
+
+
+```{r echo = FALSE}
+# Plot the data using ggplot2
+ggplot(geneva_data, aes(x = Date, y = AvgTemperature)) +
+  geom_line(color = "pink") +
+  labs(title = "Daily Temperature in Geneva",
+       x = "Date",
+       y = "Temperature (°C)") +
+  theme_minimal()
+```
+
+```{r}
+# Subset the data for summer months (June to September)
+summer_data <- subset(geneva_data, Month >= 6 & Month <= 9)
+
+# Check the first few rows of the summer data
+head(summer_data)
+```
+
+```{r}
+# Add a Year column to distinguish each summer period
+summer_data$Year <- format(summer_data$Date, "%Y")
+```
+
+
+```{r echo = FALSE}
+# Plot the summer data without connecting lines across years
+ggplot(summer_data, aes(x = Date, y = AvgTemperature, group = Year)) +
+  geom_line(color = "purple") +
+  labs(title = "Geneva Temperature Data (Summer Months)", x = "Date", y = "Average Temperature (°C)") +
+  theme_minimal()
+```
+
+### b) Compare extremal index
+
+::: {.callout-note icon="false"}
+## Question
+
+Compute the extremal index of the subsetted series with appropriatelly chosen threshold
+(for example, you can use `extremalindex` function in `extRemes` package). Do the extremes
+occur in clusters? What is the probability that if the temperature today is extreme (above
+the chosen threshold) then tomorrow will be also extreme?
+:::
+
+```{r}
+# Determine a threshold for extreme temperatures (e.g., the 95th percentile)
+threshold <- quantile(summer_data$AvgTemperature, 0.95, na.rm = TRUE)
+cat("Chosen threshold for extreme temperatures:", threshold, "°C\n")
+```
+
+```{r}
+# Determine a threshold for extreme temperatures (e.g., the 95th percentile)
+threshold <- quantile(summer_data$AvgTemperature, 0.95, na.rm = TRUE)
+cat("Chosen threshold for extreme temperatures:", threshold, "°C\n")
+
+# Identify the days where the temperature exceeds the threshold
+extreme_days <- summer_data$AvgTemperature > threshold
+
+# Compute the extremal index
+extremal_index <- extremalindex(summer_data$AvgTemperature, threshold = threshold)
+
+# Display the extremal index
+cat("The extremal index is:", extremal_index, "\n")
+
+# Calculate the probability that an extreme day is followed by another extreme day
+probability_following_extreme <- 1 - extremal_index
+
+# Display the probability
+cat("The probability that if today is extreme, tomorrow will also be extreme is:", probability_following_extreme, "\n")
+```
+
+The extremal index of the subsetted series, with a threshold of 24.94°C, is 0.2613 (this value is closer to 0 than 1). Therefore, if the temperature today is extreme, there is a 26.13 % probability that tomorrow’s temperature will also be extreme. While there is some clustering of extreme events, the persistence is not high, suggesting that extreme temperature days are relatively isolated in time.
+
+### c) Declustering the data
+
+::: {.callout-note icon="false"}
+## Question
+
+Decluster the data using a suitable threshold. Plot the resulting declustered data. (Hint:
+you may want to use `decluster` function in the `extRemes` package.)
+:::
+
+```{r}
+# Determine a threshold for extreme temperatures (e.g., the 95th percentile)
+threshold <- quantile(summer_data$AvgTemperature, 0.95, na.rm = TRUE)
+cat("Chosen threshold for extreme temperatures:", threshold, "°C\n")
+
+# Decluster the data using the chosen threshold
+declustered_data <- decluster(summer_data$AvgTemperature, threshold = threshold, run.length = 1)
+
+# Update the data frame to include only declustered values (setting non-extreme values to NA for clarity)
+summer_data$Declustered <- ifelse(summer_data$AvgTemperature >= threshold, declustered_data, NA)
+```
+
+
+```{r echo = FALSE}
+# Plot the original and declustered data
+ggplot() +
+  geom_line(data = summer_data, aes(x = Date, y = AvgTemperature), color = "blue", alpha = 0.5) +
+  geom_point(data = subset(summer_data, !is.na(Declustered)), aes(x = Date, y = Declustered), color = "red") +
+  labs(title = "Declustered Extreme Temperatures in Geneva (Summer Months)", 
+       x = "Date", y = "Temperature (°C)") +
+  theme_minimal()
+```
+
+The declustered data highlights extreme temperature events (above 24.94°C) as red dots. These events occur sporadically, with occasional clusters, indicating that while extremes can group together, they are generally distinct. The threshold effectively identifies significant temperature spikes without over-clustering.
+
+### d) Fit a GPD
+
+::: {.callout-note icon="false"}
+## Question
+
+Fit a Generalized Pareto Distribution (GPD) to the data, both raw and declustered. Compare
+the models and compute 10-year return level.
+:::
+
+```{r}
+# Step 1: Fit the GPD model to the raw data (data above the chosen threshold)
+raw_data <- summer_data$AvgTemperature[summer_data$AvgTemperature >= threshold]  # Extreme values above threshold
+fit_raw <- fpot(raw_data, threshold = threshold)  # Fit the GPD to the raw data
+
+# Step 2: Fit the GPD model to the declustered data (data above the chosen threshold)
+declustered_data <- summer_data$Declustered[!is.na(summer_data$Declustered)]  # Declustered extreme values
+fit_declustered <- fpot(declustered_data, threshold = threshold)  # Fit the GPD to the declustered data
+
+# Step 3: Extract GPD model parameters for both raw and declustered data
+shape_raw <- fit_raw$estimate["shape"]  # Shape parameter (xi) for raw data
+scale_raw <- fit_raw$estimate["scale"]  # Scale parameter (sigma) for raw data
+
+shape_declustered <- fit_declustered$estimate["shape"]  # Shape parameter (xi) for declustered data
+scale_declustered <- fit_declustered$estimate["scale"]  # Scale parameter (sigma) for declustered data
+
+# Step 4: Define a function to calculate the return level using the GPD formula
+return_level <- function(shape, scale, threshold, return_period) {
+  return(threshold + (scale / shape) * (((return_period * length(raw_data) / length(summer_data$AvgTemperature))^shape) - 1))
+}
+
+# Step 5: Calculate the 10-year return level for both raw and declustered data
+return_period <- 10  # 10-year return level
+
+# 10-year return level for raw data
+return_level_raw <- return_level(shape_raw, scale_raw, threshold, return_period)
+
+# 10-year return level for declustered data
+return_level_declustered <- return_level(shape_declustered, scale_declustered, threshold, return_period)
+
+# Step 6: Print the results for both models
+cat("10-year return level for raw data:", return_level_raw, "°C\n")
+cat("10-year return level for declustered data:", return_level_declustered, "°C\n")
+```
+
+In this analysis, we fitted a Generalized Pareto Distribution (GPD) to both the raw and declustered temperature data for the summer months in Geneva. The 10-year return level for the raw data is 23.69°C, while for the declustered data it is slightly lower at 23.52°C. The declustered model, which accounts for isolated extreme events without clustering, provides a slightly more conservative estimate of extreme temperatures compared to the raw model.

@@ -1,0 +1,795 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "jupyter:\n",
+        "  kernelspec:\n",
+        "    name: ir\n",
+        "    display_name: R\n",
+        "    language: R\n",
+        "---"
+      ],
+      "id": "cc7fa8ae"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "source": [
+        "# Install necessary packages\n",
+        "if (!require(tseries)) {  # Check if 'tseries' package is installed\n",
+        "  install.packages(\"tseries\")  # Install the 'tseries' package if not already installed\n",
+        "  library(tseries)  # Load the 'tseries' package\n",
+        "}\n",
+        "if (!require(googledrive)) {  # Check if 'googledrive' package is installed\n",
+        "  install.packages(\"googledrive\")  # Install the 'googledrive' package if not already installed\n",
+        "  library(googledrive)  # Load the 'googledrive' package\n",
+        "}\n",
+        "\n",
+        "# Authorize access to Google Drive\n",
+        "drive_auth()"
+      ],
+      "id": "eb535d6f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 1000
+        }
+      },
+      "source": [
+        "# Search for the file on Google Drive\n",
+        "file <- drive_get(\"Data_Total.csv\")\n",
+        "\n",
+        "# Download the file to the temporary system\n",
+        "drive_download(file, path = \"Data_Total.csv\", overwrite = TRUE)\n",
+        "\n",
+        "# Read the data from the CSV file and assign it to stations_data\n",
+        "stations_data <- read.csv(\"Data_Total.csv\")\n",
+        "\n",
+        "# Convert the date column to Date format\n",
+        "stations_data$DATE <- as.Date(stations_data$DATE, format = \"%Y-%m-%d\")\n",
+        "\n",
+        "# Filter the data starting from the date \"1955-01-01\"\n",
+        "stations_data <- subset(stations_data, DATE >= as.Date(\"1955-01-01\"))\n",
+        "\n",
+        "# Check the structure of the data\n",
+        "str(stations_data)\n",
+        "\n",
+        "# Summarize the data\n",
+        "summary(stations_data)\n",
+        "\n",
+        "# Display a preview of the data\n",
+        "head(stations_data)\n",
+        "\n",
+        "# Verify the data filtering\n",
+        "cat(\"Number of rows after filtering:\", nrow(stations_data), \"\\n\")\n",
+        "\n",
+        "# Summarize the data after filtering\n",
+        "summary(stations_data)"
+      ],
+      "id": "fdfac72c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 69
+        }
+      },
+      "source": [
+        "# Rename rows in the NAME column\n",
+        "stations_data$NAME <- gsub(\"LUGANO, SZ\", \"Lugano\", stations_data$NAME)\n",
+        "stations_data$NAME <- gsub(\"SAENTIS, SZ\", \"Saentis\", stations_data$NAME)\n",
+        "stations_data$NAME <- gsub(\"GENEVE COINTRIN, SZ\", \"Genève\", stations_data$NAME)\n",
+        "\n",
+        "# Keep only the three specified stations: Lugano, Saentis, Genève\n",
+        "stations_data <- subset(stations_data, NAME %in% c(\"Lugano\", \"Saentis\", \"Genève\"))\n",
+        "\n",
+        "# Check the data after filtering\n",
+        "cat(\"Number of rows after filtering:\", nrow(stations_data), \"\\n\")\n",
+        "unique(stations_data$NAME)\n",
+        "\n",
+        "# Export the cleaned data to a CSV file\n",
+        "write.csv(stations_data, \"Cleaned_Stations_Data.csv\", row.names = FALSE)\n",
+        "\n",
+        "cat(\"Cleaned file exported as 'Cleaned_Stations_Data.csv'.\\n\")"
+      ],
+      "id": "5932ac82",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 876
+        }
+      },
+      "source": [
+        "# Check the structure of the data\n",
+        "str(stations_data)\n",
+        "\n",
+        "# Summarize the data\n",
+        "summary(stations_data)\n",
+        "\n",
+        "# Display a preview of the data\n",
+        "head(stations_data)"
+      ],
+      "id": "81b123f3",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 1000
+        }
+      },
+      "source": [
+        "# Load ggplot2 if not already loaded\n",
+        "if (!require(ggplot2)) {\n",
+        "  install.packages(\"ggplot2\")\n",
+        "  library(ggplot2)\n",
+        "}\n",
+        "\n",
+        "# Create a plot for each station and display them separately\n",
+        "stations <- unique(stations_data$NAME)\n",
+        "\n",
+        "for (station in stations) {\n",
+        "  plot <- ggplot(subset(stations_data, NAME == station), aes(x = DATE, y = TMAX)) +\n",
+        "    geom_line(color = \"blue\") +\n",
+        "    labs(\n",
+        "      title = paste(\"Maximum Temperature Over Time -\", station),\n",
+        "      x = \"Date\",\n",
+        "      y = \"Maximum Temperature (°C)\"\n",
+        "    ) +\n",
+        "    theme_minimal() +\n",
+        "    theme(\n",
+        "      plot.title = element_text(hjust = 0.5)\n",
+        "    )\n",
+        "\n",
+        "  print(plot)  # Display each plot\n",
+        "}"
+      ],
+      "id": "453023ed",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 1000
+        }
+      },
+      "source": [
+        "# Create a histogram for each station\n",
+        "for (station in stations) {\n",
+        "  plot <- ggplot(subset(stations_data, NAME == station), aes(x = TMAX)) +\n",
+        "    geom_histogram(binwidth = 1, fill = \"blue\", color = \"black\", alpha = 0.7) +\n",
+        "    labs(\n",
+        "      title = paste(\"Histogram of Maximum Temperatures -\", station),\n",
+        "      x = \"Maximum Temperature (°C)\",\n",
+        "      y = \"Frequency\"\n",
+        "    ) +\n",
+        "    theme_minimal() +\n",
+        "    theme(\n",
+        "      plot.title = element_text(hjust = 0.5)\n",
+        "    )\n",
+        "\n",
+        "  print(plot)  # Display each histogram\n",
+        "}"
+      ],
+      "id": "22e132e1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "source": [
+        "# Check for missing values\n",
+        "na_counts <- colSums(is.na(stations_data))\n",
+        "cat(\"Number of missing values per column before removal:\\n\")\n",
+        "print(na_counts)\n",
+        "\n",
+        "# Remove only rows where TMAX is NA\n",
+        "stations_data <- stations_data[!is.na(stations_data$TMAX), ]\n",
+        "\n",
+        "# Check for missing values again\n",
+        "na_counts_after <- colSums(is.na(stations_data))\n",
+        "cat(\"\\nNumber of missing values per column after removal:\\n\")\n",
+        "print(na_counts_after)\n",
+        "\n",
+        "# Split the data by station\n",
+        "stations_split <- split(stations_data, stations_data$NAME)\n",
+        "\n",
+        "# Count the number of values per station\n",
+        "values_per_station <- sapply(stations_split, nrow)\n",
+        "cat(\"\\nNumber of remaining values per station after removing NAs in TMAX:\\n\")\n",
+        "print(values_per_station)\n",
+        "\n",
+        "# Display the result for each station\n",
+        "for (station in names(values_per_station)) {\n",
+        "  cat(\"\\nStation:\", station, \" | Number of rows:\", values_per_station[station], \"\\n\")\n",
+        "}"
+      ],
+      "id": "3cc86013",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        }
+      },
+      "source": [
+        "# We will create a subset for each station.\n",
+        "\n",
+        "# Check the unique station names to confirm\n",
+        "unique(stations_data$NAME)\n",
+        "\n",
+        "# Split the data by station\n",
+        "lugano_data <- subset(stations_data, NAME == \"Lugano\")\n",
+        "genève_data <- subset(stations_data, NAME == \"Genève\")\n",
+        "saentis_data <- subset(stations_data, NAME == \"Saentis\")"
+      ],
+      "id": "ba02ac3a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "source": [
+        "# Check the dimensions of the subsets\n",
+        "cat(\"Number of rows for Lugano:\", nrow(lugano_data), \"\\n\")\n",
+        "cat(\"Number of rows for Genève:\", nrow(genève_data), \"\\n\")\n",
+        "cat(\"Number of rows for Säntis:\", nrow(saentis_data), \"\\n\")"
+      ],
+      "id": "174afca6",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 1000
+        }
+      },
+      "source": [
+        "# Function to explore a station\n",
+        "explore_station <- function(data, station_name) {\n",
+        "  cat(\"\\n--- Exploration for station:\", station_name, \"---\\n\")\n",
+        "\n",
+        "  # Preview of the data\n",
+        "  cat(\"\\nData preview:\\n\")\n",
+        "  print(head(data))\n",
+        "\n",
+        "  # Descriptive statistics\n",
+        "  cat(\"\\nDescriptive statistics:\\n\")\n",
+        "  print(summary(data))\n",
+        "\n",
+        "  # Checking for missing values\n",
+        "  cat(\"\\nNumber of missing values per column:\\n\")\n",
+        "  print(colSums(is.na(data)))\n",
+        "\n",
+        "  # Histogram of maximum temperatures\n",
+        "  cat(\"\\nHistogram of maximum temperatures for:\", station_name, \"\\n\")\n",
+        "  print(\n",
+        "    ggplot(data, aes(x = TMAX)) +\n",
+        "      geom_histogram(binwidth = 1, fill = \"red\", color = \"black\") +\n",
+        "      labs(title = paste(\"Distribution of Maximum Temperatures -\", station_name),\n",
+        "           x = \"Maximum Temperature (°C)\", y = \"Frequency\") +\n",
+        "      theme_minimal()\n",
+        "  )\n",
+        "\n",
+        "  # Time series of maximum temperatures\n",
+        "  cat(\"\\nTime series of maximum temperatures for:\", station_name, \"\\n\")\n",
+        "  print(\n",
+        "    ggplot(data, aes(x = DATE, y = TMAX)) +\n",
+        "      geom_line(color = \"red\") +\n",
+        "      labs(title = paste(\"Maximum Temperatures Over Time -\", station_name),\n",
+        "           x = \"Date\", y = \"Maximum Temperature (°C)\") +\n",
+        "      theme_minimal()\n",
+        "  )\n",
+        "}\n",
+        "\n",
+        "# Exploration for Lugano\n",
+        "explore_station(lugano_data, \"Lugano\")\n",
+        "\n",
+        "# Exploration for Genève\n",
+        "explore_station(genève_data, \"Genève\")\n",
+        "\n",
+        "# Exploration for Saentis\n",
+        "explore_station(saentis_data, \"Saentis\")"
+      ],
+      "id": "6c49195e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Now we'll only focus on the summer period.\n"
+      ],
+      "id": "ca8914b8"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "source": [
+        "# Filter summer data for Lugano\n",
+        "lugano_summer <- subset(lugano_data, format(DATE, \"%m\") %in% c(\"06\", \"07\", \"08\", \"09\"))\n",
+        "\n",
+        "# Filter summer data for Genève\n",
+        "genève_summer <- subset(genève_data, format(DATE, \"%m\") %in% c(\"06\", \"07\", \"08\", \"09\"))\n",
+        "\n",
+        "# Filter summer data for Säntis\n",
+        "saentis_summer <- subset(saentis_data, format(DATE, \"%m\") %in% c(\"06\", \"07\", \"08\", \"09\"))\n",
+        "\n",
+        "# Check the dimensions of the summer subsets\n",
+        "cat(\"Number of summer rows for Lugano:\", nrow(lugano_summer), \"\\n\")\n",
+        "cat(\"Number of summer rows for Genève:\", nrow(genève_summer), \"\\n\")\n",
+        "cat(\"Number of summer rows for Säntis:\", nrow(saentis_summer), \"\\n\")"
+      ],
+      "id": "b3a620f6",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 1000
+        }
+      },
+      "source": [
+        "# Plot the evolution of summer maximum temperatures for Lugano\n",
+        "plot(lugano_summer$DATE, lugano_summer$TMAX, type = \"l\", col = \"red\",\n",
+        "     main = \"Evolution of Summer Maximum Temperatures - Lugano\",\n",
+        "     xlab = \"Date\", ylab = \"Maximum Temperature (°C)\")\n",
+        "\n",
+        "# Plot the evolution of summer maximum temperatures for Genève\n",
+        "plot(genève_summer$DATE, genève_summer$TMAX, type = \"l\", col = \"blue\",\n",
+        "     main = \"Evolution of Summer Maximum Temperatures - Genève\",\n",
+        "     xlab = \"Date\", ylab = \"Maximum Temperature (°C)\")\n",
+        "\n",
+        "# Plot the evolution of summer maximum temperatures for Säntis\n",
+        "plot(saentis_summer$DATE, saentis_summer$TMAX, type = \"l\", col = \"green\",\n",
+        "     main = \"Evolution of Summer Maximum Temperatures - Säntis\",\n",
+        "     xlab = \"Date\", ylab = \"Maximum Temperature (°C)\")"
+      ],
+      "id": "02a3ed4e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Now perform cluster analysis, etc., as in TP2\n"
+      ],
+      "id": "b3eba729"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "source": [
+        "install.packages(\"extRemes\", dependencies = TRUE)"
+      ],
+      "id": "dfb751d2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "source": [
+        "# Install the package if it is not already installed\n",
+        "if (!require(extRemes)) {\n",
+        "  install.packages(\"extRemes\", dependencies = TRUE)\n",
+        "}\n",
+        "\n",
+        "# Load the package\n",
+        "library(extRemes)"
+      ],
+      "id": "b9125ff1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "source": [
+        "# Define a threshold for extreme temperatures\n",
+        "# We can define a threshold based on the 95th percentile of summer maximum temperatures for each station.\n",
+        "\n",
+        "# Calculate thresholds for each station\n",
+        "threshold_lugano <- quantile(lugano_summer$TMAX, 0.95, na.rm = TRUE)\n",
+        "threshold_genève <- quantile(genève_summer$TMAX, 0.95, na.rm = TRUE)\n",
+        "threshold_saentis <- quantile(saentis_summer$TMAX, 0.95, na.rm = TRUE)\n",
+        "\n",
+        "cat(\"Threshold for Lugano:\", threshold_lugano, \"\\n\")\n",
+        "cat(\"Threshold for Genève:\", threshold_genève, \"\\n\")\n",
+        "cat(\"Threshold for Säntis:\", threshold_saentis, \"\\n\")"
+      ],
+      "id": "bc23c806",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 1000
+        }
+      },
+      "source": [
+        "# Load the extRemes package if necessary\n",
+        "if (!require(extRemes)) {\n",
+        "  install.packages(\"extRemes\", dependencies = TRUE)\n",
+        "  library(extRemes)\n",
+        "}\n",
+        "\n",
+        "# Validation with the MRL Plot for Lugano\n",
+        "cat(\"Mean Residual Life Plot for Lugano\\n\")\n",
+        "mrlplot(lugano_summer$TMAX, main = \"Mean Residual Life Plot - Lugano\")\n",
+        "\n",
+        "# Validation with the MRL Plot for Genève\n",
+        "cat(\"Mean Residual Life Plot for Genève\\n\")\n",
+        "mrlplot(genève_summer$TMAX, main = \"Mean Residual Life Plot - Genève\")\n",
+        "\n",
+        "# Validation with the MRL Plot for Säntis\n",
+        "cat(\"Mean Residual Life Plot for Säntis\\n\")\n",
+        "mrlplot(saentis_summer$TMAX, main = \"Mean Residual Life Plot - Säntis\")"
+      ],
+      "id": "0afa1641",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The Mean Residual Life (MRL) plot is used to validate the choice of thresholds for defining extreme events. It shows the mean excess, or the average amount by which temperatures exceed a threshold, as the threshold increases. For Geneva for example, in the plot, the curve decreases steeply at lower thresholds, indicating the inclusion of non-extreme values. Around 31°C, the curve stabilizes, suggesting this is a suitable threshold for defining extremes. The stability and narrow confidence bands confirm the reliability of this threshold. At higher thresholds, wider confidence intervals indicate less reliable estimates, further supporting the choice of 31°C as appropriate for the analysis.\n"
+      ],
+      "id": "085b2311"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "source": [
+        "# Identify extreme days for Lugano\n",
+        "lugano_extreme_days <- lugano_summer[lugano_summer$TMAX > threshold_lugano, ]\n",
+        "cat(\"Number of extreme days for Lugano:\", nrow(lugano_extreme_days), \"\\n\")\n",
+        "\n",
+        "# Identify extreme days for Genève\n",
+        "geneve_extreme_days <- genève_summer[genève_summer$TMAX > threshold_genève, ]\n",
+        "cat(\"Number of extreme days for Genève:\", nrow(geneve_extreme_days), \"\\n\")\n",
+        "\n",
+        "# Identify extreme days for Säntis\n",
+        "saentis_extreme_days <- saentis_summer[saentis_summer$TMAX > threshold_saentis, ]\n",
+        "cat(\"Number of extreme days for Säntis:\", nrow(saentis_extreme_days), \"\\n\")"
+      ],
+      "id": "d31926de",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "source": [
+        "# Calculation of the extremal index for each station\n",
+        "extremal_index_lugano <- extremalindex(lugano_summer$TMAX, threshold = threshold_lugano)\n",
+        "extremal_index_geneve <- extremalindex(genève_summer$TMAX, threshold = threshold_genève)\n",
+        "extremal_index_saentis <- extremalindex(saentis_summer$TMAX, threshold = threshold_saentis)\n",
+        "\n",
+        "cat(\"Extremal index for Lugano:\", extremal_index_lugano, \"\\n\")\n",
+        "cat(\"Extremal index for Genève:\", extremal_index_geneve, \"\\n\")\n",
+        "cat(\"Extremal index for Säntis:\", extremal_index_saentis, \"\\n\")"
+      ],
+      "id": "46e3e775",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "These results represent the extremal index calculations for each station, which measure the tendency of extreme events to occur in clusters. Here's what the numbers mean:\n",
+        "\n",
+        "Extremal Index (First Number):\n",
+        "\n",
+        "For Lugano: 0.2007\n",
+        "For Genève: 0.2699\n",
+        "For Säntis: 0.3573\n",
+        "The extremal index ranges between 0 and 1:\n",
+        "\n",
+        "A value close to 0 indicates that extreme events are strongly clustered.\n",
+        "A value closer to 1 suggests that extreme events are more isolated and independent.\n",
+        "In this case, Lugano shows the most clustering of extremes (lowest index), while Säntis has more independent extreme events (highest index).\n",
+        "\n",
+        "Number of Clusters (Second Number):\n",
+        "\n",
+        "For Lugano: 80 clusters\n",
+        "For Genève: 112 clusters\n",
+        "For Säntis: 148 clusters\n",
+        "This indicates the number of distinct clusters of extreme events detected for each station. More clusters suggest a higher frequency of extremes occurring over the studied period.\n",
+        "\n",
+        "Run Length (Third Number):\n",
+        "\n",
+        "For Lugano: 17\n",
+        "For Genève: 8\n",
+        "For Säntis: 8\n",
+        "This reflects the \"run parameter,\" which defines the minimum separation between events for them to be considered independent clusters. Higher values mean the analysis allows for longer gaps between clustered events.\n",
+        "\n",
+        "Interpretation\n",
+        "Lugano's low extremal index (0.2007), combined with a relatively low number of clusters (80), indicates strongly clustered extreme events.\n",
+        "Genève has a slightly higher extremal index (0.2699) and more clusters (112), suggesting less clustering than Lugano.\n",
+        "Säntis shows the highest extremal index (0.3573) and the most clusters (148), indicating that extremes here are more independent and less likely to occur in tightly grouped clusters.\n",
+        "These differences likely reflect local climatic and geographic conditions influencing how extreme temperatures occur.\n"
+      ],
+      "id": "bcf56997"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Load necessary library\n",
+        "if (!require(extRemes)) install.packages(\"extRemes\", dependencies = TRUE)\n",
+        "library(extRemes)\n",
+        "\n",
+        "# Decluster the data using the chosen threshold for each station\n",
+        "lugano_declustered <- decluster(lugano_summer$TMAX, threshold = threshold_lugano, run.length = 1)\n",
+        "genève_declustered <- decluster(genève_summer$TMAX, threshold = threshold_genève, run.length = 1)\n",
+        "saentis_declustered <- decluster(saentis_summer$TMAX, threshold = threshold_saentis, run.length = 1)\n",
+        "\n",
+        "# Add the declustered data to the corresponding datasets\n",
+        "lugano_summer$Declustered <- ifelse(lugano_summer$TMAX >= threshold_lugano, lugano_declustered, NA)\n",
+        "genève_summer$Declustered <- ifelse(genève_summer$TMAX >= threshold_genève, genève_declustered, NA)\n",
+        "saentis_summer$Declustered <- ifelse(saentis_summer$TMAX >= threshold_saentis, saentis_declustered, NA)"
+      ],
+      "id": "317e6025",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 1000
+        }
+      },
+      "source": [
+        "# Visualiser les données déclusterisées\n",
+        "\n",
+        "# Visualisation pour Lugano\n",
+        "ggplot() +\n",
+        "  geom_line(data = lugano_summer, aes(x = DATE, y = TMAX), color = \"blue\", alpha = 0.5) +\n",
+        "  geom_point(data = subset(lugano_summer, !is.na(Declustered)), aes(x = DATE, y = Declustered), color = \"red\") +\n",
+        "  labs(title = \"Declustered Temperatures - Lugano\", x = \"Date\", y = \"Max Temperature (°C)\") +\n",
+        "  theme_minimal()\n",
+        "\n",
+        "# Visualisation pour Genève\n",
+        "ggplot() +\n",
+        "  geom_line(data = genève_summer, aes(x = DATE, y = TMAX), color = \"blue\", alpha = 0.5) +\n",
+        "  geom_point(data = subset(genève_summer, !is.na(Declustered)), aes(x = DATE, y = Declustered), color = \"red\") +\n",
+        "  labs(title = \"Declustered Temperatures - Genève\", x = \"Date\", y = \"Max Temperature (°C)\") +\n",
+        "  theme_minimal()\n",
+        "\n",
+        "# Visualisation pour Säntis\n",
+        "ggplot() +\n",
+        "  geom_line(data = saentis_summer, aes(x = DATE, y = TMAX), color = \"blue\", alpha = 0.5) +\n",
+        "  geom_point(data = subset(saentis_summer, !is.na(Declustered)), aes(x = DATE, y = Declustered), color = \"red\") +\n",
+        "  labs(title = \"Declustered Temperatures - Säntis\", x = \"Date\", y = \"Max Temperature (°C)\") +\n",
+        "  theme_minimal()"
+      ],
+      "id": "087d179b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Explanation\n",
+        "Objective:\n",
+        "Declustering helps remove dependencies between extreme events that occur in close succession, ensuring that only independent extreme events are considered for further analysis. This is important for correctly modeling extreme behavior and deriving accurate probabilities for rare events.\n",
+        "\n",
+        "Steps:\n",
+        "\n",
+        "Threshold Selection:\n",
+        "Using the thresholds previously validated with the Mean Residual Life (MRL) plot, we identify extreme events for each station.\n",
+        "\n",
+        "Declustering:\n",
+        "Using the decluster function from the extRemes package, we filter the extreme values such that only the first event in each cluster is retained. The run.length parameter determines the minimum separation in days between clusters. For example, a run.length of 1 means any extreme values occurring consecutively are considered part of the same cluster.\n",
+        "\n",
+        "Visualization:\n",
+        "\n",
+        "The gray line represents the original maximum temperatures over time.\n",
+        "The red, blue, or green points represent the declustered extreme values. These are independent extremes retained after declustering.\n",
+        "The resulting plot allows us to visually verify how declustering isolates the independent extremes while removing consecutive dependencies.\n",
+        "\n",
+        "# fit a Generalized Pareto Distribution (GPD) to the declustered extreme temperatures and estimate probabilities and return levels:\n"
+      ],
+      "id": "053650f9"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Ensure the extRemes package is installed\n",
+        "if (!require(extRemes)) install.packages(\"extRemes\", dependencies = TRUE)\n",
+        "library(extRemes)"
+      ],
+      "id": "dbd9f475",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Define a function to fit the GPD model and calculate return levels\n",
+        "fit_gpd <- function(data, declustered_column, threshold, return_period) {\n",
+        "  # Extract declustered extreme values\n",
+        "  extreme_values <- data[[declustered_column]][!is.na(data[[declustered_column]])]\n",
+        "\n",
+        "  # Fit the Generalized Pareto Distribution (GPD)\n",
+        "  gpd_fit <- fevd(extreme_values, type = \"GP\", threshold = threshold)\n",
+        "\n",
+        "  # Calculate the return level for the specified return period\n",
+        "  return_level <- return.level(gpd_fit, return.period = return_period)\n",
+        "\n",
+        "  # Return the GPD fit and return level\n",
+        "  list(fit = gpd_fit, return_level = return_level)\n",
+        "}\n",
+        "\n",
+        "# Fit GPD for Lugano\n",
+        "gpd_lugano <- fit_gpd(lugano_summer, \"Declustered\", threshold_lugano, return_period = 10)\n",
+        "\n",
+        "# Fit GPD for Genève\n",
+        "gpd_genève <- fit_gpd(genève_summer, \"Declustered\", threshold_genève, return_period = 10)\n",
+        "\n",
+        "# Fit GPD for Säntis\n",
+        "gpd_saentis <- fit_gpd(saentis_summer, \"Declustered\", threshold_saentis, return_period = 10)"
+      ],
+      "id": "e606ff82",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 1000
+        }
+      },
+      "source": [
+        "# Print summaries and return levels\n",
+        "cat(\"Lugano - 10-Year Return Level:\", gpd_lugano$return_level, \"\\n\")\n",
+        "cat(\"Genève - 10-Year Return Level:\", gpd_genève$return_level, \"\\n\")\n",
+        "cat(\"Säntis - 10-Year Return Level:\", gpd_saentis$return_level, \"\\n\")\n",
+        "\n",
+        "# Plot the GPD model fit for each station\n",
+        "par(mfrow = c(1, 3))  # Arrange plots in a single row\n",
+        "plot(gpd_lugano$fit, main = \"GPD Fit - Lugano\")\n",
+        "plot(gpd_genève$fit, main = \"GPD Fit - Genève\")\n",
+        "plot(gpd_saentis$fit, main = \"GPD Fit - Säntis\")"
+      ],
+      "id": "9be7c943",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "To calculate the probability that an extreme day is followed by another extreme day for each station, we use the extremal index, which measures the degree of clustering of extremes. The extremal index can be interpreted as the inverse of the average cluster size. Here's the code to compute this for each station:\n"
+      ],
+      "id": "5dca4a7b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "source": [
+        "# Compute the probability of consecutive extreme days for each station\n",
+        "compute_extreme_following_prob <- function(extremal_index) {\n",
+        "  return(1 - extremal_index) # Probability of consecutive extremes\n",
+        "}\n",
+        "\n",
+        "# For Lugano\n",
+        "extremal_index_lugano <- extremalindex(lugano_summer$TMAX, threshold = threshold_lugano)\n",
+        "prob_consecutive_extremes_lugano <- compute_extreme_following_prob(extremal_index_lugano[1])\n",
+        "cat(\"Probability of consecutive extremes for Lugano:\", prob_consecutive_extremes_lugano, \"\\n\")\n",
+        "\n",
+        "# For Genève\n",
+        "extremal_index_genève <- extremalindex(genève_summer$TMAX, threshold = threshold_genève)\n",
+        "prob_consecutive_extremes_genève <- compute_extreme_following_prob(extremal_index_genève[1])\n",
+        "cat(\"Probability of consecutive extremes for Genève:\", prob_consecutive_extremes_genève, \"\\n\")\n",
+        "\n",
+        "# For Saentis\n",
+        "extremal_index_saentis <- extremalindex(saentis_summer$TMAX, threshold = threshold_saentis)\n",
+        "prob_consecutive_extremes_saentis <- compute_extreme_following_prob(extremal_index_saentis[1])\n",
+        "cat(\"Probability of consecutive extremes for Saentis:\", prob_consecutive_extremes_saentis, \"\\n\")"
+      ],
+      "id": "f8fa07d1",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "ir",
+      "display_name": "R",
+      "language": "R"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

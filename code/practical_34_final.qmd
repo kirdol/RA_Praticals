@@ -100,7 +100,7 @@ gev_return_levels_santis <- return.level(gev_fit_santis, return.period = c(10, 5
 gev_return_levels_Lugano <- return.level(gev_fit_Lugano, return.period = c(10, 50, 100))
 ```
 
-## Return Period
+### Return Period
 
 ::: {.callout-note icon="false"}
 ## Question
@@ -111,9 +111,6 @@ What is the return period of extreme temperature events exceeding a specific thr
 Now, we will analyse the return period for each city. The return period is the average interval between occurrences of extreme temperatures (exceeding the threshold, here at the 95th percentile) at each station. Here, we will test for a threshold set at the 95th percentile, which we can consider as extreme.
 
 ```{r}
-# Load required library
-library(extRemes)
-
 # Compute the 95th percentile threshold for each city
 threshold_geneva <- quantile(annual_maxima_geneva$MaxTemp, 0.95, na.rm = TRUE)
 threshold_santis <- quantile(annual_maxima_santis$MaxTemp, 0.95, na.rm = TRUE)
@@ -159,7 +156,7 @@ On average, Geneva is expected to experience temperatures exceeding their 95th p
 
 The differences in return periods highlight the variation in elevation, geography and micro-climates of regions in Switzerland and their susceptibility to extreme heat waves. Although not similar across regions, increasing temperatures poses serious issues for all regions. As return periods are calculated in a given time using historical data, in a context of climate change with average temperature in Switzerland rising, the same threshold will be exceeded more frequently in the future than what our current models suggest. In reality, the return period are lower than what the model suggest. These results highlights our understanding of the current risk and the importance of setting clear strategies to mitigate any arising risks.
 
-## Probability of New Record High Temperature
+### Probability of New Record High Temperature
 
 ::: {.callout-note icon="false"}
 ## Question

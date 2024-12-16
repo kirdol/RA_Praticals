@@ -2,9 +2,6 @@
 # load the required packages and install them if they are not.
 source(here::here("code","setup.R"))
 
-# Loading the data
-crypto_data <- read.csv(here("data", "crypto_data.csv"))
-
 # Parameters
 rounding_digits <- 4
 ```
@@ -25,6 +22,29 @@ would best fit the data ?
 :::
 
 
+```{r}
+data_clean_df <- read.csv(here::here("data", "Precipitation_lausanne_full.csv"))
+
+data_clean_df$Date <- as.Date(data_clean_df$Date, format = "%m/%d/%Y")
+data_clean_df$Precipitation <- as.numeric(data_clean_df$Precipitation)
+data_clean_df <- na.omit(data_clean_df)
+```
+
+
+```{r echo = FALSE}
+# Plot histogram
+ggplot(data_clean_df, aes(x = Precipitation)) +
+  geom_histogram(binwidth = 5, fill = "pink", color = "black") +
+  labs(title = "Histogram of Daily Precipitation Values in Lausanne",
+       x = "Daily Precipitation (mm)",
+       y = "Frequency") +
+  theme_minimal()
+```
+
+Based on the histogram, the data is heavily skewed to the right. The majority of the precipitation values are concentrated around zero and a long tail for higher values. There are many small precipitation events and a few extreme ones.
+
+The distribution that will best fit the data is the **gamma distribution** and **Weibull**. Gamma and Weibull distributions are usually used in meteorological processes such as precipitation quantities.
+
 ### b) Best fit distribution on yearly maxima
 
 ::: {.callout-note icon="false"}
@@ -34,6 +54,24 @@ Extract the yearly maximum values. Draw their histogram. Which distribution woul
 fit the data ?
 :::
 
+```{r}
+# Extract yearly maximum values
+data_clean_df$Year <- format(data_clean_df$Date, "%Y")
+yearly_max <- aggregate(Precipitation ~ Year, data = data_clean_df, max)
+```
+
+
+```{r echo = FALSE}
+# Plot histogram
+ggplot(yearly_max, aes(x = Precipitation)) +
+  geom_histogram(binwidth = 4, fill = "pink", color = "black") +
+  labs(title = "Histogram of Yearly Maximum Precipitation Values",
+       x = "Yearly Maximum Precipitation (mm)",
+       y = "Frequency") +
+  theme_minimal()
+```
+
+Based on the characteristics of the data (yearly maxima and right-skewed nature), the Generalised Extreme Value (GEV) distribution seems to be the best fit. The GEV distribution is designed to model extreme values like yearly maxima and can accommodate the heavy-tailed nature of the data, where a few large values are observed but are rare.
 
 ### c) Linear model approach
 
@@ -45,6 +83,32 @@ next 10 years. Provide confidence intervals for your predictions and plot it. Do
 that this a reasonable approach?
 :::
 
+```{r}
+# Fit linear model
+linear_model <- lm(Precipitation ~ as.numeric(Year), data = yearly_max)
+summary(linear_model)
+
+# Predict for next 10 years
+future_years <- data.frame(Year = as.numeric(2015:2024))
+predictions <- predict(linear_model, newdata = future_years, interval = "confidence")
+```
+
+
+```{r echo = FALSE}
+# Plot predictions
+ggplot() +
+  geom_point(data = yearly_max, aes(x = as.numeric(Year), y = Precipitation, color = "Observed")) +
+  geom_line(data = yearly_max, aes(x = as.numeric(Year), y = Precipitation, color = "Observed")) +
+  geom_point(data = future_years, aes(x = Year, y = predictions[,1], color = "Predicted")) +
+  geom_line(data = future_years, aes(x = Year, y = predictions[,1], color = "Predicted"), linetype = "dashed") +
+  geom_ribbon(data = future_years, aes(x = Year, ymin = predictions[,2], ymax = predictions[,3], fill = "95% CI"), alpha = 0.2) +
+  labs(title = "Linear Model Predictions for Yearly Maximum Precipitation",
+       x = "Year", y = "Yearly Maximum Precipitation (mm)",
+       color = "Legend", fill = "Confidence Interval") +
+  theme_minimal()
+```
+
+The very high p-value (0.9258 \< 0.05) shows that the slope of the regression line is not statistically significant. There is no evidence that the year has a significant effect on yearly maximum precipitation in this dataset. Additionally, the predictions show little change in yearly maximum precipitation over the next 10 years.
 
 ### d) GEV distribution
 
@@ -57,6 +121,17 @@ GEV model with time varying location parameter. Compare the two models using AIC
 BIC. Which one do you recommend using?
 :::
 
+```{r}
+# Fit GEV models
+gev_model_const <- fevd(yearly_max$Precipitation, type = "GEV", method = "MLE")
+gev_model_timevar <- fevd(yearly_max$Precipitation, type = "GEV", method = "MLE", loc = ~as.numeric(yearly_max$Year))
+
+# Compare models
+summary(gev_model_const)
+summary(gev_model_timevar)
+```
+
+AIC for the constant model (672.9433 ) is lower compared to the time-varying location model (674.8906). BIC for the constant model is also lower (680.2712 ) than for the time-varying location model (684.6612). Si nce both AIC and BIC values favor the constant parameter model, this suggest that the GEV model with constant parameters is the preferred model for fitting the yearly maximum precipitation data in Lausanne.
 
 ### e) Diagnostic plots
 
@@ -67,6 +142,21 @@ Draw diagnostic plots of your GEV fit (for example, using `gev.diag` function). 
 fit?
 :::
 
+```{r}
+gev_model_const_diag <- gev.fit(yearly_max$Precipitation)
+gev.diag(gev_model_const_diag)
+```
+
+Probability Plot: Since most points lie close to the line, it suggests that the GEV model is reasonably capturing the general behavior of the precipitation extremes.
+
+Quantile Plot: The majority of the points are also close to the diagonal line, it indicates a good fit.
+
+Return Level Plot: The data points generally follow the fitted line, and most fall within the confidence intervals.
+
+Density Plot: The histogram and density overlay indicate that the fitted GEV distribution aligns with the observed data distribution, although there may be sligh deviations at the tail.
+
+Conclusion: the GEV model with constant parameters provides a reasonably good fit for the yearly maximum precipitation values in Lausanne.
+
 
 ### f) Return levels prediction
 
@@ -76,6 +166,28 @@ fit?
 Using the model chosen in the previous parts, predict the 10-year return level. Draw your
 predictions of the 10-year return levels together with your data.
 :::
+
+```{r}
+# Calculate 10-year return level
+return_period <- 10
+return_level <- return.level(gev_model_const, return.period = return_period)
+```
+
+
+```{r echo = FALSE}
+# Add return level to plot
+ggplot(yearly_max, aes(x = as.numeric(Year), y = Precipitation)) +
+  geom_point(color = "blue") +
+  geom_line(color = "blue") +
+  geom_hline(yintercept = return_level, color = "red", linetype = "dashed") +
+  labs(title = "10-Year Return Level Prediction",
+       x = "Year", y = "Precipitation (mm)") +
+  annotate("text", x = 2010, y = return_level + 5,
+           label = paste("10-Year Return Level:", round(return_level, 2)), color = "red") +
+  theme_minimal()
+```
+
+The plot displays the yearly maximum precipitation in Lausanne over time, with the 10-year return level of 73.61mm marked by a red dashed line. This return level indicates the precipitation level that is expected to be exceeded once every 10 years.
 
 
 ### g) Interpretation
@@ -89,6 +201,47 @@ and the GEV approach (from [(f)](#f-return-levels-prediction)). How many histori
 level? Answer the same question with 20, 50 and 85-year return level.
 :::
 
+```{r}
+# Extract GEV parameters directly from the model
+location <- gev_model_const$results$par[1] # Location parameter
+scale <- gev_model_const$results$par[2]   # Scale parameter
+shape <- gev_model_const$results$par[3]   # Shape parameter
+```
+
+```{r}
+# Extract GEV parameters from the constant model
+location <- gev_model_const$results$par[1]
+scale <- gev_model_const$results$par[2]
+shape <- gev_model_const$results$par[3]
+
+# Define return periods
+return_periods <- c(10, 20, 50, 85)
+
+# Function to calculate return levels for each period
+calculate_return_level <- function(return_period) {
+  location + (scale / shape) * ((-log(1 - 1 / return_period))^(-shape) - 1)
+}
+
+# Calculate return levels
+return_levels <- sapply(return_periods, calculate_return_level)
+
+# Display return levels
+names(return_levels) <- paste(return_periods, "year return level")
+print(return_levels)
+
+# Count how many yearly maximum values exceed each return level
+exceedances <- sapply(return_levels, function(level) sum(yearly_max$Precipitation > level))
+
+# Display exceedance counts
+exceedances
+```
+
+Each year, there is 1/10 chance of exceeding the 10-year return level of 73.61 mm based on the GEV model, with 6 historical exceedances aligning with this probability.
+
+The GEV approach accurately captures the rarity of extreme events, providing 20, 50, and 85-year return levels (82.53 mm, 94.90 mm, and 102.45 mm, respectively), with 4, 2, and 1 exceedances observed for each.
+
+In contrast, the linear model lacks the specificity to estimate extreme events reliably, as it doesn't account for tail behavior. The GEV model's results match expected exceedance frequencies, validating its effectiveness for extreme precipitation analysis.
+
 
 ### h) Return period 100 mm precipitation
 
@@ -98,6 +251,17 @@ level? Answer the same question with 20, 50 and 85-year return level.
 Using the fitted model, compute the return period of 100 mm of precipitation.
 :::
 
+```{r}
+# Desired precipitation level
+precipitation_level <- 100
+
+# Calculate the return period for 100 mm of precipitation
+return_period_100mm <- 1 / (1 - exp(-((precipitation_level - location) / scale * shape + 1)^(-1 / shape)))
+
+cat("The return period for a 100 mm precipitation event is approximately:", return_period_100mm, "years\n")
+```
+
+The return period for a 100 mm precipitation event is approximately: 71.70624 years
 
 ### i) Probability of exceeding 150 mm
 
@@ -108,74 +272,14 @@ Using the fitted model, compute the probability that there will be a day in the 
 when the precipitation exceeds 150 mm.
 :::
 
+```{r}
+# Desired precipitation threshold
+precipitation_threshold <- 150
 
-## Part 2: Peaks-over-threshold approach
+# Compute the probability of exceeding 150 mm in a given year
+prob_exceed_150mm <- 1 - exp(-((precipitation_threshold - location) / scale * shape + 1)^(-1 / shape))
 
-### a) Time series plot
+cat("The probability of a precipitation event exceeding 150 mm in the next year is approximately:", prob_exceed_150mm * 100, "%\n")
+```
 
-::: {.callout-note icon="false"}
-## Question
-
-Display a time series plot of the daily precipitation across the data range.
-:::
-
-
-### b) Mean Residual Life Plot
-
-::: {.callout-note icon="false"}
-## Question
-
-We want to model the high precipitation levels using the POT approach. First step is choosing
-a threshold. Draw Mean Residual Life Plot (for example using `mrlplot` in `POT` library) for
-the full range of your data. Choose a reasonable threshold. In the plot from part [(a)](#a-time-series-plot)) highlight the data that exceeds this threshold.
-:::
-
-
-### c) Fit a GPD
-
-::: {.callout-note icon="false"}
-## Question
-
-Fit a GPD for the data exceeding the threshold and draw a diagnostic plot. Is it a reasonable
-fit? (Hint: if not, you may reconsider the choice of the threshold)
-:::
-
-
-### d) Return levels prediction
-
-::: {.callout-note icon="false"}
-## Question
-
-Using the fitted model, compute the 10-year, 20-year, 50-year and 85-year return levels.
-:::
-
-
-### e) Return period 100 mm precipitation
-
-::: {.callout-note icon="false"}
-## Question
-
-Using the fitted model, compute the return period of 100 mm of precipitation.
-:::
-
-
-### f) Probability of exceeding 150 mm
-
-::: {.callout-note icon="false"}
-## Question
-
-Using the fitted model, compute the probability that there will be a day in the next year
-when the precipitation exceeds 150 mm.
-:::
-
-
-### g) Comparison with block maxima
-
-::: {.callout-note icon="false"}
-## Question
-
-Compare the results with the block maxima method. Explain the drawbacks and advantages
-of using the POT approach compared to the block maxima method. Which method do you
-prefer?
-:::
-
+The probability of a precipitation event exceeding 150 mm in the next year is approximately: 0.0643559 %

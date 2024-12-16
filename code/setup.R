@@ -23,7 +23,9 @@ packages <- c(
   "tidyverse",
   "extRemes",
   "zoo",
-  "forecast"
+  "forecast",
+  "POT",
+  "tinytex"
 )
 
 # Function that install the packages if not already installed on your computer

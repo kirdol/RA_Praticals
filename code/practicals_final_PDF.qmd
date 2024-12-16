@@ -22,9 +22,9 @@ This documents is the annex to our final report for group 1. It contains the ful
 
 **Note:**
 
-Certain sections of the code have been omitted from the generated PDF and HTML versions of this annex to enhance readability. Specifically, the code for data loading, package installation, and plot generation has been excluded. The full code is available in the QMD files located in the “code” folder of our [GitHub repository](https://github.com/kirdol/RA_Praticals).
+Certain sections of the code have been omitted from the generated PDF and HTML versions of this annex to enhance readability. Specifically, the code for data loading, package installation, and plot generation has been excluded. The full code is available in the QMD files located in the “code” folder of our [GitHub repository](https://github.com/kirdol/RA_Praticals) or .zip file.
 
 {{< pagebreak >}}
 
-```{r child = c("practical_11_final.qmd", "practical_12_final.qmd", "practical_13_final.qmd", "practical_21_final.qmd", "practical_22_final.qmd", "practical_23_final.qmd", "practical_31_final.qmd", "practical_33_final.qmd", "practical_34_final.qmd")}
+```{r child = c("practical_11_final.qmd", "practical_12_final.qmd", "practical_13_final.qmd", "practical_21_final.qmd", "practical_22_final.qmd", "practical_23_final.qmd", "practical_31_final.qmd", "practical_32_final.qmd", "practical_33_final.qmd", "practical_34_final.qmd")}
 ```

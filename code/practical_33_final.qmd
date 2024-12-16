@@ -286,6 +286,6 @@ The return levels are:
 | Santïs  | 2500m      | `r round(gpd_return_levels_santis[1], 2)` | `r round(gpd_return_levels_santis[2], 2)` | `r round(gpd_return_levels_santis[3], 2)` |
 | Lugano  | 275m       | `r round(gpd_return_levels_Lugano[1], 2)` | `r round(gpd_return_levels_Lugano[2], 2)` | `r round(gpd_return_levels_Lugano[3], 2)` |
 
-### Comparison of Approaches:
+### Comparison of Approaches
 
 In comparing the block maxima approach (GEV) to the Peaks-over-Threshold approach (GPD) for modeling temperature extremes, we find that the POT method often provides more nuanced information about the tail behavior of the distribution. While the GEV model uses only the annual maximum values, which can lead to relatively large uncertainty due to a limited amount of extreme data, the POT approach utilizes all temperature values above a chosen high threshold. This generally results in more data points to characterize the tail, potentially yielding more stable and reliable estimates of parameters and return levels. However, the POT approach depends on careful threshold selection and declustering, which introduces additional steps not required by the simpler block maxima method. In practice, the POT approach can lead to different (often more precise) return level estimates, giving a potentially more accurate picture of the frequency and magnitude of extreme temperature events.

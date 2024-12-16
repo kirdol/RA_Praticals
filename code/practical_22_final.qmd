@@ -1,4 +1,297 @@
 
 {{< pagebreak >}}
 
-## Part 2
+```{r  echo = FALSE, message = FALSE}
+# load the required packages and install them if they are not.
+source(here::here("code","setup.R"))
+
+# Parameters
+rounding_digits <- 4
+```
+
+## Part 2: Peaks-over-threshold approach
+
+### a) Time series plot
+
+::: {.callout-note icon="false"}
+## Question
+
+Display a time series plot of the daily precipitation across the data range.
+:::
+
+```{r}
+# Load the precipitation data
+data_clean_df <- read.csv(here::here("data", "Precipitation_lausanne_full.csv"))
+
+# Ensure that the Date column is in Date format
+data_clean_df$Date <- as.Date(data_clean_df$Date, format = "%m/%d/%Y")
+```
+
+
+```{r echo = FALSE}
+# Plot the time series of daily precipitation
+ggplot(data_clean_df, aes(x = Date, y = Precipitation)) +
+  geom_line(color = "blue") +
+  labs(title = "Daily Precipitation in Lausanne (1930-2014)",
+       x = "Date",
+       y = "Precipitation (mm)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+### b) Mean Residual Life Plot
+
+::: {.callout-note icon="false"}
+## Question
+
+We want to model the high precipitation levels using the POT approach. First step is choosing
+a threshold. Draw Mean Residual Life Plot (for example using `mrlplot` in `POT` library) for
+the full range of your data. Choose a reasonable threshold. In the plot from part [(a)](#a-time-series-plot)) highlight the data that exceeds this threshold.
+:::
+
+```{r}
+# Extract the precipitation values
+precipitation_values <- data_clean_df$Precipitation
+
+# Generate the Mean Residual Life Plot
+mrlplot(precipitation_values, main = "Mean Residual Life Plot for Daily Precipitation")
+
+# After observing the MRL plot, let's choose a threshold
+# Replace the chosen_threshold value with the one you select after reviewing the plot
+chosen_threshold <- 50  
+
+# Highlight data exceeding the threshold in the time series plot
+data_clean_df$AboveThreshold <- data_clean_df$Precipitation > chosen_threshold
+```
+
+
+```{r echo = FALSE}
+ggplot(data_clean_df, aes(x = Date, y = Precipitation)) +
+  geom_line(color = "blue") +
+  geom_point(data = subset(data_clean_df, AboveThreshold), aes(x = Date, y = Precipitation), color = "red") +
+  labs(title = "Daily Precipitation in Lausanne with Exceedances Highlighted",
+       x = "Date",
+       y = "Precipitation (mm)") +
+  theme_minimal()
+```
+
+We chose a threshold of 50 mm, which seems appropriate, as it allows for a stable selection of extreme precipitation events base on the MRL plot.
+
+
+### c) Fit a GPD
+
+::: {.callout-note icon="false"}
+## Question
+
+Fit a GPD for the data exceeding the threshold and draw a diagnostic plot. Is it a reasonable
+fit? (Hint: if not, you may reconsider the choice of the threshold)
+:::
+
+```{r}
+# Define the threshold
+threshold <- 50
+
+# Fit the GPD model to the exceedances over the threshold
+fit_gpd <- fpot(data_clean_df$Precipitation, threshold = threshold)
+```
+
+
+```{r echo = FALSE}
+# Generate diagnostic plots for the GPD fit
+plot(fit_gpd)
+```
+
+Given the plots, the 50 mm threshold seems to provide an adequate fit without significant deviations. Thus, it is reasonable to proceed with this threshold, as the model sufficiently captures the tail behavior of the date within the confidence intervals.
+
+
+### d) Return levels prediction
+
+::: {.callout-note icon="false"}
+## Question
+
+Using the fitted model, compute the 10-year, 20-year, 50-year and 85-year return levels.
+:::
+
+```{r}
+threshold <- 50 
+
+# Extract parameters from the fitted model
+shape <- fit_gpd$estimate["shape"]
+scale <- fit_gpd$estimate["scale"]
+
+# Calculate the rate of exceedance (lambda)
+n_exceedances <- length(fit_gpd$data)  # Number of exceedances
+n_total <- nrow(data_clean_df)  # Total number of data points
+lambda <- n_exceedances / n_total
+
+# Define return periods
+return_periods <- c(10, 20, 50, 85)
+
+# Function to calculate return level
+return_level <- function(T) {
+  threshold + (scale / shape) * (((T * lambda)^shape) - 1)
+}
+
+# Calculate return levels for each return period
+return_levels <- sapply(return_periods, return_level)
+names(return_levels) <- paste(return_periods, "year return level")
+
+# Display return levels
+return_levels
+```
+
+10-year return level: 74.81 mm, 20-year return level: 83.44, 50-year return level: 95.80, 85-year return level: 103.48
+
+
+### e) Return period 100 mm precipitation
+
+::: {.callout-note icon="false"}
+## Question
+
+Using the fitted model, compute the return period of 100 mm of precipitation.
+:::
+
+```{r}
+# Display both the shape and scale parameters
+print(fit_gpd$estimate)
+```
+
+```{r}
+# Define the target return level and threshold
+target_level <- 100
+threshold <- 50  # Replace if a different threshold was used
+
+# Parameters from the fitted GPD model
+shape <- 0.09818681
+scale <- 9.60205760
+
+# Calculate the exceedance rate (lambda)
+n_exceedances <- length(fit_gpd$data)  # Number of exceedances above threshold
+n_total <- nrow(data_clean_df)  # Total number of data points
+lambda <- n_exceedances / n_total
+
+# Calculate the return period for the 100 mm event
+return_period_100mm <- (1 / lambda) * (1 + (shape * (target_level - threshold) / scale))^(1 / shape)
+
+# Display the return period
+return_period_100mm
+```
+
+On average, a precipitation event of this magnitude (100 mm) would be expected to occur once every 67 years in Lausanne. The average annual precipitation in Lausanne is around 1150 mm.
+
+
+### f) Probability of exceeding 150 mm
+
+::: {.callout-note icon="false"}
+## Question
+
+Using the fitted model, compute the probability that there will be a day in the next year
+when the precipitation exceeds 150 mm.
+:::
+
+```{r}
+# Define the precipitation threshold (150 mm)
+precipitation_threshold <- 150
+
+# Extract the parameters of the fitted GPD model
+shape <- fit_gpd$estimate["shape"]
+scale <- fit_gpd$estimate["scale"]
+threshold <- 50  # The threshold you selected for the POT method
+
+# Calculate the CDF for the 150 mm precipitation level
+cdf_150mm <- 1 - (1 + (shape / scale) * (precipitation_threshold - threshold))^(-1 / shape)
+
+# Compute the probability of exceeding 150 mm
+prob_exceed_150mm <- 1 - cdf_150mm
+
+cat("The probability of a precipitation event exceeding 150 mm in the next year is approximately:", prob_exceed_150mm * 100, "%\n")
+
+```
+
+The probability of a precipitation event exceeding 150 mm in the next year is approximately: 0.07664709%.
+
+```{r}
+# Fit the GEV model to the yearly maximum precipitation (or exceedances)
+fit_gev <- fevd(yearly_max$Precipitation, type = "GEV", method = "MLE")
+
+# View the model parameters
+summary(fit_gev)
+# Extract parameters for the GEV model
+location <- fit_gev$results$par[1]  # Location parameter
+scale <- fit_gev$results$par[2]     # Scale parameter
+shape <- fit_gev$results$par[3]     # Shape parameter
+# Calculate the probability of exceeding 150 mm using the GEV model
+prob_exceed_150_gev <- 1 - pevd(150, loc = location, scale = scale, shape = shape, type = "GEV")
+
+# Display the probability
+prob_exceed_150_gev
+
+# Fit the GEV model to the yearly maximum precipitation (or exceedances)
+fit_gev <- fevd(yearly_max$Precipitation, type = "GEV", method = "MLE")
+
+# Extract parameters for the GEV model
+location <- fit_gev$results$par[1]  # Location parameter
+scale <- fit_gev$results$par[2]     # Scale parameter
+shape <- fit_gev$results$par[3]     # Shape parameter
+
+# Calculate the probability of exceeding 150 mm using the GEV model
+prob_exceed_150_gev <- 1 - pevd(150, loc = location, scale = scale, shape = shape, type = "GEV")
+
+# Display the probability
+prob_exceed_150_gev
+
+```
+
+```{r}
+# Step 1: Compute the probability of exceeding the threshold (150 mm) for a single day
+daily_prob_exceed_150mm <- lambda * (1 + (shape * (150 - threshold) / scale))^(-1 / shape)
+
+# Step 2: Calculate the annual probability of at least one day exceeding 150 mm
+annual_prob_exceed_150mm <- 1 - (1 - daily_prob_exceed_150mm)^365
+
+# Display the annual probability
+annual_prob_exceed_150mm
+```
+
+### g) Comparison with block maxima
+
+::: {.callout-note icon="false"}
+## Question
+
+Compare the results with the block maxima method. Explain the drawbacks and advantages
+of using the POT approach compared to the block maxima method. Which method do you
+prefer?
+:::
+
+```{r}
+# Fit the GEV model to the yearly maximum precipitation (or exceedances)
+fit_gev <- fevd(yearly_max$Precipitation, type = "GEV", method = "MLE")
+
+# View the model parameters
+summary(fit_gev)
+# Extract parameters for the GEV model
+location <- fit_gev$results$par[1]  # Location parameter
+scale <- fit_gev$results$par[2]     # Scale parameter
+shape <- fit_gev$results$par[3]     # Shape parameter
+# Calculate the probability of exceeding 150 mm using the GEV model
+prob_exceed_150_gev <- 1 - pevd(150, loc = location, scale = scale, shape = shape, type = "GEV")
+
+# Display the probability
+prob_exceed_150_gev
+
+# Fit the GEV model to the yearly maximum precipitation (or exceedances)
+fit_gev <- fevd(yearly_max$Precipitation, type = "GEV", method = "MLE")
+
+# Extract parameters for the GEV model
+location <- fit_gev$results$par[1]  # Location parameter
+scale <- fit_gev$results$par[2]     # Scale parameter
+shape <- fit_gev$results$par[3]     # Shape parameter
+
+# Calculate the probability of exceeding 150 mm using the GEV model
+prob_exceed_150_gev <- 1 - pevd(150, loc = location, scale = scale, shape = shape, type = "GEV")
+
+# Display the probability
+prob_exceed_150_gev
+```
+
+The block maxima method estimates a 0.064% annual probability of precipitation exceeding 150 mm, while the POT appraoch estimates a slightly higher probability at 0.076%. The block maxima is simpler but loses data by focusing only on yearly maxima, potentially underestimating extremes. In contrast, the POT approach captures all exceedances above a threshold, providing more precise insights into rare events. The POT method is thus preferred for analysing extreme precipitation events.
