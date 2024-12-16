@@ -107,7 +107,7 @@ probability_following_extreme <- 1 - extremal_index
 cat("The probability that if today is extreme, tomorrow will also be extreme is:", probability_following_extreme, "\n")
 ```
 
-The extremal index of the subsetted series, with a threshold of 24.94°C, is 0.2613 (this value is closer to 0 than 1). Therefore, if the temperature today is extreme, there is a 26.13 % probability that tomorrow’s temperature will also be extreme. While there is some clustering of extreme events, the persistence is not high, suggesting that extreme temperature days are relatively isolated in time.
+The extremal index of the subset series, using a chosen threshold of 24.94°C, is 0.2613, indicating that extreme temperatures occur in clusters (closer to 0 than 1). The probability that an extreme temperature today will be followed by another extreme temperature tomorrow is 0.74%. This suggests a strong persistence of extreme events over consecutive days.
 
 ### c) Declustering the data
 
